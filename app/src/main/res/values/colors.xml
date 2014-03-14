@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="card_pressed">#7E0099CC</color>
+
+    <color name="theme_color">#ff123456</color>
+
+    <!-- Message card -->
+    <color name="card_color1">#ffdedede</color>
+    <color name="card_color2">#ffffffff</color>
+</resources>

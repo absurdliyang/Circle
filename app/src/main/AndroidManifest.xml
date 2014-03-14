@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.absurd.circle.app" >
+
+    <application
+        android:name="com.absurd.circle.app.AppData"
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+        <activity
+            android:name="com.absurd.circle.ui.activity.HomeActivity"
+            android:label="@string/title_activity_home" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.absurd.circle.ui.activity.EditTweetActivity"
+            android:label="@string/title_activity_edit_tweet" >
+        </activity>
+        <activity
+            android:name="com.absurd.circle.ui.activity.MessageActivity"
+            android:label="@string/title_activity_message" >
+        </activity>
+        <activity
+            android:name="com.absurd.circle.ui.activity.ContactActivity"
+            android:label="@string/title_activity_contact" >
+        </activity>
+        <activity
+            android:name="com.absurd.circle.ui.activity.SettingActivity"
+            android:label="@string/title_activity_setting" >
+        </activity>
+        <activity
+            android:name="com.absurd.circle.ui.activity.TweetDetailActivity"
+            android:label="@string/title_activity_tweet_detail" >
+        </activity>
+    </application>
+
+</manifest>
