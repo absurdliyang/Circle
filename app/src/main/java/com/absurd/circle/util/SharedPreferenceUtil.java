@@ -5,7 +5,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.absurd.circle.app.AppConstant;
-import com.absurd.circle.app.AppData;
+import com.absurd.circle.app.AppContext;
 
 public class SharedPreferenceUtil {
 
@@ -22,7 +22,7 @@ public class SharedPreferenceUtil {
 	
 	public synchronized static SharedPreferenceUtil getInstance(){
 		if(mSharedPreferenceUtil == null){
-			mSharedPreferenceUtil = new SharedPreferenceUtil(AppData.getContext(), AppConstant.SETTING_INFOS);
+			mSharedPreferenceUtil = new SharedPreferenceUtil(AppContext.getContext(), AppConstant.SETTING_INFOS);
 		}
 		return mSharedPreferenceUtil;
 	}

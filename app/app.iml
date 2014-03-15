@@ -73,6 +73,7 @@
     <orderEntry type="library" exported="" name="appcompat-v7-19.0.1" level="project" />
     <orderEntry type="library" exported="" name="bcs-sdk-java_1.4.5" level="project" />
     <orderEntry type="library" exported="" name="gson-2.2.2" level="project" />
+    <orderEntry type="library" exported="" name="weibosdkcore" level="project" />
     <orderEntry type="library" exported="" name="mas" level="project" />
     <orderEntry type="library" exported="" name="support-v4-19.0.1" level="project" />
     <orderEntry type="library" exported="" name="volley" level="project" />

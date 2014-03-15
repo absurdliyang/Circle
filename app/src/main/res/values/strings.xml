@@ -17,5 +17,11 @@
     <string name="title_activity_contact">ContactActivity</string>
     <string name="title_activity_setting">SettingActivity</string>
     <string name="title_activity_tweet_detail">TweetDetailActivity</string>
+    <string name="title_activity_login">LoginActivity</string>
+
+    <!-- sina weibo -->
+    <string name="com_sina_weibo_sdk_login_with_weibo_account">用微博登錄</string>
+    <string name="com_sina_weibo_sdk_login">登錄</string>
+    <string name="com_sina_weibo_sdk_logout">註銷</string>
 
 </resources>

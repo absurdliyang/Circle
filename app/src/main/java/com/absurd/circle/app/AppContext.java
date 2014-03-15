@@ -6,7 +6,7 @@ import android.content.Context;
 /**
  * Created by absurd on 14-3-11.
  */
-public class AppData extends Application{
+public class AppContext extends Application{
     private static Context mContext;
 
     @Override
