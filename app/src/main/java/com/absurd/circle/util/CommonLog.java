@@ -51,6 +51,7 @@ public class CommonLog {
         if(logLevel <= Log.INFO){
             String name = getFunctionName();
             String ls = (name==null?str.toString():(name+" - "+str));
+            ls = ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>  " +ls;
             Log.i(tag,ls);
         }
     }

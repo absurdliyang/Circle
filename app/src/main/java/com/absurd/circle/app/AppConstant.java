@@ -22,7 +22,10 @@ public interface AppConstant {
     public static final String SINA_WEIBO_SSO_URL = "sinaweibosso://login?redirect_uri={0}&callback_uri=sinaweibosso.4029269314&client_id={1}&scope=follow_app_official_microblog";
     public static final String SINA_CLIENT_SECRET = "d878c36c3489781818575de07ae77f0d";
     public static final String GET_ACCESS_TOKEN_URL = "https://api.weibo.com/oauth2/access_token?client_id={0}&client_secret={1}&grant_type=authorization_code&redirect_uri={2}&code={3}";
-
+    /**
+     * Baidu locatio service
+     */
+    public static final String BAIDU_GEOCODER_URL= "http://api.map.baidu.com/geocoder?output=json&location=%s,%s&key=EGFpCFxPKo3hLG5u0xSnNljbgAGFGynb";
 
 
 
