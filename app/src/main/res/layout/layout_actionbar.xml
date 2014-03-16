@@ -2,38 +2,50 @@
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <TextView
-        android:id="@+id/tv_actionbar_home"
+    android:layout_height="match_parent"
+    android:background="@color/theme_color"
+    >
+    <ImageView
+        android:id="@+id/iv_actionbar_home"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_centerVertical="true"
         android:layout_marginLeft="5dp"
         android:clickable="true"
-        android:textColor="#ffffffff"
-        android:text="home"
-        android:textSize="20dp"/>
+        android:src="@drawable/actionbar_icon_home"/>
 
-    <TextView
-        android:id="@+id/tv_actionbar_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <LinearLayout
+        android:id="@+id/llyt_actionbar_title"
         android:layout_centerInParent="true"
-        android:text="title"
-        android:clickable="true"
-        android:textColor="#ffffffff"
-        android:textSize="20sp" />
-    <TextView
-        android:id="@+id/tv_actionbar_edit"
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/tv_actionbar_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="title"
+            android:clickable="true"
+            android:textColor="#ffffffff"
+            android:textSize="20sp" />
+        <ImageView
+            android:id="@+id/iv_actionbar_title"
+            android:layout_marginLeft="3dp"
+            android:layout_marginTop="8dp"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:src="@drawable/actionbar_icon_category"/>
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/iv_actionbar_edit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
         android:layout_marginRight="5dp"
         android:clickable="true"
-        android:textColor="#ffffffff"
-        android:text="edit"
-        android:textSize="20dp"/>
+        android:src="@drawable/actionbar_icon_edit"/>
 
 </RelativeLayout>

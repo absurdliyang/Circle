@@ -1,6 +1,7 @@
 package com.absurd.circle.ui.activity;
 
 import java.text.SimpleDateFormat;
+import java.util.List;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -20,9 +21,13 @@ import android.widget.Toast;
 import com.absurd.circle.app.AppConstant;
 import com.absurd.circle.app.AppContext;
 import com.absurd.circle.app.R;
+import com.absurd.circle.data.model.User;
+import com.absurd.circle.data.service.UserService;
 import com.absurd.circle.util.CommonLog;
 import com.absurd.circle.data.util.GPSUtil;
 import com.absurd.circle.util.LogFactory;
+import com.microsoft.windowsazure.mobileservices.ServiceFilterResponse;
+import com.microsoft.windowsazure.mobileservices.TableQueryCallback;
 import com.sina.weibo.sdk.auth.Oauth2AccessToken;
 import com.sina.weibo.sdk.auth.WeiboAuth.AuthInfo;
 import com.sina.weibo.sdk.auth.WeiboAuthListener;
@@ -92,6 +97,8 @@ public class LoginActivity extends ActionBarActivity {
          * 通常情况下，我们的应用不需要调用该函数。
          */
         mLoginoutBtnDefault.setExternalOnClickListener(mButtonClickListener);
+
+
     }
 
     /**

@@ -2,7 +2,7 @@
 <resources>
     <color name="card_pressed">#7E0099CC</color>
 
-    <color name="theme_color">#ff123456</color>
+    <color name="theme_color">#21ABEA</color>
 
     <!-- Message card -->
     <color name="card_color1">#ffdedede</color>

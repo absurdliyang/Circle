@@ -47,7 +47,7 @@ public class User implements Serializable{
     private String mLocation;
 
     @SerializedName("date")
-    private String mDate;
+    private Date mDate;
 
     @SerializedName("avatar")
     private String mAvatar;
@@ -200,11 +200,11 @@ public class User implements Serializable{
         mAvatar = avatar;
     }
 
-    public String getDate() {
+    public Date getDate() {
         return mDate;
     }
 
-    public void setDate(String date) {
+    public void setDate(Date date) {
         mDate = date;
     }
 

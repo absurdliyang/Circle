@@ -9,19 +9,33 @@ import android.support.v7.app.ActionBar;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.absurd.circle.app.R;
+import com.absurd.circle.data.model.User;
+import com.absurd.circle.data.model.UserLocation;
+import com.absurd.circle.data.service.UserLocationService;
+import com.absurd.circle.data.service.UserService;
 import com.absurd.circle.ui.fragment.CategoryFragment;
 import com.absurd.circle.ui.fragment.TweetListFragment;
 import com.absurd.circle.ui.fragment.SlidingMenuFragment;
+import com.absurd.circle.util.CommonLog;
 import com.absurd.circle.util.IntentUtil;
+import com.absurd.circle.util.LogFactory;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.jeremyfeinstein.slidingmenu.lib.app.SlidingFragmentActivity;
+import com.microsoft.windowsazure.mobileservices.ServiceFilterResponse;
+import com.microsoft.windowsazure.mobileservices.TableOperationCallback;
+import com.microsoft.windowsazure.mobileservices.TableQueryCallback;
+
+import java.util.Calendar;
+import java.util.List;
 
 import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshAttacher;
 
 public class HomeActivity extends SlidingFragmentActivity{
+    private CommonLog mLog = LogFactory.createLog();
     private PullToRefreshAttacher mAttacher;
 
     private Fragment mContent;
@@ -64,6 +78,9 @@ public class HomeActivity extends SlidingFragmentActivity{
 
         // customize the SlidingMenu
         getSlidingMenu().setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
+
+
+
     }
 
     private void configureSlidingMenu(){
@@ -84,11 +101,11 @@ public class HomeActivity extends SlidingFragmentActivity{
         actionBar.setDisplayShowHomeEnabled(false);
         ActionBar.LayoutParams params = new ActionBar.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.MATCH_PARENT);
         View actionBarView = LayoutInflater.from(this).inflate(R.layout.layout_actionbar,null);
-        TextView titleTv = (TextView)actionBarView.findViewById(R.id.tv_actionbar_title);
-        titleTv.setOnClickListener(new View.OnClickListener() {
+        View titleV = actionBarView.findViewById(R.id.llyt_actionbar_title);
+        titleV.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                FragmentManager fm = getSupportFragmentManager();
+                public void onClick(View view) {
+                    FragmentManager fm = getSupportFragmentManager();
                 if(fm.getBackStackEntryCount() == 0){
                     FragmentTransaction ft = fm.beginTransaction();
                     ft.setCustomAnimations(R.anim.fragment_slide_bottom_in, R.anim.fragment_slide_bottom_out);
@@ -100,14 +117,14 @@ public class HomeActivity extends SlidingFragmentActivity{
                 }
             }
         });
-        TextView editTv = (TextView)actionBarView.findViewById(R.id.tv_actionbar_edit);
+        ImageView editTv = (ImageView)actionBarView.findViewById(R.id.iv_actionbar_edit);
         editTv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 IntentUtil.startActivity(HomeActivity.this,EditTweetActivity.class);
             }
         });
-        TextView homeTv = (TextView)actionBarView.findViewById(R.id.tv_actionbar_home);
+        ImageView homeTv = (ImageView)actionBarView.findViewById(R.id.iv_actionbar_home);
         homeTv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

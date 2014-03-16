@@ -8,7 +8,7 @@ import java.util.Date;
 /**
  * Created by absurd on 14-3-14.
  */
-public class Tweet implements Serializable{
+public class Message implements Serializable{
     private static final int WEIBO = 1;
     private static final int BUSINESS = 2;
     private static final int HELP = 3;

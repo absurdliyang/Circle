@@ -1,7 +1,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#ff000000">
+    android:background="@drawable/sliding_menu_bg">
     <RelativeLayout
         android:id="@+id/rlyt_drawer_title"
         android:layout_marginTop="40dp"
@@ -16,6 +16,7 @@
             android:id="@+id/iv_drawer_username"
             android:layout_below="@id/iv_drawer_user_avatar"
             android:layout_centerHorizontal="true"
+            android:textColor="#ffffffff"
             android:text="absurd"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
@@ -35,13 +36,14 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_launcher"
+                android:src="@drawable/icon_home"
                 />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center"
                 android:layout_marginLeft="20dp"
+                android:textColor="#ffffffff"
                 android:text="主页" />
         </LinearLayout>
         <LinearLayout
@@ -55,13 +57,14 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_launcher"
+                android:src="@drawable/icon_message"
                 />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center"
                 android:layout_marginLeft="20dp"
+                android:textColor="#ffffffff"
                 android:text="消息" />
         </LinearLayout>
         <LinearLayout
@@ -75,13 +78,14 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_launcher"
+                android:src="@drawable/icon_contact"
                 />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center"
                 android:layout_marginLeft="20dp"
+                android:textColor="#ffffffff"
                 android:text="联系人" />
         </LinearLayout>
         <LinearLayout
@@ -95,13 +99,14 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_launcher"
+                android:src="@drawable/icon_setting"
                 />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center"
                 android:layout_marginLeft="20dp"
+                android:textColor="#ffffffff"
                 android:text="设置" />
         </LinearLayout>
     </RelativeLayout>

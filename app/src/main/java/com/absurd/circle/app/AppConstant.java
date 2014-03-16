@@ -27,7 +27,7 @@ public interface AppConstant {
      */
     public static final String BAIDU_GEOCODER_URL= "http://api.map.baidu.com/geocoder?output=json&location=%s,%s&key=EGFpCFxPKo3hLG5u0xSnNljbgAGFGynb";
 
-
+    public static final String TEST_USER_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6MH0.eyJleHAiOjE0MjY1MDc4ODAuOTUzLCJpc3MiOiJ1cm46bWljcm9zb2Z0OndpbmRvd3MtYXp1cmU6enVtbyIsInZlciI6MSwiYXVkIjoiIiwidWlkIjoicXE6RTE5MkNBMTREMTA4Q0U1MDlCMjBEMEI2NjMwQkE4RjUifQ.8_sb6czvorFYAr53Riyp-UIDBcDwnY1V0-wZKNe-Ok4";
 
 
     /**
