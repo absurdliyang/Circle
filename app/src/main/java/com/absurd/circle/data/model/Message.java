@@ -20,7 +20,7 @@ public class Message implements Serializable{
     private static final int SHOW = 9;
     private static final int MOOD = 10;
 
-    public enum TweetType {
+    public enum MessageType {
         WEIBO,
         BUSINESS,
         HELP,
@@ -40,7 +40,7 @@ public class Message implements Serializable{
     public String mContent;
 
     @SerializedName("contenttype")
-    private int mContentType;
+    private MessageType mContentType;
 
     @SerializedName("latitude")
     private double mLatitude;
@@ -140,11 +140,11 @@ public class Message implements Serializable{
         mContent = content;
     }
 
-    public int getContentType() {
+    public MessageType getContentType() {
         return mContentType;
     }
 
-    public void setContentType(int contentType) {
+    public void setContentType(MessageType contentType) {
         mContentType = contentType;
     }
 

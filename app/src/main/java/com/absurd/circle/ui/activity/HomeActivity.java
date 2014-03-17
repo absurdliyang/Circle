@@ -10,13 +10,8 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.absurd.circle.app.R;
-import com.absurd.circle.data.model.User;
-import com.absurd.circle.data.model.UserLocation;
-import com.absurd.circle.data.service.UserLocationService;
-import com.absurd.circle.data.service.UserService;
 import com.absurd.circle.ui.fragment.CategoryFragment;
 import com.absurd.circle.ui.fragment.TweetListFragment;
 import com.absurd.circle.ui.fragment.SlidingMenuFragment;
@@ -25,12 +20,6 @@ import com.absurd.circle.util.IntentUtil;
 import com.absurd.circle.util.LogFactory;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.jeremyfeinstein.slidingmenu.lib.app.SlidingFragmentActivity;
-import com.microsoft.windowsazure.mobileservices.ServiceFilterResponse;
-import com.microsoft.windowsazure.mobileservices.TableOperationCallback;
-import com.microsoft.windowsazure.mobileservices.TableQueryCallback;
-
-import java.util.Calendar;
-import java.util.List;
 
 import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshAttacher;
 
@@ -121,7 +110,7 @@ public class HomeActivity extends SlidingFragmentActivity{
         editTv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                IntentUtil.startActivity(HomeActivity.this,EditTweetActivity.class);
+                IntentUtil.startActivity(HomeActivity.this,EditMessageActivity.class);
             }
         });
         ImageView homeTv = (ImageView)actionBarView.findViewById(R.id.iv_actionbar_home);

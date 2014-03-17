@@ -14,5 +14,10 @@ public class SettingActivity extends BaseActivity {
         setContentView(R.layout.activity_setting);
     }
 
+    @Override
+    protected String setActionBarTitle() {
+        return "设置";
+    }
+
 
 }

@@ -1,9 +1,7 @@
 package com.absurd.circle.ui.activity;
 
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
+
 import com.absurd.circle.app.R;
 import com.absurd.circle.core.bean.Message;
 import com.absurd.circle.ui.fragment.TweetDetailFragment;
@@ -22,7 +20,7 @@ public class TweetDetailActivity extends BaseActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_tweet_detail);
+        setContentView(R.layout.activity_message_detail);
         mAttacher = PullToRefreshAttacher.get(this);
         tweet = (Message)getIntent().getSerializableExtra("messageId");
 
@@ -31,6 +29,11 @@ public class TweetDetailActivity extends BaseActivity {
                 .commit();
 
 
+    }
+
+    @Override
+    protected String setActionBarTitle() {
+        return "详情";
     }
 
 

@@ -49,6 +49,7 @@ public class BaseService{
         mMessageTable = mClient.getTable(TABLE_MESSAGE,Message.class);
         mUserTable = mClient.getTable(TABLE_USERS,User.class);
         mUserLocationTable = mClient.getTable(UserLocation.class);
+        mUserTable.getSystemProperties();
     }
 
     public MobileServiceTable<User> getUserTable(){

@@ -26,11 +26,11 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.absurd.circle.ui.activity.EditTweetActivity"
+            android:name="com.absurd.circle.ui.activity.EditMessageActivity"
             android:label="@string/title_activity_edit_tweet" >
         </activity>
         <activity
-            android:name="com.absurd.circle.ui.activity.MessageActivity"
+            android:name="com.absurd.circle.ui.activity.NotificationActivity"
             android:label="@string/title_activity_message" >
         </activity>
         <activity

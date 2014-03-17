@@ -1,0 +1,45 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    tools:context="com.absurd.circle.ui.activity.EditMessageActivity">
+
+
+    <RelativeLayout android:layout_height="match_parent"
+                    android:layout_width="match_parent"
+                    android:layout_marginLeft="8.0dip"
+                    android:layout_marginRight="8.0dip"
+                    android:layout_marginTop="16.0dip"
+                    android:layout_marginBottom="64.0dip">
+
+        <EditText android:id="@+id/ame_edit_message"
+                  android:layout_width="match_parent"
+                  android:layout_height="match_parent"
+                  android:background="#ffffffff"
+                  android:padding="16dp"
+                  android:gravity="left"
+                  android:textSize="17dp"
+                  android:textColor="#ff4c4c4c"
+                  android:textColorHint="#ffa5a5a5"
+                  android:hint="说点儿什么吧。。。"/>
+        <ImageView android:id="@+id/ame_media"
+                   android:layout_height="60dp"
+                   android:layout_width="60dp"
+                   android:layout_alignParentBottom="true"
+                   android:layout_alignParentLeft="true"
+                   android:layout_marginLeft="16dp"
+                   android:layout_marginBottom="8dp"/>
+        <TextView android:id="@+id/ame_count"
+                  android:layout_width="30dp"
+                  android:layout_height="30dp"
+                  android:layout_alignParentRight="true"
+                  android:layout_alignParentBottom="true"
+                  android:layout_marginBottom="8dp"
+                  android:layout_marginRight="16dp"/>
+    </RelativeLayout>
+
+</RelativeLayout>

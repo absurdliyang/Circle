@@ -45,8 +45,8 @@ public class TweetDetailFragment extends Fragment{
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_tweet_detail,null);
-        View headerView = inflater.inflate(R.layout.header_tweet_detail,null);
+        View rootView = inflater.inflate(R.layout.fragment_message_detail,null);
+        View headerView = inflater.inflate(R.layout.header_message_detail,null);
         ((TextView)headerView.findViewById(R.id.tv_header_username)).setText(mTweetDetailActivity.tweet.getUser().getNickName());
         ((TextView)headerView.findViewById(R.id.tv_header_tweet_content)).setText(mTweetDetailActivity.tweet.getContent());
         new LoadCommentTask().execute(false);

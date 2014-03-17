@@ -14,5 +14,10 @@ public class ContactActivity extends BaseActivity {
         setContentView(R.layout.activity_contact);
     }
 
+    @Override
+    protected String setActionBarTitle() {
+        return "关注";
+    }
+
 
 }

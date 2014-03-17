@@ -6,7 +6,6 @@ import static com.microsoft.windowsazure.mobileservices.MobileServiceQueryOperat
 
 import com.absurd.circle.data.model.Message;
 import com.absurd.circle.data.model.User;
-import com.microsoft.windowsazure.mobileservices.MobileServiceQueryOperations;
 import com.microsoft.windowsazure.mobileservices.TableQueryCallback;
 
 
@@ -27,11 +26,11 @@ public class MessageService extends BaseService{
 
 
     public void getMessageByUser(int pageIndex, User user,TableQueryCallback<Message> callback){
-        mMessageTable.where().field("userid").eq(val(""))
+        mMessageTable.where()
                 .parameter("type","user")
                 .parameter("userID","1157673")
                 .parameter("page",pageIndex + "")
-                .parameter("isMe","false")
+                .parameter("isMe","true")
                 .execute(callback);
     }
 

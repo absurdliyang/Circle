@@ -39,7 +39,7 @@ public class MessageAdapter extends BeanAdapter<Message>{
         final Message message = (Message) getItem(i);
         ViewHolder holder = null;
         if(view == null){
-            view = LayoutInflater.from(mContext).inflate(R.layout.item_tweet,null);
+            view = LayoutInflater.from(mContext).inflate(R.layout.item_message,null);
             holder = new ViewHolder();
             holder.avatarIv = (ImageView)view.findViewById(R.id.iv_title_avatar);
             holder.createdTv = (TextView)view.findViewById(R.id.tv_title_created);
