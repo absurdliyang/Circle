@@ -4,7 +4,7 @@ import android.os.Bundle;
 
 import com.absurd.circle.app.R;
 import com.absurd.circle.core.bean.Message;
-import com.absurd.circle.ui.fragment.TweetDetailFragment;
+import com.absurd.circle.ui.fragment.MessageDetailFragment;
 
 import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshAttacher;
 
@@ -25,7 +25,7 @@ public class TweetDetailActivity extends BaseActivity {
         tweet = (Message)getIntent().getSerializableExtra("messageId");
 
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.flyt_comment_container,new TweetDetailFragment(this))
+                .replace(R.id.flyt_comment_container,new MessageDetailFragment(this))
                 .commit();
 
 

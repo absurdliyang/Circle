@@ -23,7 +23,7 @@ public class UserLocationServiceTest extends BaseTestCase {
 
     public void testGetUserLocation() throws Exception {
         final Object lock = new Object();
-        mService.getUserLocation("112343", new TableQueryCallback<UserLocation>() {
+        mService.getUserLocation("936768", new TableQueryCallback<UserLocation>() {
             @Override
             public void onCompleted(List<UserLocation> userLocations, int i, Exception e, ServiceFilterResponse serviceFilterResponse) {
                 if (userLocations != null) {

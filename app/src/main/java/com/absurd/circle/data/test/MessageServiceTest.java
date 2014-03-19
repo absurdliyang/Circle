@@ -5,6 +5,7 @@ import com.absurd.circle.data.model.Message;
 import com.absurd.circle.data.model.User;
 import com.absurd.circle.data.service.MessageService;
 import com.microsoft.windowsazure.mobileservices.ServiceFilterResponse;
+import com.microsoft.windowsazure.mobileservices.TableOperationCallback;
 import com.microsoft.windowsazure.mobileservices.TableQueryCallback;
 
 import java.util.List;
@@ -24,17 +25,9 @@ public class MessageServiceTest extends BaseTestCase {
     public void testGetMessageByUser() throws Exception{
         final Object lock = new Object();
         mMessageService.getMessageByUser(1,new User(), new TableQueryCallback<Message>() {
+
             @Override
             public void onCompleted(List<Message> messages, int i, Exception e, ServiceFilterResponse serviceFilterResponse) {
-                if(messages == null){
-                    if(e != null){
-                        e.printStackTrace();
-                    }
-                }else {
-                    for (Message message : messages) {
-                        mLog.i(message.getContent());
-                    }
-                }
                 synchronized (lock){
                     lock.notify();
                 }
@@ -44,6 +37,4 @@ public class MessageServiceTest extends BaseTestCase {
             lock.wait();
         }
     }
-
-
 }

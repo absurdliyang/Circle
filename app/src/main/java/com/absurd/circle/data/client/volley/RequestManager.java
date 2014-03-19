@@ -2,6 +2,8 @@ package com.absurd.circle.data.client.volley;
 
 import com.absurd.circle.app.AppContext;
 import com.absurd.circle.data.util.CacheUtil;
+import com.absurd.circle.util.CommonLog;
+import com.absurd.circle.util.LogFactory;
 import com.android.volley.Cache;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -24,6 +26,8 @@ import java.io.File;
  * Created by absurd on 14-3-15.
  */
 public class RequestManager {
+    private static CommonLog mLog = LogFactory.createLog();
+
     public static RequestQueue mRequestQueue = newRequestQueue();
 
     // 取运行内存阈值的1/3作为图片缓存
@@ -88,6 +92,7 @@ public class RequestManager {
             @Override
             public void onResponse(ImageLoader.ImageContainer response, boolean isImmediate) {
                 if (response.getBitmap() != null) {
+                    mLog.i("get iamge success");
                     if (!isImmediate && defaultImageDrawable != null) {
                         TransitionDrawable transitionDrawable = new TransitionDrawable(
                                 new Drawable[] {

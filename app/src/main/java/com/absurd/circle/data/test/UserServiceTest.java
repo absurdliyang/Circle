@@ -23,7 +23,7 @@ public class UserServiceTest  extends BaseTestCase{
         mUserService = new UserService(getContext());
         mLog.d("UserServiceTest");
     }
-
+/**
     public void testGetUser() throws Exception {
         final Object lock = new Object();
         String userId = "qq:E192CA14D108CE509B20D0B6630BA8F5";
@@ -45,14 +45,16 @@ public class UserServiceTest  extends BaseTestCase{
         });
 
     }
-
+**/
     public void testInsertUser() throws Exception{
         final Boolean lock = false;
         User user = new User();
         user.setLoginType(1);
         user.setName(" ");
         user.setSex("m");
-        user.setUserId("qq:E192CA14D108CE509B20D0B6630BA884");
+        user.setUserId("qq:E192CA14D108CE509B20D0B6630BA845");
+        user.setLoginName("testtest");
+        user.setPassword("testtest");
         Calendar calendar = Calendar.getInstance();
         user.setDate(new java.sql.Date(calendar.getTimeInMillis()));
         user.setLastLoginDate(new java.sql.Date(calendar.getTimeInMillis()));
@@ -60,7 +62,7 @@ public class UserServiceTest  extends BaseTestCase{
             @Override
             public void onCompleted(User user, Exception e, ServiceFilterResponse serviceFilterResponse) {
                 if(user != null){
-                    mLog.d(user.getId() +" ------------" +  user.getToken());
+                    mLog.d(user.getName() + "---" + user.getId() +" ------------" +  user.getToken() + "---" +user.getLoginName() + "------" + user.getPassword());
                 }else{
                     mLog.d("error");
                 }
@@ -76,4 +78,31 @@ public class UserServiceTest  extends BaseTestCase{
             lock.wait();
         }
     }
+
+    public void testLogin() throws Exception{
+        final Boolean lock = false;
+        User loginUser = new User();
+        loginUser.setLoginName("testtest");
+        loginUser.setPassword("testtest");
+        mUserService.insertUser(loginUser,new TableOperationCallback<User>() {
+            @Override
+            public void onCompleted(User user, Exception e, ServiceFilterResponse serviceFilterResponse) {
+                if(user != null){
+                    mLog.d(user.getName() + "---" + user.getId() +" ------------" +  user.getToken() + "---" +user.getLoginName() + "------" + user.getPassword());
+                }else{
+                    mLog.d("error");
+                }
+                if(e != null){
+                    e.printStackTrace();
+                }
+                synchronized (lock){
+                    lock.notify();
+                }
+            }
+        });
+        synchronized (lock){
+            lock.wait();
+        }
+    }
+
 }

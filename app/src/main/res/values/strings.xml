@@ -127,9 +127,9 @@
     <string name="weibosdk_demo_openapi_invite_success">发送邀请成功</string>
     <string name="weibosdk_demo_openapi_invite_failed">发送邀请失败</string>
     <string name="weibosdk_demo_access_token_is_empty">Access Token 不存在，请先登录</string>
-
     <string name="weibosdk_demo_get_home_mblog">获取首页微博信息流</string>
     <string name="weibosdk_demo_get_comment">获取微博评论信息流</string>
     <string name="weibosdk_demo_get_group">获取微博好友分组</string>
+    <string name="title_activity_dsfsdf">dsfsdf</string>
 
 </resources>

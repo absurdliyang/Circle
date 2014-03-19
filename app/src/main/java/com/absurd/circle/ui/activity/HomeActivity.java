@@ -13,7 +13,7 @@ import android.widget.ImageView;
 
 import com.absurd.circle.app.R;
 import com.absurd.circle.ui.fragment.CategoryFragment;
-import com.absurd.circle.ui.fragment.TweetListFragment;
+import com.absurd.circle.ui.fragment.MessageListFragment;
 import com.absurd.circle.ui.fragment.SlidingMenuFragment;
 import com.absurd.circle.util.CommonLog;
 import com.absurd.circle.util.IntentUtil;
@@ -23,13 +23,13 @@ import com.jeremyfeinstein.slidingmenu.lib.app.SlidingFragmentActivity;
 
 import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshAttacher;
 
-public class HomeActivity extends SlidingFragmentActivity{
+public class HomeActivity extends SlidingFragmentActivity implements RefreshableActivity{
     private CommonLog mLog = LogFactory.createLog();
     private PullToRefreshAttacher mAttacher;
 
     private Fragment mContent;
     /**
-     * false TweetListFragment
+     * false MessageListFragment
      * true CategoryFragment
      */
     private boolean mStatus = false;
@@ -47,7 +47,7 @@ public class HomeActivity extends SlidingFragmentActivity{
         if (savedInstanceState != null)
             mContent = getSupportFragmentManager().getFragment(savedInstanceState, "mContent");
         if (mContent == null)
-            mContent = new TweetListFragment();
+            mContent = new MessageListFragment();
 
         configureSlidingMenu();
         configureActionBar();

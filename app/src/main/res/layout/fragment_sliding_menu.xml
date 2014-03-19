@@ -47,7 +47,7 @@
                 android:text="主页" />
         </LinearLayout>
         <LinearLayout
-            android:id="@+id/llyt_drawer_menu_message"
+            android:id="@+id/llyt_drawer_menu_notification"
             android:layout_marginTop="10dp"
             android:layout_below="@id/llyt_drawer_menu_home"
             android:clickable="true"
@@ -69,7 +69,7 @@
         </LinearLayout>
         <LinearLayout
             android:id="@+id/llyt_drawer_menu_contact"
-            android:layout_below="@id/llyt_drawer_menu_message"
+            android:layout_below="@id/llyt_drawer_menu_notification"
             android:layout_marginTop="10dp"
             android:clickable="true"
             android:layout_alignLeft="@id/llyt_drawer_menu_home"
