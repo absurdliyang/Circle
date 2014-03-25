@@ -5,6 +5,7 @@ package com.absurd.circle.app;
  */
 public interface AppConstant {
     public static final String TAG = "Circle";
+    public static final String AZURE_MOBILE_TAG = "AzureMobileService";
 
     /**
      * Badidu authentication infos
@@ -27,7 +28,7 @@ public interface AppConstant {
      */
     public static final String BAIDU_GEOCODER_URL= "http://api.map.baidu.com/geocoder?output=json&location=%s,%s&key=EGFpCFxPKo3hLG5u0xSnNljbgAGFGynb";
 
-    public static final String TEST_USER_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6MH0.eyJleHAiOjE0MjY1OTEyMjguMjMzLCJpc3MiOiJ1cm46bWljcm9zb2Z0OndpbmRvd3MtYXp1cmU6enVtbyIsInZlciI6MSwiYXVkIjoiIiwidWlkIjoicXE6RTE5MkNBMTREMTA4Q0U1MDlCMjBEMEI2NjMwQkE4NDUifQ.88DPv2Ig2vNvDulT8QmRGu4G_qSr42lyIp5sJXAIl34";
+    public static final String TEST_USER_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6MH0.eyJleHAiOjE0MjcyNzIzMTYuMzEyLCJpc3MiOiJ1cm46bWljcm9zb2Z0OndpbmRvd3MtYXp1cmU6enVtbyIsInZlciI6MSwiYXVkIjoiIiwidWlkIjoicXE6RTE5MkNBMTREMTA4Q0U1MDlCMjBEMEI2NjMwQkE4RTQifQ.b797TOr2Cu_V0nCBec4qPSe26MrRWt9UuURABEKMl9Q";
     public static final String TEST_USER_ID = "1160123";
 
 

@@ -28,6 +28,39 @@ public class MessageServiceTest extends BaseTestCase {
 
             @Override
             public void onCompleted(List<Message> messages, int i, Exception e, ServiceFilterResponse serviceFilterResponse) {
+                if(messages == null){
+                    if(e != null){
+                        e.printStackTrace();
+                    }
+                }else{
+                    for(Message message : messages){
+                        mLog.i(message.getContent());
+                    }
+                }
+                synchronized (lock){
+                    lock.notify();
+                }
+            }
+        });
+        synchronized (lock){
+            lock.wait();
+        }
+    }
+
+    public void testGetNearMessage() throws Exception{
+        final Object lock = new Object();
+        mMessageService.getNearMessage(1,new TableQueryCallback<Message>() {
+            @Override
+            public void onCompleted(List<Message> messages, int i, Exception e, ServiceFilterResponse serviceFilterResponse) {
+                if(messages == null){
+                    if(e != null){
+                        e.printStackTrace();
+                    }
+                }else{
+                    for(Message message : messages){
+                        mLog.i(message.getContent());
+                    }
+                }
                 synchronized (lock){
                     lock.notify();
                 }

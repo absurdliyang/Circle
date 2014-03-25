@@ -1,9 +1,15 @@
 package com.absurd.circle.data.test;
 
+import com.absurd.circle.app.AppConstant;
+import com.absurd.circle.data.model.Message;
 import com.absurd.circle.data.model.User;
 import com.absurd.circle.data.service.BaseService;
 import com.absurd.circle.data.service.UserService;
+import com.microsoft.windowsazure.mobileservices.MobileServiceSystemProperty;
 import com.microsoft.windowsazure.mobileservices.MobileServiceTable;
+
+import java.util.Arrays;
+import java.util.EnumSet;
 
 /**
  * Created by absurd on 14-3-14.
@@ -15,20 +21,19 @@ public class ServiceTest extends BaseTestCase{
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        mUserService = new UserService(getContext());
     }
 
-    public void testService() throws Exception {
-        BaseService service = new BaseService();
-        MobileServiceTable<User> userTable =  service.getUserTable();
-        if(userTable != null) {
-            mLog.d(userTable.getTableName());
-            mLog.d(service.getMessageTable().getTableName());
-        }else{
-            mLog.d("userTable is null");
-        }
-        assertNull(null);
+    public void testTable() throws Exception {
+        BaseService baseService = new BaseService();
+        MobileServiceTable<Message> messageTable = baseService.getMessageTable();
+        EnumSet<MobileServiceSystemProperty> messageProperties = messageTable.getSystemProperties();
+        mLog.i(Arrays.toString(messageProperties.toArray()));
+
+        EnumSet<MobileServiceSystemProperty> userProperties = baseService.getUserTable().getSystemProperties();
+        mLog.i(Arrays.toString(userProperties.toArray()));
+
+        EnumSet<MobileServiceSystemProperty> userLocationProperties = baseService.getUserLocationTable().getSystemProperties();
+        mLog.i(Arrays.toString(userLocationProperties.toArray()));
 
     }
-
 }

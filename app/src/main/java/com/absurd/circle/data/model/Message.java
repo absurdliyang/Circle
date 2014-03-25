@@ -40,7 +40,7 @@ public class Message implements Serializable{
     public String mContent;
 
     @SerializedName("contenttype")
-    private MessageType mContentType;
+    private String mContentType;
 
     @SerializedName("latitude")
     private double mLatitude;
@@ -79,50 +79,11 @@ public class Message implements Serializable{
     private int mPraiseCount;
 
     @SerializedName("user")
-    private User mUser;
+    private String mUser;
 
     @SerializedName("messagetype")
     private int mMessagetType;
 
-    public static int getHelp() {
-        return HELP;
-    }
-
-    public static int getWeibo() {
-        return WEIBO;
-    }
-
-    public static int getBusiness() {
-        return BUSINESS;
-    }
-
-    public static int getLive() {
-        return LIVE;
-    }
-
-    public static int getFood() {
-        return FOOD;
-    }
-
-    public static int getSales() {
-        return SALES;
-    }
-
-    public static int getParty() {
-        return PARTY;
-    }
-
-    public static int getFriend() {
-        return FRIEND;
-    }
-
-    public static int getMood() {
-        return MOOD;
-    }
-
-    public static int getShow() {
-        return SHOW;
-    }
 
     public int getId() {
         return mId;
@@ -140,11 +101,11 @@ public class Message implements Serializable{
         mContent = content;
     }
 
-    public MessageType getContentType() {
+    public String getContentType() {
         return mContentType;
     }
 
-    public void setContentType(MessageType contentType) {
+    public void setContentType(String contentType) {
         mContentType = contentType;
     }
 
@@ -244,11 +205,11 @@ public class Message implements Serializable{
         mPraiseCount = praiseCount;
     }
 
-    public User getUser() {
+    public String getUser() {
         return mUser;
     }
 
-    public void setUser(User user) {
+    public void setUser(String user) {
         mUser = user;
     }
 

@@ -2,6 +2,7 @@ package com.absurd.circle.data.test;
 
 import android.os.AsyncTask;
 
+import com.absurd.circle.app.AppConstant;
 import com.absurd.circle.data.model.User;
 import com.absurd.circle.data.service.UserService;
 import com.microsoft.windowsazure.mobileservices.ServiceFilterResponse;
@@ -20,7 +21,7 @@ public class UserServiceTest  extends BaseTestCase{
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        mUserService = new UserService(getContext());
+        mUserService = new UserService(getContext(), AppConstant.TEST_USER_TOKEN);
         mLog.d("UserServiceTest");
     }
 /**
@@ -52,7 +53,7 @@ public class UserServiceTest  extends BaseTestCase{
         user.setLoginType(1);
         user.setName(" ");
         user.setSex("m");
-        user.setUserId("qq:E192CA14D108CE509B20D0B6630BA845");
+        user.setUserId("qq:E192CA14D108CE509B20D0B6630BA8E4");
         user.setLoginName("testtest");
         user.setPassword("testtest");
         Calendar calendar = Calendar.getInstance();
@@ -105,4 +106,25 @@ public class UserServiceTest  extends BaseTestCase{
         }
     }
 
+    public void testUser() throws Exception {
+        final Object lock = new Object();
+        mUserService.getUser("1160123",new TableQueryCallback<User>() {
+            @Override
+            public void onCompleted(List<User> users, int i, Exception e, ServiceFilterResponse serviceFilterResponse) {
+                if(users == null){
+                    if(e != null){
+                        e.printStackTrace();
+                    }
+                }else{
+                    mLog.i(users.get(0).getName());
+                }
+                synchronized (lock){
+                    lock.notify();
+                }
+            }
+        });
+        synchronized (lock){
+            lock.wait();
+        }
+    }
 }

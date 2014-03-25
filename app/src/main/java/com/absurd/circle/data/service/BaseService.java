@@ -39,10 +39,11 @@ public class BaseService{
     }
 
     public BaseService(Context context, String token){
-        this(context);
+        mClient = AzureClient.getInstance(context);
         MobileServiceUser user = new MobileServiceUser("");
         user.setAuthenticationToken(token);
         mClient.setCurrentUser(user);
+        initTable();
     }
 
     public void initTable(){
