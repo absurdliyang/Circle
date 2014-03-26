@@ -8,8 +8,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.absurd.circle.app.R;
-import com.absurd.circle.core.bean.Comment;
-import com.absurd.circle.core.bean.Message;
+import com.absurd.circle.data.model.Comment;
 
 import java.util.List;
 
@@ -53,7 +52,7 @@ public class CommentAdapter extends BeanAdapter<Comment> {
         }else{
             holder = (ViewHolder)view.getTag();
         }
-        holder.usernameTv.setText(comment.getUser().getNickName());
+        holder.usernameTv.setText(comment.getUser().getName());
         holder.commentContentTv.setText(comment.getContent());
 
         return view;

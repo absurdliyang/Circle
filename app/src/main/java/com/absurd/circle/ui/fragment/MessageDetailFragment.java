@@ -10,21 +10,22 @@ import android.widget.AbsListView;
 import android.widget.HeaderViewListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.absurd.circle.app.AppConstant;
+import com.absurd.circle.app.AppContext;
 import com.absurd.circle.app.R;
-import com.absurd.circle.core.bean.Comment;
-import com.absurd.circle.core.bean.CommentPage;
-import com.absurd.circle.core.service.CommentService;
-import com.absurd.circle.ui.activity.TweetDetailActivity;
+import com.absurd.circle.data.model.Comment;
+import com.absurd.circle.data.service.CommentService;
+import com.absurd.circle.ui.activity.MessageDetailActivity;
 import com.absurd.circle.ui.adapter.CommentAdapter;
 import com.absurd.circle.util.CommonLog;
 import com.absurd.circle.util.LogFactory;
+import com.microsoft.windowsazure.mobileservices.ServiceFilterResponse;
+import com.microsoft.windowsazure.mobileservices.TableQueryCallback;
 
-import java.util.Collections;
 import java.util.List;
 
-import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshAttacher;
 
 /**
  * Created by absurd on 14-3-14.
@@ -34,31 +35,50 @@ public class MessageDetailFragment extends Fragment{
     private ListView mContentLv;
     private TextView mEmptyTv;
 
-    private PullToRefreshAttacher mAttacher;
-    private CommentPage mCurrentPage = new CommentPage();
+    private MessageDetailActivity mMessageDetailActivity;
 
-    private TweetDetailActivity mTweetDetailActivity;
+    private CommentService mCommentService;
 
-    public MessageDetailFragment(TweetDetailActivity tweetDetailActivity){
-        this.mTweetDetailActivity = tweetDetailActivity;
+    private int currentPageIndex = 1;
+
+    public MessageDetailFragment(MessageDetailActivity messageDetailActivity){
+        this.mMessageDetailActivity = messageDetailActivity;
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        mCommentService = new CommentService(getActivity(), AppContext.token);
         View rootView = inflater.inflate(R.layout.fragment_message_detail,null);
         View headerView = inflater.inflate(R.layout.header_message_detail,null);
-        ((TextView)headerView.findViewById(R.id.tv_header_username)).setText(mTweetDetailActivity.tweet.getUser().getNickName());
-        ((TextView)headerView.findViewById(R.id.tv_header_tweet_content)).setText(mTweetDetailActivity.tweet.getContent());
-        new LoadCommentTask().execute(false);
+        ((TextView)headerView.findViewById(R.id.tv_header_username)).setText(mMessageDetailActivity.message.getUser().getName());
+        ((TextView)headerView.findViewById(R.id.tv_header_tweet_content)).setText(mMessageDetailActivity.message.getContent());
+        //new LoadCommentTask().execute(false);
+
         mContentLv = (ListView)rootView.findViewById(R.id.lv_comment_content);
         CommentAdapter adapter = new CommentAdapter(getActivity());
         mContentLv.addHeaderView(headerView);
         mContentLv.setAdapter(adapter);
+
+        //Scroll down get more comments
         mContentLv.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(AbsListView absListView, int i) {
                 if(absListView.getLastVisiblePosition() == absListView.getCount() - 1 && i == AbsListView.OnScrollListener.SCROLL_STATE_IDLE){
-                    new LoadCommentTask().execute(true);
+                    mCommentService.getComments(mMessageDetailActivity.message.getId(),1,10,true,new TableQueryCallback<Comment>(){
+
+                        @Override
+                        public void onCompleted(List<Comment> result, int count, Exception exception, ServiceFilterResponse response) {
+                            if(result == null){
+                                if(exception != null){
+                                    exception.printStackTrace();
+                                    Toast.makeText(MessageDetailFragment.this.getActivity(),"get Comment failed!",Toast.LENGTH_SHORT).show();
+                                }
+                            }else {
+                                HeaderViewListAdapter headerAdapter = (HeaderViewListAdapter) mContentLv.getAdapter();
+                                ((CommentAdapter)headerAdapter.getWrappedAdapter()).addItems(result);
+                            }
+                        }
+                    });
                 }
             }
             @Override
@@ -67,23 +87,33 @@ public class MessageDetailFragment extends Fragment{
             }
         });
         mEmptyTv = (TextView)rootView.findViewById(R.id.tv_empty);
+
+        //Init comment list on start
+        mCommentService.getComments(mMessageDetailActivity.message.getId(),currentPageIndex,10,true,new TableQueryCallback<Comment>() {
+            @Override
+            public void onCompleted(List<Comment> result, int count, Exception exception, ServiceFilterResponse response) {
+                if(result == null){
+                    if(exception != null){
+                        exception.printStackTrace();
+                        Toast.makeText(MessageDetailFragment.this.getActivity(),"get Comment failed!",Toast.LENGTH_SHORT).show();
+                    }
+                }else {
+                    // HeaderViewListAdapter can not cast to BaseAdapter directly
+                    HeaderViewListAdapter headerAdapter = (HeaderViewListAdapter) mContentLv.getAdapter();
+                    ((CommentAdapter) headerAdapter.getWrappedAdapter()).setItems(result);
+                }
+            }
+        });
+
         return rootView;
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mAttacher = mTweetDetailActivity.getAttacher();
-        mAttacher.addRefreshableView(mContentLv,new PullToRefreshAttacher.OnRefreshListener() {
-            @Override
-            public void onRefreshStarted(View view) {
-                mLog.i("onRefreshStarted");
-                new LoadCommentTask().execute(false);
-            }
-        });
-
     }
 
+    /**
     private class LoadCommentTask extends AsyncTask<Boolean,Void,List<Comment>> {
 
         private boolean mStatus = false;
@@ -95,7 +125,7 @@ public class MessageDetailFragment extends Fragment{
             CommentService service = new CommentService();
             if(!mStatus){
                 // up
-                mCurrentPage = service.getMessage(mTweetDetailActivity.tweet.getId());
+                mCurrentPage = service.getMessage(mMessageDetailActivity.message.getId());
             }else{
                 // down
                 if(hasNext())
@@ -111,8 +141,6 @@ public class MessageDetailFragment extends Fragment{
         @Override
         protected void onPostExecute(List<Comment> comments) {
             mLog.i("onPostExecute");
-            if(mAttacher.isRefreshing())
-                mAttacher.setRefreshing(false);
             if(!mStatus){
                 // the method get Adapter when listView add headerView or footerView
                 HeaderViewListAdapter headerAdapter = (HeaderViewListAdapter)mContentLv.getAdapter();
@@ -128,4 +156,5 @@ public class MessageDetailFragment extends Fragment{
     private boolean hasNext() {
         return (mCurrentPage == null || mCurrentPage.getNext() == null) ? false : true;
     }
+        **/
 }

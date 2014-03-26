@@ -3,5 +3,5 @@
     android:id="@+id/flyt_comment_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.absurd.circle.ui.activity.TweetDetailActivity"
+    tools:context="com.absurd.circle.ui.activity.MessageDetailActivity"
     tools:ignore="MergeRootFrame" />

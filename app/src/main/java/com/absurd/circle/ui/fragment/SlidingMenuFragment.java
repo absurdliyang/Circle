@@ -1,6 +1,7 @@
 package com.absurd.circle.ui.fragment;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -11,12 +12,14 @@ import android.widget.TextView;
 
 import com.absurd.circle.app.AppContext;
 import com.absurd.circle.app.R;
+import com.absurd.circle.data.client.volley.BitmapFilter;
 import com.absurd.circle.data.client.volley.RequestManager;
 import com.absurd.circle.ui.activity.ContactActivity;
 import com.absurd.circle.ui.activity.HomeActivity;
 import com.absurd.circle.ui.activity.ImageDetailActivity;
 import com.absurd.circle.ui.activity.NotificationActivity;
 import com.absurd.circle.ui.activity.SettingActivity;
+import com.absurd.circle.util.ImageUtil;
 import com.absurd.circle.util.IntentUtil;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 
@@ -31,12 +34,11 @@ public class SlidingMenuFragment extends Fragment {
 
     private View mRootView;
 
-    public SlidingMenuFragment(HomeActivity homeActivity){
-        this.mHomeActivity = homeActivity;
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        //Init HomeActivity
+        mHomeActivity = (HomeActivity)getActivity();
+
         mRootView = inflater.inflate(R.layout.fragment_sliding_menu,null);
         mRootView.findViewById(R.id.llyt_drawer_menu_home).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -56,7 +58,12 @@ public class SlidingMenuFragment extends Fragment {
     public void invalidateView(){
         if(AppContext.auth.getAvatar() != null) {
             RequestManager.loadImage(AppContext.auth.getAvatar(),
-                    RequestManager.getImageListener(mAvatarIv, null, null));
+                    RequestManager.getImageListener(mAvatarIv, null, null,new BitmapFilter() {
+                        @Override
+                        public Bitmap filter(Bitmap bitmap) {
+                            return ImageUtil.roundBitmap(bitmap);
+                        }
+                    }));
         }
         mAvatarIv.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -71,7 +71,7 @@ public class HomeActivity extends SlidingFragmentActivity implements Refreshable
 
         // set the Behind View
         setBehindContentView(R.layout.menu_frame);
-        mSlidingMenuFragment = new SlidingMenuFragment(this);
+        mSlidingMenuFragment = new SlidingMenuFragment();
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.menu_frame, mSlidingMenuFragment)

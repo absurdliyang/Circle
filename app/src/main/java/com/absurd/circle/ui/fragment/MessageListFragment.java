@@ -1,6 +1,5 @@
 package com.absurd.circle.ui.fragment;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -10,21 +9,25 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.absurd.circle.app.AppConstant;
+import com.absurd.circle.app.AppContext;
 import com.absurd.circle.app.R;
-import com.absurd.circle.core.bean.Message;
-import com.absurd.circle.core.bean.MessagePage;
-import com.absurd.circle.core.service.MessageService;
+import com.absurd.circle.data.model.Message;
+import com.absurd.circle.data.model.MessageType;
+import com.absurd.circle.data.service.MessageService;
 import com.absurd.circle.ui.activity.HomeActivity;
-import com.absurd.circle.ui.activity.TweetDetailActivity;
+import com.absurd.circle.ui.activity.MessageDetailActivity;
 import com.absurd.circle.ui.adapter.MessageAdapter;
 import com.absurd.circle.util.CommonLog;
 import com.absurd.circle.util.IntentUtil;
 import com.absurd.circle.util.LogFactory;
+import com.microsoft.windowsazure.mobileservices.ServiceFilterResponse;
+import com.microsoft.windowsazure.mobileservices.TableQueryCallback;
 
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
 import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshAttacher;
@@ -38,13 +41,33 @@ public class MessageListFragment extends Fragment {
     private TextView mEmptyTv;
 
     private PullToRefreshAttacher mAttacher;
-    private MessagePage mCurrentPage = new MessagePage();
+    //private MessagePage mCurrentPage = new MessagePage();
+    private MessageService mMessageService;
+
+    private int mCurrentPageIndex = 1;
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        mMessageService = new MessageService(getActivity(), AppContext.token);
         View rootView = inflater.inflate(R.layout.item_list,null);
-        new LoadMessageTask().execute(false);
+        //new LoadMessageTask().execute(false);
+        List<Integer> messageTypes = new ArrayList<Integer>();
+        messageTypes.add(MessageType.WEIBO);
+        mMessageService.getNearMessage(mCurrentPageIndex,38.246900000000004,114.78558,1000,messageTypes,true,"1",new TableQueryCallback<Message>() {
+            @Override
+            public void onCompleted(List<Message> result, int count, Exception exception, ServiceFilterResponse response) {
+                if(result == null){
+                    if(exception != null){
+                        exception.printStackTrace();
+                        Toast.makeText(MessageListFragment.this.getActivity(),"getNearMessage error!",Toast.LENGTH_SHORT).show();
+                    }
+                }else{
+                    ((MessageAdapter)mContentLv.getAdapter()).setItems(result);
+                }
+            }
+        });
+
         mContentLv = (ListView)rootView.findViewById(R.id.lv_content);
         MessageAdapter adapter = new MessageAdapter(getActivity());
         mContentLv.setAdapter(adapter);
@@ -52,7 +75,22 @@ public class MessageListFragment extends Fragment {
             @Override
             public void onScrollStateChanged(AbsListView absListView, int i) {
                 if(absListView.getLastVisiblePosition() == absListView.getCount() - 1 && i == AbsListView.OnScrollListener.SCROLL_STATE_IDLE){
-                    new LoadMessageTask().execute(true);
+                    //new LoadMessageTask().execute(true);
+                    List<Integer> messageTypes = new ArrayList<Integer>();
+                    messageTypes.add(MessageType.WEIBO);
+                    mMessageService.getNearMessage(mCurrentPageIndex++,38.246900000000004,114.78558,1000,messageTypes,true,"1",new TableQueryCallback<Message>() {
+                        @Override
+                        public void onCompleted(List<Message> result, int count, Exception exception, ServiceFilterResponse response) {
+                            if(result == null){
+                                if(exception != null){
+                                    exception.printStackTrace();
+                                    Toast.makeText(MessageListFragment.this.getActivity(),"getNearMessage error!",Toast.LENGTH_SHORT).show();
+                                }
+                            }else{
+                                ((MessageAdapter)mContentLv.getAdapter()).addItems(result);
+                            }
+                        }
+                    });
                 }
             }
             @Override
@@ -63,7 +101,7 @@ public class MessageListFragment extends Fragment {
         mContentLv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                IntentUtil.startActivity(MessageListFragment.this.getActivity(), TweetDetailActivity.class,"messageId",(Message)mContentLv.getAdapter().getItem(i));
+                IntentUtil.startActivity(MessageListFragment.this.getActivity(), MessageDetailActivity.class,"messageId",(Message)mContentLv.getAdapter().getItem(i));
             }
         });
         mEmptyTv = (TextView)rootView.findViewById(R.id.tv_empty);
@@ -79,12 +117,29 @@ public class MessageListFragment extends Fragment {
             @Override
             public void onRefreshStarted(View view) {
                 mLog.i("onRefreshStarted");
-                new LoadMessageTask().execute(false);
+                //new LoadMessageTask().execute(false);
+                List<Integer> messageTypes = new ArrayList<Integer>();
+                messageTypes.add(MessageType.WEIBO);
+                mMessageService.getNearMessage(mCurrentPageIndex,38.246900000000004,114.78558,1000,messageTypes,true,"1",new TableQueryCallback<Message>() {
+                    @Override
+                    public void onCompleted(List<Message> result, int count, Exception exception, ServiceFilterResponse response) {
+                        mAttacher.setRefreshComplete();
+                        if(result == null){
+                            if(exception != null){
+                                exception.printStackTrace();
+                                Toast.makeText(MessageListFragment.this.getActivity(),"getNearMessage error!",Toast.LENGTH_SHORT).show();
+                            }
+                        }else{
+                            ((MessageAdapter)mContentLv.getAdapter()).setItems(result);
+                        }
+                    }
+                });
+
             }
         });
 
     }
-
+    /**
     private class LoadMessageTask extends AsyncTask<Boolean,Void,List<Message>>{
 
         private boolean mStatus = false;
@@ -127,5 +182,6 @@ public class MessageListFragment extends Fragment {
     private boolean hasNext() {
         return (mCurrentPage == null || mCurrentPage.getNext() == null) ? false : true;
     }
+        **/
 
 }

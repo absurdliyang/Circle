@@ -1,7 +1,11 @@
 package com.absurd.circle.ui.adapter;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ColorDrawable;
+import android.media.Image;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,19 +14,24 @@ import android.widget.TextView;
 
 import com.absurd.circle.app.AppContext;
 import com.absurd.circle.app.R;
-import com.absurd.circle.core.bean.Message;
+import com.absurd.circle.data.client.volley.BitmapFilter;
 import com.absurd.circle.data.client.volley.RequestManager;
+import com.absurd.circle.data.model.Message;
+import com.absurd.circle.util.ImageUtil;
+import com.absurd.circle.util.TimeUtil;
+import com.absurd.circle.util.StringUtil;
 import com.android.volley.toolbox.ImageLoader;
 
 import java.util.List;
 
 /**
- * Created by absurd on 14-3-12.
+ * Created by absurd on 14-3-26.
  */
-public class MessageAdapter extends BeanAdapter<Message>{
+public class MessageAdapter extends BeanAdapter<Message> {
 
-    private BitmapDrawable mAvatarDefaultBitmap = (BitmapDrawable)AppContext.getContext().getResources().getDrawable(R.drawable.ic_launcher);
+    private Bitmap mAvatarDefaultBitmap = ((BitmapDrawable) AppContext.getContext().getResources().getDrawable(R.drawable.ic_launcher)).getBitmap();
 
+    private Bitmap mMediaDefaultBitmap = ((BitmapDrawable) AppContext.getContext().getResources().getDrawable(R.drawable.ic_launcher)).getBitmap();
     public MessageAdapter(Context context, List<Message> items) {
         super(context, items);
     }
@@ -36,8 +45,11 @@ public class MessageAdapter extends BeanAdapter<Message>{
         TextView createdTv;
         TextView usernameTv;
         TextView contentTv;
+        TextView locationTv;
+        TextView praiseCommentTv;
         ImageView mediaIv;
         ImageLoader.ImageContainer avatarRequest;
+        ImageLoader.ImageContainer mediaRequest;
     }
 
 
@@ -53,19 +65,45 @@ public class MessageAdapter extends BeanAdapter<Message>{
             holder.usernameTv = (TextView)view.findViewById(R.id.tv_title_username);
             holder.contentTv = (TextView)view.findViewById(R.id.tv_content);
             holder.mediaIv = (ImageView)view.findViewById(R.id.iv_media);
+            holder.locationTv = (TextView)view.findViewById(R.id.tv_location);
+            holder.praiseCommentTv = (TextView)view.findViewById(R.id.tv_praise_comment);
 
             view.setTag(holder);
         }else{
             holder = (ViewHolder)view.getTag();
+            //Cancle Request in order to fobidden the delay of image downloading
+            if(holder.avatarRequest != null){
+                holder.avatarRequest.cancelRequest();
+            }
+            if(holder.mediaRequest != null){
+                holder.mediaRequest.cancelRequest();
+            }
         }
-        holder.avatarRequest = RequestManager.loadImage("http://qlogo4.store.qq.com/qzone/1271320063/1271320063/100?1318045820",
-                RequestManager.getImageListener(holder.avatarIv,null,null));
         if(message.getUser() != null) {
-            holder.usernameTv.setText(message.getUser().getNickName());
+            if(message.getUser().getAvatar() != null && StringUtil.isUrl(message.getUser().getAvatar()) ) {
+                //AppContext.commonLog.i(message.getUser().getName()+ "---------" + message.getUser().getAvatar());
+                holder.avatarRequest = RequestManager.loadImage(message.getUser().getAvatar(),
+                        RequestManager.getImageListener(holder.avatarIv, mAvatarDefaultBitmap, mAvatarDefaultBitmap,new BitmapFilter() {
+                            @Override
+                            public Bitmap filter(Bitmap bitmap) {
+                                return ImageUtil.roundBitmap(bitmap);
+                            }
+                        }));
+            }
+            holder.usernameTv.setText(message.getUser().getName());
         }
+
         holder.contentTv.setText(message.getContent());
-        if(message.getMedia() != null) {
+        holder.createdTv.setText(TimeUtil.formatShowTime(message.getDate()));
+        holder.locationTv.setText(message.getLocationDec());
+        holder.praiseCommentTv.setText("赞 " + message.getPraiseCount() + " 评论 " + message.getCommentCount());
+        if(message.getMediaUrl() != null){
+            holder.mediaRequest = RequestManager.loadImage(message.getMediaUrl(),
+                    RequestManager.getImageListener(holder.mediaIv, mMediaDefaultBitmap, mMediaDefaultBitmap,null));
+        }else{
+            holder.mediaIv.setVisibility(View.GONE);
         }
         return view;
     }
+
 }

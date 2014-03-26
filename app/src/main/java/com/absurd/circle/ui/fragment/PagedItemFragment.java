@@ -6,20 +6,14 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.absurd.circle.app.AppConstant;
 import com.absurd.circle.app.R;
-import com.absurd.circle.core.bean.Message;
-import com.absurd.circle.core.bean.PageBase;
 import com.absurd.circle.core.service.MessageService;
-import com.absurd.circle.ui.activity.BaseActivity;
-import com.absurd.circle.ui.activity.HomeActivity;
 import com.absurd.circle.ui.activity.RefreshableActivity;
 import com.absurd.circle.ui.adapter.BeanAdapter;
-import com.absurd.circle.ui.adapter.MessageAdapter;
 import com.absurd.circle.util.CommonLog;
 import com.absurd.circle.util.LogFactory;
 
@@ -27,7 +21,6 @@ import java.util.Collections;
 import java.util.List;
 
 import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshAttacher;
-import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshLayout;
 
 /**
  * Created by absurd on 14-3-12.
@@ -59,7 +52,8 @@ public abstract class PagedItemFragment<E> extends Fragment{
             @Override
             public void onRefreshStarted(View view) {
                 mLog.i("onRefreshStarted");
-                new LoadDataTask().execute(false);
+                //new LoadDataTask().execute(false);
+                getFirstPage();
             }
         });
     }
@@ -99,13 +93,12 @@ public abstract class PagedItemFragment<E> extends Fragment{
 
     protected abstract BeanAdapter getAdapter();
     protected abstract boolean hasNext();
-    protected abstract List<E> loadData(int index);
+    protected abstract List<E> loadData(int pageIndex);
     protected List<E> getFirstPage(){
-        return loadData(0);
+        return loadData(1);
     }
     protected  List<E> getNextPage(){
         return null;
-
     }
 
 

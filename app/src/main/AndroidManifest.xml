@@ -41,7 +41,7 @@
             android:label="@string/title_activity_setting" >
         </activity>
         <activity
-            android:name="com.absurd.circle.ui.activity.TweetDetailActivity"
+            android:name="com.absurd.circle.ui.activity.MessageDetailActivity"
             android:label="@string/title_activity_tweet_detail" >
         </activity>
 

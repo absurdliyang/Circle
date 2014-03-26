@@ -3,6 +3,7 @@ package com.absurd.circle.data.client.volley;
 import com.absurd.circle.app.AppContext;
 import com.absurd.circle.data.util.CacheUtil;
 import com.absurd.circle.util.CommonLog;
+import com.absurd.circle.util.ImageUtil;
 import com.absurd.circle.util.LogFactory;
 import com.android.volley.Cache;
 import com.android.volley.Request;
@@ -15,6 +16,7 @@ import com.android.volley.toolbox.ImageLoader;
 
 import android.app.ActivityManager;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.TransitionDrawable;
@@ -79,37 +81,61 @@ public class RequestManager {
         return mImageLoader.get(requestUrl, imageListener, maxWidth, maxHeight);
     }
 
-    public static ImageLoader.ImageListener getImageListener(final ImageView view,
-                                                             final Drawable defaultImageDrawable, final Drawable errorImageDrawable) {
+    public static ImageLoader.ImageListener getImageListener(final ImageView view, final Bitmap defaultImageBitmap,
+                                                             final Bitmap errorImageBitmap, final BitmapFilter bitmapFilter) {
         return new ImageLoader.ImageListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                if (errorImageDrawable != null) {
-                    view.setImageDrawable(errorImageDrawable);
+                if (errorImageBitmap != null) {
+                    if (bitmapFilter != null) {
+                        view.setImageBitmap(bitmapFilter.filter(errorImageBitmap));
+                    }else{
+                        view.setImageBitmap(errorImageBitmap);
+                    }
                 }
             }
 
             @Override
             public void onResponse(ImageLoader.ImageContainer response, boolean isImmediate) {
                 if (response.getBitmap() != null) {
-                    mLog.i("get iamge success");
-                    if (!isImmediate && defaultImageDrawable != null) {
-                        TransitionDrawable transitionDrawable = new TransitionDrawable(
-                                new Drawable[] {
-                                        defaultImageDrawable,
-                                        new BitmapDrawable(AppContext.getContext().getResources(),
-                                                response.getBitmap())
-                                });
+                    //mLog.i("get iamge success");
+                    if (!isImmediate && defaultImageBitmap != null) {
+                        TransitionDrawable transitionDrawable;
+                        if(bitmapFilter != null) {
+                            transitionDrawable = new TransitionDrawable(
+                                    new Drawable[]{
+                                            new BitmapDrawable(AppContext.getContext().getResources(),bitmapFilter.filter(defaultImageBitmap)),
+                                            new BitmapDrawable(AppContext.getContext().getResources(),bitmapFilter.filter(response.getBitmap()))
+                                    }
+                            );
+                        }else{
+                            transitionDrawable = new TransitionDrawable(
+                                    new Drawable[]{
+                                            new BitmapDrawable(AppContext.getContext().getResources(),defaultImageBitmap),
+                                            new BitmapDrawable(AppContext.getContext().getResources(),response.getBitmap())
+                                    }
+                            );
+                        }
                         transitionDrawable.setCrossFadeEnabled(true);
                         view.setImageDrawable(transitionDrawable);
                         transitionDrawable.startTransition(100);
                     } else {
-                        view.setImageBitmap(response.getBitmap());
+                        if(bitmapFilter != null) {
+                            view.setImageBitmap(bitmapFilter.filter(response.getBitmap()));
+                        }else{
+                            view.setImageBitmap(response.getBitmap());
+                        }
                     }
-                } else if (defaultImageDrawable != null) {
-                    view.setImageDrawable(defaultImageDrawable);
+                } else if (defaultImageBitmap != null) {
+                    if(bitmapFilter != null) {
+                        view.setImageBitmap(bitmapFilter.filter(defaultImageBitmap));
+                    }else{
+                        view.setImageBitmap(defaultImageBitmap);
+                    }
                 }
             }
         };
     }
+
+
 }
