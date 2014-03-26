@@ -1,5 +1,7 @@
 package com.absurd.circle.data.model;
 
+import com.absurd.circle.data.util.JsonUtil;
+import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
@@ -9,80 +11,75 @@ import java.util.Date;
  * Created by absurd on 14-3-14.
  */
 public class Message implements Serializable{
-    private static final int WEIBO = 1;
-    private static final int BUSINESS = 2;
-    private static final int HELP = 3;
-    private static final int LIVE = 4;
-    private static final int SALES = 5;
-    private static final int FOOD = 6;
-    private static final int PARTY = 7;
-    private static final int FRIEND = 8;
-    private static final int SHOW = 9;
-    private static final int MOOD = 10;
-
-    public enum MessageType {
-        WEIBO,
-        BUSINESS,
-        HELP,
-        LIVE,
-        SALES,
-        FOOD,
-        PARTY,
-        FRIEND,
-        SHOW,
-        MOOD
-    }
 
     @SerializedName("id")
-    private int mId;
+    protected int mId;
 
     @SerializedName("content")
-    public String mContent;
+    protected String mContent;
 
     @SerializedName("contenttype")
-    private String mContentType;
+    protected int mContentType;
 
     @SerializedName("latitude")
-    private double mLatitude;
+    protected double mLatitude;
 
     @SerializedName("longitude")
-    private double mLongitude;
+    protected double mLongitude;
 
     @SerializedName("weiboid")
-    private String mWeiboId;
+    protected String mWeiboId;
 
     @SerializedName("locationdec")
-    private String mLocationDec;
+    protected String mLocationDec;
 
     @SerializedName("userid")
-    private int mUserId;
+    protected String mUserId;
 
     @SerializedName("title")
-    private String mTitle;
+    protected String mTitle;
 
     @SerializedName("mediaurl")
-    private String mMediaUrl;
+    protected String mMediaUrl;
 
     @SerializedName("mediatype")
-    public int mMediaType;
+    protected int mMediaType;
 
     @SerializedName("date")
-    private Date mDate;
+    protected Date mDate;
 
     @SerializedName("commentdate")
-    private Date mCommentDate;
+    protected Date mCommentDate;
 
     @SerializedName("commentcount")
-    private int mCommentCount;
+    protected int mCommentCount;
 
     @SerializedName("praisecount")
-    private int mPraiseCount;
+    protected int mPraiseCount;
 
-    @SerializedName("user")
-    private String mUser;
+    @SerializedName("User")
+    protected String mStrUser;
 
     @SerializedName("messagetype")
-    private int mMessagetType;
+    protected int mMessagetType;
+
+    @Expose
+    protected User mUser;
+
+    public User getUser(){
+        User user = null;
+        if(mUser != null)
+            return mUser;
+        if(mStrUser != null){
+            user = JsonUtil.fromJson(mStrUser,User.class);
+        }
+        return user;
+    }
+
+    public void setUser(User user){
+        this.mUser = user;
+        mStrUser = JsonUtil.toJson(user);
+    }
 
 
     public int getId() {
@@ -101,11 +98,11 @@ public class Message implements Serializable{
         mContent = content;
     }
 
-    public String getContentType() {
+    public int getContentType() {
         return mContentType;
     }
 
-    public void setContentType(String contentType) {
+    public void setContentType(int contentType) {
         mContentType = contentType;
     }
 
@@ -141,11 +138,11 @@ public class Message implements Serializable{
         mTitle = title;
     }
 
-    public int getUserId() {
+    public String getUserId() {
         return mUserId;
     }
 
-    public void setUserId(int userId) {
+    public void setUserId(String userId) {
         mUserId = userId;
     }
 
@@ -205,12 +202,12 @@ public class Message implements Serializable{
         mPraiseCount = praiseCount;
     }
 
-    public String getUser() {
-        return mUser;
+    public String getStrUser() {
+        return mStrUser;
     }
 
     public void setUser(String user) {
-        mUser = user;
+        mStrUser = user;
     }
 
     public int getMessagetType() {
@@ -220,4 +217,6 @@ public class Message implements Serializable{
     public void setMessagetType(int messagetType) {
         mMessagetType = messagetType;
     }
+
+
 }

@@ -10,8 +10,13 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
+import com.absurd.circle.app.AppConstant;
+import com.absurd.circle.app.AppContext;
 import com.absurd.circle.app.R;
+import com.absurd.circle.data.model.User;
+import com.absurd.circle.data.service.UserService;
 import com.absurd.circle.ui.fragment.CategoryFragment;
 import com.absurd.circle.ui.fragment.MessageListFragment;
 import com.absurd.circle.ui.fragment.SlidingMenuFragment;
@@ -20,6 +25,10 @@ import com.absurd.circle.util.IntentUtil;
 import com.absurd.circle.util.LogFactory;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.jeremyfeinstein.slidingmenu.lib.app.SlidingFragmentActivity;
+import com.microsoft.windowsazure.mobileservices.ServiceFilterResponse;
+import com.microsoft.windowsazure.mobileservices.TableQueryCallback;
+
+import java.util.List;
 
 import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshAttacher;
 
@@ -33,6 +42,8 @@ public class HomeActivity extends SlidingFragmentActivity implements Refreshable
      * true CategoryFragment
      */
     private boolean mStatus = false;
+
+    private SlidingMenuFragment mSlidingMenuFragment;
 
 
     public PullToRefreshAttacher getAttacher(){
@@ -60,17 +71,37 @@ public class HomeActivity extends SlidingFragmentActivity implements Refreshable
 
         // set the Behind View
         setBehindContentView(R.layout.menu_frame);
+        mSlidingMenuFragment = new SlidingMenuFragment(this);
         getSupportFragmentManager()
                 .beginTransaction()
-                .replace(R.id.menu_frame, new SlidingMenuFragment(this))
+                .replace(R.id.menu_frame, mSlidingMenuFragment)
                 .commit();
 
         // customize the SlidingMenu
         getSlidingMenu().setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
 
-
-
+        getAuth();
     }
+
+    private void getAuth(){
+        new UserService(this,AppConstant.TEST_USER_TOKEN).getUser(AppConstant.TEST_USER_ID,new TableQueryCallback<User>(){
+
+            @Override
+            public void onCompleted(List<User> result, int count, Exception exception, ServiceFilterResponse response) {
+                if(result == null){
+                    if(exception != null){
+                        exception.printStackTrace();
+                        Toast.makeText(HomeActivity.this,"get auth info failed!",Toast.LENGTH_SHORT).show();
+                    }
+                }else{
+                    AppContext.auth = result.get(0);
+                    AppContext.token = AppContext.auth.getToken();
+                    mSlidingMenuFragment.invalidateView();
+                }
+            }
+        });
+    }
+
 
     private void configureSlidingMenu(){
         // customize the SlidingMenu

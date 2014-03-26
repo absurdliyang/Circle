@@ -820,6 +820,21 @@ public class MobileServiceClient {
 				}
 			}
 		}
+        Class<?> superClass = clazz.getSuperclass();
+        if(superClass != null){
+            for (Field field : superClass.getDeclaredFields()) {
+                SerializedName serializedName = field.getAnnotation(SerializedName.class);
+                if (serializedName != null) {
+                    if (serializedName.value().equalsIgnoreCase("id")) {
+                        idPropertyCount++;
+                    }
+                } else {
+                    if (field.getName().equalsIgnoreCase("id")) {
+                        idPropertyCount++;
+                    }
+                }
+            }
+        }
 		
 		if (idPropertyCount != 1) {
 			throw new IllegalArgumentException("The class representing the MobileServiceTable must have a single id property defined");
@@ -923,8 +938,6 @@ public class MobileServiceClient {
 	 *            Mobile Service application key
 	 * @param currentUser
 	 *            The Mobile Service user used to authenticate requests
-	 * @param gsonBuilder
-	 *            the GsonBuilder used to in JSON Serialization/Deserialization
 	 * @param context
 	 *            The Context where the MobileServiceClient is created
 	 */
@@ -968,7 +981,7 @@ public class MobileServiceClient {
 	 * Gets the GsonBuilder used to in JSON Serialization/Deserialization
 	 */
 	public GsonBuilder getGsonBuilder() {
-		return mGsonBuilder;
+		return mGsonBuilder.setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
 	}
 
 	/**
@@ -998,9 +1011,7 @@ public class MobileServiceClient {
 
 	/**
 	 * Sets the GsonBuilder used to in JSON Serialization/Deserialization
-	 * 
-	 * @param mGsonBuilder
-	 *            The GsonBuilder to set
+	 *
 	 */
 	public void setGsonBuilder(GsonBuilder gsonBuilder) {
 		mGsonBuilder = gsonBuilder;

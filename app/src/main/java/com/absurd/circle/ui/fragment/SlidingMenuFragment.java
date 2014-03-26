@@ -7,7 +7,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
+import com.absurd.circle.app.AppContext;
 import com.absurd.circle.app.R;
 import com.absurd.circle.data.client.volley.RequestManager;
 import com.absurd.circle.ui.activity.ContactActivity;
@@ -18,10 +20,16 @@ import com.absurd.circle.ui.activity.SettingActivity;
 import com.absurd.circle.util.IntentUtil;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 
+import org.w3c.dom.Text;
+
 public class SlidingMenuFragment extends Fragment {
     private HomeActivity mHomeActivity;
 
     private ImageView mAvatarIv;
+
+    private TextView mUsernameTv;
+
+    private View mRootView;
 
     public SlidingMenuFragment(HomeActivity homeActivity){
         this.mHomeActivity = homeActivity;
@@ -29,37 +37,27 @@ public class SlidingMenuFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_sliding_menu,null);
-        rootView.findViewById(R.id.llyt_drawer_menu_home).setOnClickListener(new View.OnClickListener() {
+        mRootView = inflater.inflate(R.layout.fragment_sliding_menu,null);
+        mRootView.findViewById(R.id.llyt_drawer_menu_home).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 mHomeActivity.toggle();
             }
         });
-        rootView.findViewById(R.id.llyt_drawer_menu_notification).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mHomeActivity.toggle();
-                IntentUtil.startActivity(mHomeActivity, NotificationActivity.class);
-            }
-        });
-        rootView.findViewById(R.id.llyt_drawer_menu_contact).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mHomeActivity.toggle();
-                IntentUtil.startActivity(mHomeActivity, ContactActivity.class);
-            }
-        });
-        rootView.findViewById(R.id.llyt_drawer_menu_setting).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mHomeActivity.toggle();
-                IntentUtil.startActivity(mHomeActivity, SettingActivity.class);
-            }
-        });
-        mAvatarIv = (ImageView)rootView.findViewById(R.id.iv_drawer_user_avatar);
-        RequestManager.loadImage("http://qlogo4.store.qq.com/qzone/1271320063/1271320063/100?1318045820",
-                RequestManager.getImageListener(mAvatarIv,null,null));
+
+        mAvatarIv = (ImageView)mRootView.findViewById(R.id.iv_drawer_user_avatar);
+        mUsernameTv = (TextView)mRootView.findViewById(R.id.tv_drawer_username);
+        if(AppContext.auth != null) {
+            invalidateView();
+        }
+        return mRootView;
+    }
+
+    public void invalidateView(){
+        if(AppContext.auth.getAvatar() != null) {
+            RequestManager.loadImage(AppContext.auth.getAvatar(),
+                    RequestManager.getImageListener(mAvatarIv, null, null));
+        }
         mAvatarIv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -67,6 +65,29 @@ public class SlidingMenuFragment extends Fragment {
                 SlidingMenuFragment.this.startActivity(intent);
             }
         });
-        return rootView;
+        mUsernameTv.setText(AppContext.auth.getName());
+
+        mRootView.findViewById(R.id.llyt_drawer_menu_notification).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mHomeActivity.toggle();
+                IntentUtil.startActivity(mHomeActivity, NotificationActivity.class);
+            }
+        });
+        mRootView.findViewById(R.id.llyt_drawer_menu_contact).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mHomeActivity.toggle();
+                IntentUtil.startActivity(mHomeActivity, ContactActivity.class);
+            }
+        });
+        mRootView.findViewById(R.id.llyt_drawer_menu_setting).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mHomeActivity.toggle();
+                IntentUtil.startActivity(mHomeActivity, SettingActivity.class);
+            }
+        });
     }
+
 }

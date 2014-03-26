@@ -21,25 +21,22 @@ public class UserService extends BaseService {
         super(context);
     }
 
-    public UserService(){
-        super();
-    }
 
     public UserService(Context context, String token) {
         super(context, token);
     }
 
     public void getUsers(TableQueryCallback<User> mCallback){
-        mUserTable.where().execute(mCallback);
+        getUserTable().where().execute(mCallback);
     }
 
 
     public void insertUser(User user, TableOperationCallback<User> callback){
-        mUserTable.insert(user,callback);
+        getUserTable().insert(user,callback);
     }
 
     public void getUser(String userId,TableQueryCallback<User> callback){
-        mUserTable.where().field("userId").eq(userId).execute(callback);
+        getUserTable().where().field("userId").eq(userId).execute(callback);
     }
 
 

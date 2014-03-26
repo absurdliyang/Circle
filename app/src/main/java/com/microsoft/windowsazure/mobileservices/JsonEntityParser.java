@@ -23,6 +23,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.absurd.circle.app.AppContext;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -52,7 +53,8 @@ class JsonEntityParser {
 
 			for (JsonElement element : elements) {
 				changeIdPropertyName(element.getAsJsonObject(), idPropertyName);
-				E typedElement = gson.fromJson(element, clazz);
+                AppContext.azureLog.i("Json element ----> " + element);
+                E typedElement = gson.fromJson(element, clazz);
 				result.add(typedElement);
 			}
 		} else { // Lookup result

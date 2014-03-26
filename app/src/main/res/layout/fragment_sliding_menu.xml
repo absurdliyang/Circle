@@ -13,7 +13,7 @@
             android:layout_width="60.0dp"
             android:layout_height="60.0dp" />
         <TextView
-            android:id="@+id/iv_drawer_username"
+            android:id="@+id/tv_drawer_username"
             android:layout_below="@id/iv_drawer_user_avatar"
             android:layout_centerHorizontal="true"
             android:textColor="#ffffffff"

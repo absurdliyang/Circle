@@ -1,5 +1,7 @@
 package com.absurd.circle.data.model;
 
+import com.absurd.circle.data.util.JsonUtil;
+import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
@@ -18,7 +20,25 @@ public class BlackList implements Serializable{
     private String mFollowUserId;
 
     @SerializedName("User")
+    private String mStrUser;
+
+    @Expose
     private User mUser;
+
+    public User getUser(){
+        User user = null;
+        if(mUser != null)
+            return mUser;
+        if(mStrUser != null){
+            user = JsonUtil.fromJson(mStrUser, User.class);
+        }
+        return user;
+    }
+
+    public void setUser(User user){
+        this.mUser = user;
+        mStrUser = JsonUtil.toJson(user);
+    }
 
 
     public int getId() {
@@ -45,11 +65,11 @@ public class BlackList implements Serializable{
         mFollowUserId = followUserId;
     }
 
-    public User getUser() {
-        return mUser;
+    public String getStrUser() {
+        return mStrUser;
     }
 
-    public void setUser(User user) {
-        mUser = user;
+    public void setStrUser(String strUser) {
+        mStrUser = strUser;
     }
 }

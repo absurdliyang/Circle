@@ -22,7 +22,7 @@ public class UserLocationService extends BaseService{
     }
 
     public void getUserLocation(String userid,TableQueryCallback<UserLocation> callback){
-        mUserLocationTable.where().field("userid").eq(val(userid)).execute(callback);
+        getUserLocationTable().where().field("userid").eq(val(userid)).execute(callback);
     }
 
 }

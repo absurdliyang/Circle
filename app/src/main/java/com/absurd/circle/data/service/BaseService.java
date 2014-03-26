@@ -5,9 +5,16 @@ import android.content.Context;
 import com.absurd.circle.app.AppConstant;
 import com.absurd.circle.app.AppContext;
 import com.absurd.circle.data.client.AzureClient;
+import com.absurd.circle.data.model.BlackList;
+import com.absurd.circle.data.model.Comment;
+import com.absurd.circle.data.model.Follow;
 import com.absurd.circle.data.model.Message;
+import com.absurd.circle.data.model.Praise;
+import com.absurd.circle.data.model.ReportMessage;
+import com.absurd.circle.data.model.Score;
 import com.absurd.circle.data.model.User;
 import com.absurd.circle.data.model.UserLocation;
+import com.absurd.circle.data.model.UserMessage;
 import com.absurd.circle.util.CommonLog;
 import com.absurd.circle.util.LogFactory;
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
@@ -18,50 +25,74 @@ import com.microsoft.windowsazure.mobileservices.MobileServiceUser;
  * Created by absurd on 14-3-14.
  */
 public class BaseService{
+    public static final String TABLE_USERS = "Users";
+    public static final String TABLE_MESSAGE= "Message";
+    public static final String TABLE_USER_MESSAGE = "UserMessage";
+    public static final String TABLE_COMMENT = "Comment";
+    public static final String TABLE_FOLLOW = "Follow";
+    public static final String TABLE_BLACK_LIST = "BlackList";
+    public static final String TABLE_PRAISE = "Praise";
+    public static final String TABLE_REPORT_MESSAGE = "ReportMessage";
+    public static final String TABLE_SCORE = "Score";
+    public static final String TABLE_USER_LOCATION = "UserLocation";
+
     protected CommonLog mLog = LogFactory.createLog(AppConstant.TAG);
     private MobileServiceClient mClient = AzureClient.getInstance(AppContext.getContext());
 
-    private static final String TABLE_USERS = "Users";
-    private static final String TABLE_MESSAGE= "Message";
-
-
-    protected MobileServiceTable<Message> mMessageTable;
-    protected MobileServiceTable<User> mUserTable;
-    protected MobileServiceTable<UserLocation> mUserLocationTable;
 
     public BaseService(){
-        initTable();
     }
 
     public BaseService(Context context){
         mClient = AzureClient.getInstance(context);
-        initTable();
     }
 
-    public BaseService(Context context, String token){
+    public BaseService(Context context, String token) {
         mClient = AzureClient.getInstance(context);
         MobileServiceUser user = new MobileServiceUser("");
         user.setAuthenticationToken(token);
         mClient.setCurrentUser(user);
-        initTable();
     }
 
-    public void initTable(){
-        mMessageTable = mClient.getTable(TABLE_MESSAGE,Message.class);
-        mUserTable = mClient.getTable(TABLE_USERS,User.class);
-        mUserLocationTable = mClient.getTable(UserLocation.class);
+    protected MobileServiceTable<User> getUserTable(){
+        return mClient.getTable(TABLE_USERS,User.class);
     }
 
-    public MobileServiceTable<User> getUserTable(){
-        return mUserTable;
+    protected MobileServiceTable<Message> getMessageTable(){
+        return mClient.getTable(TABLE_MESSAGE,Message.class);
     }
 
-    public MobileServiceTable<Message> getMessageTable(){
-        return mMessageTable;
+    protected MobileServiceTable<UserLocation> getUserLocationTable(){
+        return mClient.getTable(TABLE_USER_LOCATION,UserLocation.class);
     }
 
-    public MobileServiceTable<UserLocation> getUserLocationTable(){
-        return mUserLocationTable;
+    protected MobileServiceTable<UserMessage> getUserMessageTable(){
+        return mClient.getTable(TABLE_USER_MESSAGE,UserMessage.class);
     }
+
+    protected MobileServiceTable<Comment> getCommentTable(){
+        return mClient.getTable(TABLE_COMMENT, Comment.class);
+    }
+
+    protected MobileServiceTable<Follow> getFollowTable(){
+        return mClient.getTable(TABLE_FOLLOW, Follow.class);
+    }
+
+    protected MobileServiceTable<BlackList> getBlackList(){
+        return mClient.getTable(TABLE_BLACK_LIST,BlackList.class);
+    }
+
+    protected MobileServiceTable<Praise> getPraiseTable(){
+        return mClient.getTable(TABLE_PRAISE,Praise.class);
+    }
+
+    protected MobileServiceTable<ReportMessage> getReportTable(){
+        return mClient.getTable(TABLE_REPORT_MESSAGE,ReportMessage.class);
+    }
+
+    protected MobileServiceTable<Score> getScoreTable(){
+        return mClient.getTable(TABLE_SCORE, Score.class);
+    }
+
 
 }

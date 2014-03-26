@@ -24,29 +24,7 @@ public class UserServiceTest  extends BaseTestCase{
         mUserService = new UserService(getContext(), AppConstant.TEST_USER_TOKEN);
         mLog.d("UserServiceTest");
     }
-/**
-    public void testGetUser() throws Exception {
-        final Object lock = new Object();
-        String userId = "qq:E192CA14D108CE509B20D0B6630BA8F5";
-        mUserService.getUser(userId,new TableQueryCallback<User>() {
-            @Override
-            public void onCompleted(List<User> users, int i, Exception e, ServiceFilterResponse serviceFilterResponse) {
-                if(users == null){
-                    if(e != null){
-                        e.printStackTrace();
-                    }
-                }else {
-                    User user = users.get(0);
-                    mLog.i(user.getName() + user.getToken());
-                }
-                synchronized (lock){
-                    lock.notify();
-                }
-            }
-        });
-
-    }
-**/
+    /**
     public void testInsertUser() throws Exception{
         final Boolean lock = false;
         User user = new User();
@@ -79,7 +57,7 @@ public class UserServiceTest  extends BaseTestCase{
             lock.wait();
         }
     }
-
+**/
     public void testLogin() throws Exception{
         final Boolean lock = false;
         User loginUser = new User();
@@ -105,10 +83,9 @@ public class UserServiceTest  extends BaseTestCase{
             lock.wait();
         }
     }
-
     public void testUser() throws Exception {
         final Object lock = new Object();
-        mUserService.getUser("1160123",new TableQueryCallback<User>() {
+        mUserService.getUser("qq:7F234A6D96FB2B9A45F2AD02B196AC37",new TableQueryCallback<User>() {
             @Override
             public void onCompleted(List<User> users, int i, Exception e, ServiceFilterResponse serviceFilterResponse) {
                 if(users == null){

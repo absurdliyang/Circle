@@ -7,7 +7,7 @@ import java.io.Serializable;
 /**
  * Created by absurd on 14-3-25.
  */
-public class Comment implements Serializable {
+public class Comment extends Message implements Serializable {
 
     @SerializedName("messageid")
     private int mMessageId;
@@ -21,6 +21,7 @@ public class Comment implements Serializable {
     @SerializedName("state")
     private int mState;
 
+    @SerializedName("ParentText")
     private String mParentText;
 
     @SerializedName("seconds")
