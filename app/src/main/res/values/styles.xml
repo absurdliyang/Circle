@@ -80,5 +80,13 @@
         <item name="android:gravity">center</item>
         <item name="android:text">@string/com_sina_weibo_sdk_login_with_weibo_account</item>
     </style>
+    <!-- SwipeBack -->
+    <style name="SwipeBackLayout">
+        <item name="edge_size">50dip</item>
+        <item name="shadow_left">@drawable/shadow_left</item>
+        <item name="shadow_right">@drawable/shadow_right</item>
+        <item name="shadow_bottom">@drawable/shadow_bottom</item>
+    </style>
+
 
 </resources>
