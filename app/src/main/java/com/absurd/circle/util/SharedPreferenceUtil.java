@@ -6,18 +6,19 @@ import android.content.SharedPreferences;
 
 import com.absurd.circle.app.AppConstant;
 import com.absurd.circle.app.AppContext;
+import com.absurd.circle.data.model.Position;
 
 public class SharedPreferenceUtil {
 
 	private static SharedPreferenceUtil mSharedPreferenceUtil;
 	
-	private SharedPreferences sp;
-	private SharedPreferences.Editor editor;
+	private SharedPreferences mSharedPreferences;
+	private SharedPreferences.Editor mEditor;
 	
 	private SharedPreferenceUtil(Context context,String file) {
 		// TODO Auto-generated constructor stub
-		sp = context.getSharedPreferences(file, Context.MODE_PRIVATE);
-		editor = sp.edit();
+		mSharedPreferences = context.getSharedPreferences(file, Context.MODE_PRIVATE);
+		mEditor = mSharedPreferences.edit();
 	}
 	
 	public synchronized static SharedPreferenceUtil getInstance(){
@@ -26,81 +27,39 @@ public class SharedPreferenceUtil {
 		}
 		return mSharedPreferenceUtil;
 	}
-	
-	public int addNotificationCount(){
-		int count = sp.getInt("notificationCount", -1);
-		if(count != -1){
-			count ++;
-			editor.putInt("notificationCount", count)
-				.commit();
-			return count;
-		}else{
-			editor.putInt("notificationCount", 1)
-			.commit();
-			return 1;
-		}
-	}
-	
-	public void setNotificationCount(int count){
-		editor.putInt("notificationCount", count)
-			.commit();
-	}
-	
-	public int getNotificationCount(){
-		return sp.getInt("notificationCount", -1);
-	}
-	
-	// appid
-	public void setAppId(String appid) {
-		// TODO Auto-generated method stub
-		editor.putString("appid", appid);
-		editor.commit();
-	}
 
-	public String getAppId() {
-		return sp.getString("appid", "");
-	}
+    public String getAuthToken(){
+        return mSharedPreferences.getString("token","");
+    }
 
-	// user_id
-	public void setUserId(String userId) {
-		editor.putString("userId", userId);
-		editor.commit();
-	}
+    public void setAuthTokem(String token){
+        mEditor.putString("token",token)
+                .commit();
+    }
 
-	public String getUserId() {
-		return sp.getString("userId", "");
-	}
+    public void setUserId(String userId){
+        mEditor.putString("userId",userId)
+                .commit();
+    }
 
-	// channel_id
-	public void setChannelId(String ChannelId) {
-		editor.putString("ChannelId", ChannelId);
-		editor.commit();
-	}
+    public String getUserId(){
+        return mSharedPreferences.getString("userId","");
+    }
 
-	public String getChannelId() {
-		return sp.getString("ChannelId", "");
-	}
+    public void setLastPosition(Position position){
+        mEditor.putString("lastPosition",position.getLatitude() + ":" + position.getLongitude())
+                .commit();
+    }
 
-	// nick
-	public void setNick(String nick) {
-		editor.putString("nick", nick);
-		editor.commit();
-	}
-
-	public String getNick() {
-		return sp.getString("nick", "");
-	}
-
-	// ͷ��ͼ��
-	public int getHeadIcon() {
-		return sp.getInt("headIcon", 0);
-	}
-
-	public void setHeadIcon(int icon) {
-		editor.putInt("headIcon", icon);
-		editor.commit();
-	}
-	
-	
-	
+    public Position getLastPosition(){
+        String strPosition = mSharedPreferences.getString("lastPosition","");
+        if(!StringUtil.isEmpty(strPosition)){
+            String[] temp = strPosition.split(":");
+            Position position = new Position();
+            position.setLatitude(Double.valueOf(temp[0]));
+            position.setLongitude(Double.valueOf(temp[1]));
+            return position;
+        }
+        return null;
+    }
 }

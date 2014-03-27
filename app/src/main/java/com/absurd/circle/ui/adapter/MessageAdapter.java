@@ -17,11 +17,15 @@ import com.absurd.circle.app.R;
 import com.absurd.circle.data.client.volley.BitmapFilter;
 import com.absurd.circle.data.client.volley.RequestManager;
 import com.absurd.circle.data.model.Message;
+import com.absurd.circle.ui.activity.ImageDetailActivity;
+import com.absurd.circle.util.DistanceUtil;
 import com.absurd.circle.util.ImageUtil;
+import com.absurd.circle.util.IntentUtil;
 import com.absurd.circle.util.TimeUtil;
 import com.absurd.circle.util.StringUtil;
 import com.android.volley.toolbox.ImageLoader;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -29,9 +33,9 @@ import java.util.List;
  */
 public class MessageAdapter extends BeanAdapter<Message> {
 
-    private Bitmap mAvatarDefaultBitmap = ((BitmapDrawable) AppContext.getContext().getResources().getDrawable(R.drawable.ic_launcher)).getBitmap();
+    private Bitmap mAvatarDefaultBitmap = ((BitmapDrawable) AppContext.getContext().getResources().getDrawable(R.drawable.default_avatar)).getBitmap();
 
-    private Bitmap mMediaDefaultBitmap = ((BitmapDrawable) AppContext.getContext().getResources().getDrawable(R.drawable.ic_launcher)).getBitmap();
+    private Bitmap mMediaDefaultBitmap = ((BitmapDrawable) AppContext.getContext().getResources().getDrawable(R.drawable.default_media)).getBitmap();
     public MessageAdapter(Context context, List<Message> items) {
         super(context, items);
     }
@@ -95,11 +99,20 @@ public class MessageAdapter extends BeanAdapter<Message> {
 
         holder.contentTv.setText(message.getContent());
         holder.createdTv.setText(TimeUtil.formatShowTime(message.getDate()));
-        holder.locationTv.setText(message.getLocationDec());
+        if(AppContext.lastPosition != null) {
+            holder.locationTv.setText(DistanceUtil.caculate(AppContext.lastPosition.getLatitude(),AppContext.lastPosition.getLongitude()
+                                              ,message.getLatitude(),message.getLongitude()) + "");
+        }
         holder.praiseCommentTv.setText("赞 " + message.getPraiseCount() + " 评论 " + message.getCommentCount());
         if(message.getMediaUrl() != null){
             holder.mediaRequest = RequestManager.loadImage(message.getMediaUrl(),
                     RequestManager.getImageListener(holder.mediaIv, mMediaDefaultBitmap, mMediaDefaultBitmap,null));
+            holder.mediaIv.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    IntentUtil.startActivity(mContext,ImageDetailActivity.class,"mediaUrl",message.getMediaUrl());
+                }
+            });
         }else{
             holder.mediaIv.setVisibility(View.GONE);
         }

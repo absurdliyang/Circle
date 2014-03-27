@@ -12,7 +12,9 @@ import android.widget.TextView;
 
 import com.absurd.circle.app.R;
 
-public abstract class BaseActivity extends ActionBarActivity {
+import me.imid.swipebacklayout.lib.app.SwipeBackActivity;
+
+public abstract class BaseActivity extends SwipeBackActivity {
 
     private String mTitle;
     private TextView mActionBarTitleTv;

@@ -6,8 +6,8 @@
             <solid android:color="@color/theme_color"/>
             <size android:width="100dp"
                 android:height="100dp"/>
-            <stroke android:color="#ff345678"
-                android:width="1dp"/>
+            <stroke android:color="#ffa3a1a3"
+                android:width="1.0dp"/>
         </shape>
     </item>
     <item android:state_focused="true">
@@ -15,8 +15,8 @@
             <solid android:color="@color/theme_color"/>
             <size android:width="100dp"
                 android:height="100dp"/>
-            <stroke android:color="#ff345678"
-                android:width="1dp"/>
+            <stroke android:color="#ffa3a1a3"
+                android:width="1.0dp"/>
         </shape>
     </item>
     <item>
@@ -25,7 +25,7 @@
             <size android:width="100dp"
                 android:height="100dp"/>
             <stroke android:color="#ffffffff"
-                android:width="1dp"/>
+                android:width="1.0dp"/>
         </shape>
     </item>
 </selector>

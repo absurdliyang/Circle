@@ -25,7 +25,7 @@
             android:id="@+id/tv_actionbar_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="title"
+            android:text="附近"
             android:clickable="true"
             android:textColor="#ffffffff"
             android:textSize="20sp" />

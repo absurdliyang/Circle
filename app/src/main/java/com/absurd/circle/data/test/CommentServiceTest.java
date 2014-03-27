@@ -18,7 +18,7 @@ public class CommentServiceTest extends BaseTestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        mCommentService = new CommentService(getContext(), AppConstant.TEST_USER_TOKEN);
+        mCommentService = new CommentService(getContext());
     }
 
     public void testGetComments() throws Exception {

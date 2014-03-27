@@ -10,27 +10,32 @@
         <ImageView
             android:id="@+id/iv_drawer_user_avatar"
             android:layout_centerInParent="true"
-            android:layout_width="60.0dp"
-            android:layout_height="60.0dp" />
+            android:layout_width="90dp"
+            android:layout_height="90dp" />
         <TextView
             android:id="@+id/tv_drawer_username"
             android:layout_below="@id/iv_drawer_user_avatar"
+            android:layout_marginTop="30dp"
             android:layout_centerHorizontal="true"
             android:textColor="#ffffffff"
             android:text="absurd"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
     </RelativeLayout>
-    <RelativeLayout
+    <LinearLayout
         android:id="@+id/llyt_drawer_menu"
         android:layout_below="@id/rlyt_drawer_title"
         android:layout_marginTop="50dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_marginBottom="120dp"
+        android:layout_centerHorizontal="true"
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent">
         <LinearLayout
             android:id="@+id/llyt_drawer_menu_home"
             android:clickable="true"
-            android:layout_centerHorizontal="true"
+            android:layout_weight="1"
+            android:layout_gravity="left"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
             <ImageView
@@ -41,17 +46,17 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:gravity="center"
                 android:layout_marginLeft="20dp"
                 android:textColor="#ffffffff"
+                android:textSize="20dp"
                 android:text="主页" />
         </LinearLayout>
         <LinearLayout
             android:id="@+id/llyt_drawer_menu_notification"
             android:layout_marginTop="10dp"
-            android:layout_below="@id/llyt_drawer_menu_home"
             android:clickable="true"
-            android:layout_alignLeft="@id/llyt_drawer_menu_home"
+            android:layout_gravity="left"
+            android:layout_weight="1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
             <ImageView
@@ -62,17 +67,17 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:gravity="center"
                 android:layout_marginLeft="20dp"
+                android:textSize="20dp"
                 android:textColor="#ffffffff"
                 android:text="消息" />
         </LinearLayout>
         <LinearLayout
             android:id="@+id/llyt_drawer_menu_contact"
-            android:layout_below="@id/llyt_drawer_menu_notification"
             android:layout_marginTop="10dp"
             android:clickable="true"
-            android:layout_alignLeft="@id/llyt_drawer_menu_home"
+            android:layout_gravity="left"
+            android:layout_weight="1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
             <ImageView
@@ -83,17 +88,17 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:gravity="center"
                 android:layout_marginLeft="20dp"
+                android:textSize="20dp"
                 android:textColor="#ffffffff"
                 android:text="联系人" />
         </LinearLayout>
         <LinearLayout
             android:id="@+id/llyt_drawer_menu_setting"
-            android:layout_below="@id/llyt_drawer_menu_contact"
             android:layout_marginTop="10dp"
             android:clickable="true"
-            android:layout_alignLeft="@id/llyt_drawer_menu_home"
+            android:layout_gravity="left"
+            android:layout_weight="1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
             <ImageView
@@ -104,11 +109,11 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:gravity="center"
                 android:layout_marginLeft="20dp"
                 android:textColor="#ffffffff"
+                android:textSize="20dp"
                 android:text="设置" />
         </LinearLayout>
-    </RelativeLayout>
+    </LinearLayout>
 </RelativeLayout>
 

@@ -16,7 +16,7 @@ public class Comment extends Message implements Serializable {
     private int mParentId;
 
     @SerializedName("touserid")
-    private int mToUserId;
+    private String mToUserId;
 
     @SerializedName("state")
     private int mState;
@@ -43,11 +43,11 @@ public class Comment extends Message implements Serializable {
         mParentId = parentId;
     }
 
-    public int getToUserId() {
+    public String getToUserId() {
         return mToUserId;
     }
 
-    public void setToUserId(int toUserId) {
+    public void setToUserId(String toUserId) {
         mToUserId = toUserId;
     }
 

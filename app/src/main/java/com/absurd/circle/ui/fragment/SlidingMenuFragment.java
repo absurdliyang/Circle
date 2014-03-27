@@ -68,8 +68,6 @@ public class SlidingMenuFragment extends Fragment {
         mAvatarIv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(SlidingMenuFragment.this.getActivity(), ImageDetailActivity.class);
-                SlidingMenuFragment.this.startActivity(intent);
             }
         });
         mUsernameTv.setText(AppContext.auth.getName());

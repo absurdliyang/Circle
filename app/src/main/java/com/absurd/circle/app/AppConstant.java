@@ -31,6 +31,10 @@ public interface AppConstant {
     public static final String TEST_USER_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6MH0.eyJleHAiOjE0MjcyNzIzMTYuMzEyLCJpc3MiOiJ1cm46bWljcm9zb2Z0OndpbmRvd3MtYXp1cmU6enVtbyIsInZlciI6MSwiYXVkIjoiIiwidWlkIjoicXE6RTE5MkNBMTREMTA4Q0U1MDlCMjBEMEI2NjMwQkE4RTQifQ.b797TOr2Cu_V0nCBec4qPSe26MrRWt9UuURABEKMl9Q";
     public static final String TEST_USER_ID = "qq:7F234A6D96FB2B9A45F2AD02B196AC37";
 
+    /**
+     * AMap key
+     */
+    public static final String AMAP_KEY = "80837d6d2302e9567a379416f49bee46";
 
     /**
      * setting

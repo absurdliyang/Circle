@@ -50,60 +50,54 @@ public class ImageDetailActivity extends ActionBarActivity implements View.OnTou
     private PointF prev = new PointF();
     private PointF mid = new PointF();
     private float dist = 1f;
+    private Bitmap mMediaDefaultBitmap = ((BitmapDrawable) AppContext.getContext().getResources().getDrawable(R.drawable.default_media)).getBitmap();
 
-    private BitmapDrawable mErrorBitmapDrawable = (BitmapDrawable)AppContext.getContext().getResources().getDrawable(R.drawable.ic_launcher);
-    private BitmapDrawable mDefaultBitmapDrawable = (BitmapDrawable)AppContext.getContext().getResources().getDrawable(R.drawable.ic_launcher);
+    private String mImageUrl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mImageUrl = getIntent().getStringExtra("mediaUrl");
         // Show in full screen
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        //getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         getSupportActionBar().hide();
         setContentView(R.layout.activity_image_detail);
         mImageDetailIv = (ImageView)findViewById(R.id.iv_image_detail);
-        RequestManager.loadImage("http://qlogo4.store.qq.com/qzone/1271320063/1271320063/100?1318045820",
-                new ImageLoader.ImageListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        if (mErrorBitmapDrawable != null) {
-                            mImageDetailIv.setImageDrawable(mErrorBitmapDrawable);
-                        }
+        RequestManager.loadImage(mImageUrl,
+            new ImageLoader.ImageListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    if (mMediaDefaultBitmap != null) {
+                        mImageDetailIv.setImageBitmap(mMediaDefaultBitmap);
                     }
+                }
 
-                    @Override
-                    public void onResponse(ImageLoader.ImageContainer response, boolean isImmediate) {
-                        if (response.getBitmap() != null) {
-                            mLog.i("get iamge success");
-                            mBitmap = response.getBitmap();
-                            if (!isImmediate && mDefaultBitmapDrawable!= null) {
-                                TransitionDrawable transitionDrawable = new TransitionDrawable(
-                                        new Drawable[] {
-                                                mDefaultBitmapDrawable,
-                                                new BitmapDrawable(AppContext.getContext().getResources(),
-                                                        response.getBitmap())
-                                        });
-                                transitionDrawable.setCrossFadeEnabled(true);
-                                mImageDetailIv.setImageDrawable(transitionDrawable);
-                                transitionDrawable.startTransition(100);
-                            } else {
-                                mImageDetailIv.setImageBitmap(response.getBitmap());
-                            }
-                            mImageDetailIv.setOnTouchListener(ImageDetailActivity.this);
-                            mDisplayMetrics = new DisplayMetrics();
-                            getWindowManager().getDefaultDisplay().getMetrics(mDisplayMetrics);
-                            minZoom();
-                            center();
-                            mImageDetailIv.setImageMatrix(mMatrix);
-                        } else if (mDefaultBitmapDrawable != null) {
-                            mImageDetailIv.setImageDrawable(mDefaultBitmapDrawable);
+                @Override
+                public void onResponse(ImageLoader.ImageContainer response, boolean isImmediate) {
+                    if (response.getBitmap() != null) {
+                        mBitmap = response.getBitmap();
+                        if (!isImmediate && mMediaDefaultBitmap!= null) {
+                            TransitionDrawable transitionDrawable = new TransitionDrawable(
+                                    new Drawable[] {
+                                            new BitmapDrawable(AppContext.getContext().getResources(),mMediaDefaultBitmap),
+                                            new BitmapDrawable(AppContext.getContext().getResources(),
+                                                    response.getBitmap())
+                                    });
+                            transitionDrawable.setCrossFadeEnabled(true);
+                            mImageDetailIv.setImageDrawable(transitionDrawable);
+                            transitionDrawable.startTransition(100);
+                        } else {
+                            mImageDetailIv.setImageBitmap(response.getBitmap());
                         }
-
-
+                        mImageDetailIv.setOnTouchListener(ImageDetailActivity.this);
+                        mDisplayMetrics = new DisplayMetrics();
+                        getWindowManager().getDefaultDisplay().getMetrics(mDisplayMetrics);
+                        minZoom();
+                        center();
+                        mImageDetailIv.setImageMatrix(mMatrix);
                     }
-
-
-                });
+                }
+            });
 
 
 
@@ -148,7 +142,7 @@ public class ImageDetailActivity extends ActionBarActivity implements View.OnTou
                 break;
         }
         mImageDetailIv.setImageMatrix(mMatrix);
-        checkView();
+        //checkView();
         return true;
     }
 

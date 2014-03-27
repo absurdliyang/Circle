@@ -31,7 +31,6 @@ import java.util.List;
  * Created by absurd on 14-3-14.
  */
 public class MessageDetailFragment extends Fragment{
-    private CommonLog mLog = LogFactory.createLog(AppConstant.TAG);
     private ListView mContentLv;
     private TextView mEmptyTv;
 
@@ -47,7 +46,7 @@ public class MessageDetailFragment extends Fragment{
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mCommentService = new CommentService(getActivity(), AppContext.token);
+        mCommentService = new CommentService(getActivity());
         View rootView = inflater.inflate(R.layout.fragment_message_detail,null);
         View headerView = inflater.inflate(R.layout.header_message_detail,null);
         ((TextView)headerView.findViewById(R.id.tv_header_username)).setText(mMessageDetailActivity.message.getUser().getName());
@@ -113,48 +112,4 @@ public class MessageDetailFragment extends Fragment{
         super.onViewCreated(view, savedInstanceState);
     }
 
-    /**
-    private class LoadCommentTask extends AsyncTask<Boolean,Void,List<Comment>> {
-
-        private boolean mStatus = false;
-
-        @Override
-        protected List<Comment> doInBackground(Boolean... booleans) {
-            mStatus = booleans[0];
-            List<Comment> res = Collections.emptyList();
-            CommentService service = new CommentService();
-            if(!mStatus){
-                // up
-                mCurrentPage = service.getMessage(mMessageDetailActivity.message.getId());
-            }else{
-                // down
-                if(hasNext())
-                    mCurrentPage = service.getNext(mCurrentPage.getNext());
-                else
-                    return null;
-            }
-            if(mCurrentPage != null)
-                res = mCurrentPage.getResults();
-            return res;
-        }
-
-        @Override
-        protected void onPostExecute(List<Comment> comments) {
-            mLog.i("onPostExecute");
-            if(!mStatus){
-                // the method get Adapter when listView add headerView or footerView
-                HeaderViewListAdapter headerAdapter = (HeaderViewListAdapter)mContentLv.getAdapter();
-                ((CommentAdapter) headerAdapter.getWrappedAdapter()).setItems(comments);
-            }else{
-                if(comments != null)
-                    ((CommentAdapter)mContentLv.getAdapter()).addItems(comments);
-            }
-
-        }
-    }
-
-    private boolean hasNext() {
-        return (mCurrentPage == null || mCurrentPage.getNext() == null) ? false : true;
-    }
-        **/
 }

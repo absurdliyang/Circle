@@ -1,60 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    style="@style/card_outer"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content" >
+    android:layout_height="wrap_content"
+    android:background="@drawable/sel_message_card_bg">
+    <LinearLayout
+        android:id="@+id/content_frame"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <ImageView android:id="@+id/iv_title_avatar"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:background="@drawable/avatar_border"
+            android:layout_marginLeft="10.0dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginBottom="10.0dp"
+            android:layout_marginTop="10.0dp"/>
 
-    <RelativeLayout android:id="@+id/inner_frame"
-        android:background="@drawable/sel_message_card_bg"
-        style="@style/card_inner">
-        <LinearLayout
-            android:id="@+id/content_frame"
-            android:layout_width="match_parent"
+        <RelativeLayout
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="10dp"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <ImageView android:id="@+id/iv_title_avatar"
-                    style="@style/card_thumbnail"
-                    android:background="@drawable/avatar_border"
-                    android:layout_marginLeft="10.0dp"
-                    android:layout_marginRight="5dp"
-                    android:layout_marginBottom="10.0dp"
-                    android:layout_marginTop="10.0dp"/>
-                <RelativeLayout android:id="@+id/titleFrame"
-                    android:layout_height="wrap_content"
-                    android:layout_width="match_parent"
-                    android:layout_gravity="center_vertical">
-                    <TextView android:id="@+id/tv_title_username"
-                        android:layout_height="wrap_content"
-                        android:layout_width="wrap_content"
-                        android:layout_alignParentLeft="true"
-                        android:singleLine="true"
-                        android:textSize="14.0sp"
-                        android:textColor="#ff433d3d"
-                        android:ellipsize="end"/>
-                    <TextView android:id="@+id/tv_title_created"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textSize="13.0sp"
-                        android:textColor="#ffa3a1a3"
-                        android:ellipsize="end"
-                        android:singleLine="true"
-                        android:layout_alignParentRight="true"
-                        android:layout_alignBottom="@id/tv_title_username"
-                        android:layout_marginRight="15dp"
-                        />
-
-                </RelativeLayout>
-            </LinearLayout>
+            android:layout_width="match_parent"
+            android:layout_gravity="center_vertical">
+            <TextView android:id="@+id/tv_title_username"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:singleLine="true"
+                android:textSize="14.0sp"
+                android:textColor="#ff433d3d"
+                android:ellipsize="end"/>
+            <TextView android:id="@+id/tv_title_created"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="13.0sp"
+                android:textColor="#ffa3a1a3"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignBottom="@id/tv_title_username"
+                android:layout_marginRight="15dp"/>
 
             <TextView
                 android:id="@+id/tv_content"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="10.0dp"
+                android:layout_below="@id/tv_title_username"
+                android:layout_alignLeft="@id/tv_title_username"
                 android:layout_marginTop="10.0dp"
                 android:layout_marginRight="10.0dp"
                 android:lineSpacingMultiplier="1.1"
@@ -62,112 +55,40 @@
                 android:textColor="#ff433d3d"
                 />
             <ImageView
-                android:layout_width="200dp"
-                android:layout_height="200dp"
+                android:layout_below="@id/tv_content"
+                android:layout_alignLeft="@id/tv_content"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:scaleType="centerInside"
                 android:layout_marginTop="5dp"
-                android:layout_marginLeft="10dp"
                 android:id="@+id/iv_media"/>
-
-
-            <!--
-            <ImageView
-                android:id="@+id/v_separator"
-                android:layout_width="match_parent"
-                android:layout_height="1.0dp"
-                android:layout_marginTop="5dp"
-                android:src="#ffdedede"/>
-
-
-
-        <RelativeLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="40dp">
             <RelativeLayout
-                android:id="@+id/mi_praise_btn"
-                android:layout_height="match_parent"
+                android:layout_below="@id/iv_media"
+                android:paddingBottom="12dp"
                 android:layout_width="match_parent"
-                android:layout_centerVertical="true"
-                android:layout_alignParentLeft="true"
-                android:paddingLeft="15dp"
-                android:background="#fff1f0f0">
-                <ImageView
-                    android:id="@+id/iv_praise_icon"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="1dip"
-                    android:layout_alignParentLeft="true"
-                    android:src="@drawable/ic_praise"/>
-                <TextView
-                    android:id="@+id/mi_praise_num"
-                    android:layout_toRightOf="@id/iv_praise_icon"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:paddingLeft="0dip"
-                    android:textSize="12sp"
-                    android:textColor="#ff9fa43d"
-                    />
-            </RelativeLayout>
-            <RelativeLayout
-                android:id="@+id/mi_comment_btn"
-                android:layout_height="match_parent"
-                android:layout_width="wrap_content"
-                android:layout_centerInParent="true"
-                android:background="#fff1f0f0"
-                android:layout_weight="1">
-                <ImageView
-                    android:id="@+id/iv_comment_icon"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="14dip"
-                    android:src="@drawable/ic_comment"/>
-                <TextView
-                    android:id="@+id/mi_comment_num"
-                    android:layout_toRightOf="@id/iv_comment_icon"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
-                    android:paddingLeft="7dp"
-                    android:textSize="12sp"
-                    android:textColor="#ff9fa43d"
-                    />
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true">
+                <TextView android:id="@+id/tv_location"
+                          android:layout_height="wrap_content"
+                          android:layout_width="wrap_content"
+                          android:textSize="13.0sp"
+                          android:textColor="#ffa3a1a3"
+                          android:ellipsize="end"
+                          android:singleLine="true"
+                          android:layout_alignParentLeft="true"
+                          android:layout_marginLeft="10dp"/>
+
+                <TextView android:id="@+id/tv_praise_comment"
+                          android:layout_height="wrap_content"
+                          android:layout_width="wrap_content"
+                          android:textSize="13.0sp"
+                          android:textColor="#ffa3a1a3"
+                          android:ellipsize="end"
+                          android:singleLine="true"
+                          android:layout_alignParentRight="true"
+                          android:layout_marginRight="10dp"/>
             </RelativeLayout>
         </RelativeLayout>
+    </LinearLayout>
 
--->
-        </LinearLayout>
-
-        <RelativeLayout
-            android:id="@+id/media_frame"
-            android:layout_below="@id/content_frame"
-            android:layout_marginBottom="20dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <TextView android:id="@+id/tv_location"
-                      android:layout_height="wrap_content"
-                      android:layout_width="wrap_content"
-                      android:textSize="13.0sp"
-                      android:textColor="#ffa3a1a3"
-                      android:ellipsize="end"
-                      android:singleLine="true"
-                      android:layout_alignParentLeft="true"
-                      android:layout_marginLeft="10dp"/>
-
-            <TextView android:id="@+id/tv_praise_comment"
-                      android:layout_height="wrap_content"
-                      android:layout_width="wrap_content"
-                      android:textSize="13.0sp"
-                      android:textColor="#ffa3a1a3"
-                      android:ellipsize="end"
-                      android:singleLine="true"
-                      android:layout_alignParentRight="true"
-                      android:layout_marginRight="10dp"/>
-        </RelativeLayout>
-    </RelativeLayout>
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="3dp"
-        android:src="@drawable/tweet_card_shadow"
-        />
-</LinearLayout>
+</RelativeLayout>

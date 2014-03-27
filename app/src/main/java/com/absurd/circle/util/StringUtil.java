@@ -11,4 +11,12 @@ public class StringUtil {
         }
         return false;
     }
+
+    public static boolean isEmpty(String str){
+        if(str == null || str.equals("")){
+            return true;
+        }
+        return false;
+
+    }
 }

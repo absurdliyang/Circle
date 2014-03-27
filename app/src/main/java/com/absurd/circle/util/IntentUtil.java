@@ -7,6 +7,7 @@ import java.util.Map;
 
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 /**
@@ -33,13 +34,13 @@ public class IntentUtil {
 
 
 
-    public static void startActivity(Activity activity,Class<?> cls,String key,Serializable value){
+    public static void startActivity(Context context,Class<?> cls,String key,Serializable value){
         Intent intent = new Intent();
-        intent.setClass(activity,cls);
+        intent.setClass(context,cls);
         Bundle bundle = new Bundle();
         bundle.putSerializable(key, value);
         intent.putExtras(bundle);
-        activity.startActivity(intent);
+        context.startActivity(intent);
 
     }
 

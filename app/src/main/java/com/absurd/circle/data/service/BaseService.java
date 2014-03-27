@@ -54,6 +54,7 @@ public class BaseService{
         mClient.setCurrentUser(user);
     }
 
+
     protected MobileServiceTable<User> getUserTable(){
         return mClient.getTable(TABLE_USERS,User.class);
     }
