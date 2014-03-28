@@ -19,7 +19,7 @@ public class Praise implements Serializable {
     private int mMessageId;
 
     @SerializedName("touserid")
-    private int mToUserId;
+    private String mToUserId;
 
     @SerializedName("state")
     private boolean mState;
@@ -94,11 +94,11 @@ public class Praise implements Serializable {
         mUserId = userId;
     }
 
-    public int getToUserId() {
+    public String getToUserId() {
         return mToUserId;
     }
 
-    public void setToUserId(int toUserId) {
+    public void setToUserId(String toUserId) {
         mToUserId = toUserId;
     }
 

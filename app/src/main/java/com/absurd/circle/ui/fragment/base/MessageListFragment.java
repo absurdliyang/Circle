@@ -1,4 +1,4 @@
-package com.absurd.circle.ui.fragment;
+package com.absurd.circle.ui.fragment.base;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -17,7 +17,6 @@ import com.absurd.circle.app.AppContext;
 import com.absurd.circle.app.R;
 import com.absurd.circle.data.model.Message;
 import com.absurd.circle.data.service.MessageService;
-import com.absurd.circle.ui.activity.HomeActivity;
 import com.absurd.circle.ui.activity.MessageDetailActivity;
 import com.absurd.circle.ui.activity.RefreshableActivity;
 import com.absurd.circle.ui.adapter.MessageAdapter;
@@ -39,11 +38,10 @@ public class MessageListFragment extends Fragment{
     private CommonLog mLog = LogFactory.createLog(AppConstant.TAG);
     private ListView mContentLv;
     private TextView mEmptyTv;
-    //private HomeActivity mHomeActivity;
 
     private PullToRefreshAttacher mAttacher;
     private LoadingFooter mLoadingFooter;
-    //private MessagePage mCurrentPage = new MessagePage();
+
     protected MessageService mMessageService;
 
     private int mCurrentPageIndex = 0;
@@ -152,8 +150,6 @@ public class MessageListFragment extends Fragment{
     }
 
     protected void loadData(int pageIndex,TableQueryCallback<Message> callback){
-        //mMessageService.getNearMessage(pageIndex, AppContext.lastPosition.getLatitude(), AppContext.lastPosition.getLongitude(),
-        //       mHomeActivity.distanceFilter * 1000 , mHomeActivity.categoryFilter, true, "1", callback);
     }
 
 }

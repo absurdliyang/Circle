@@ -7,12 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.absurd.circle.app.R;
-import com.absurd.circle.core.bean.Message;
-import com.absurd.circle.ui.adapter.BeanAdapter;
-import com.absurd.circle.ui.adapter.MessageAdapter;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by absurd on 14-3-19.

@@ -30,7 +30,7 @@ public class UserMessage implements Serializable {
     @SerializedName("touserid")
     private String mToUserId;
 
-    @SerializedName("tousername")
+    @SerializedName("ToUserName")
     private String mToUserName;
 
     @SerializedName("date")

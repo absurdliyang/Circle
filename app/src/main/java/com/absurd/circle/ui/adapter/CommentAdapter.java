@@ -2,18 +2,17 @@ package com.absurd.circle.ui.adapter;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.absurd.circle.app.AppContext;
 import com.absurd.circle.app.R;
 import com.absurd.circle.data.client.volley.BitmapFilter;
 import com.absurd.circle.data.client.volley.RequestManager;
 import com.absurd.circle.data.model.Comment;
+import com.absurd.circle.ui.adapter.base.BeanAdapter;
 import com.absurd.circle.util.ImageUtil;
 import com.absurd.circle.util.StringUtil;
 import com.android.volley.toolbox.ImageLoader;
@@ -25,8 +24,6 @@ import java.util.List;
  */
 public class CommentAdapter extends BeanAdapter<Comment> {
 
-    private Bitmap mAvatarDefaultBitmap = ((BitmapDrawable) AppContext.getContext().getResources().getDrawable(R.drawable.default_avatar)).getBitmap();
-    private Bitmap mMediaDefaultBitmap = ((BitmapDrawable) AppContext.getContext().getResources().getDrawable(R.drawable.default_media)).getBitmap();
 
     public CommentAdapter(Context context, List<Comment> items) {
         super(context, items);

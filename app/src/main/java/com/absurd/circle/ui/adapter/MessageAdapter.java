@@ -2,10 +2,7 @@ package com.absurd.circle.ui.adapter;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.ColorDrawable;
-import android.media.Image;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +16,7 @@ import com.absurd.circle.data.client.volley.RequestManager;
 import com.absurd.circle.data.model.Message;
 import com.absurd.circle.ui.activity.ImageDetailActivity;
 import com.absurd.circle.ui.activity.UserMessageActivity;
+import com.absurd.circle.ui.adapter.base.BeanAdapter;
 import com.absurd.circle.util.DistanceUtil;
 import com.absurd.circle.util.ImageUtil;
 import com.absurd.circle.util.IntentUtil;
@@ -26,15 +24,12 @@ import com.absurd.circle.util.TimeUtil;
 import com.absurd.circle.util.StringUtil;
 import com.android.volley.toolbox.ImageLoader;
 
-import java.io.Serializable;
 import java.util.List;
 
 /**
  * Created by absurd on 14-3-26.
  */
 public class MessageAdapter extends BeanAdapter<Message> {
-
-    private Bitmap mAvatarDefaultBitmap = ((BitmapDrawable) AppContext.getContext().getResources().getDrawable(R.drawable.default_avatar)).getBitmap();
 
     private Bitmap mMediaDefaultBitmap = ((BitmapDrawable) AppContext.getContext().getResources().getDrawable(R.drawable.default_media)).getBitmap();
     public MessageAdapter(Context context, List<Message> items) {

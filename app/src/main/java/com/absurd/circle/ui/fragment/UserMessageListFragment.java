@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import com.absurd.circle.app.AppContext;
 import com.absurd.circle.data.model.Message;
 import com.absurd.circle.ui.activity.UserMessageActivity;
+import com.absurd.circle.ui.fragment.base.MessageListFragment;
 import com.microsoft.windowsazure.mobileservices.TableQueryCallback;
 
 /**

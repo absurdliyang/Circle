@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.absurd.circle.app.R;
+import com.absurd.circle.data.client.volley.RequestManager;
 
 import me.imid.swipebacklayout.lib.app.SwipeBackActivity;
 
@@ -39,7 +40,7 @@ public abstract class BaseActivity extends SwipeBackActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         configureActionBar();
-        mTitle = setActionBarTitle();
+        mTitle = actionBarTitle();
         mActionBarTitleTv.setText(mTitle);
         mActionBarRightBtn.setText(setRightBtnTxt());
         mActionBarRightBtn.setOnClickListener(new View.OnClickListener() {
@@ -64,11 +65,23 @@ public abstract class BaseActivity extends SwipeBackActivity {
         actionBar.setCustomView(actionBarView,params);
     }
 
-    protected abstract String setActionBarTitle();
+    @Override
+    protected void onStop() {
+        super.onStop();
+        // When the activity's life is over, don't forget to cancel the requests
+        RequestManager.cancelAll(this);
+    }
+
+    protected abstract String actionBarTitle();
+
+    public void setActionBarTitle(String title){
+        mActionBarTitleTv.setText(title);
+    }
 
     protected String setRightBtnTxt(){
         return "";
     }
+
 
     public void onRightBtnClicked(View view){
 

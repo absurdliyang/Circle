@@ -67,6 +67,14 @@
             android:name="com.absurd.circle.ui.activity.UserMessageActivity"
             android:label="@string/title_activity_user_message" >
         </activity>
+        <activity
+            android:name="com.absurd.circle.ui.activity.UnReadCommentActivity"
+            android:label="UnReadCommentActivity" >
+        </activity>
+        <activity
+            android:name="com.absurd.circle.ui.activity.UnReadPraiseActivity"
+            android:label="UnReadPraiseActivity" >
+        </activity>
     </application>
 
 </manifest>

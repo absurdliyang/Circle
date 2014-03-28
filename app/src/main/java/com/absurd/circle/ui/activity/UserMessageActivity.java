@@ -34,7 +34,7 @@ public class UserMessageActivity extends BaseActivity implements RefreshableActi
 
 
     @Override
-    protected String setActionBarTitle() {
+    protected String actionBarTitle() {
         if(AppContext.auth != null && AppContext.auth.getUserId().equals(userId)){
             return "我的动态";
         }else{

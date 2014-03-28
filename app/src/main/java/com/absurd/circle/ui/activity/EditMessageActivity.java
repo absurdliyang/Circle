@@ -71,7 +71,7 @@ public class EditMessageActivity extends BaseActivity implements AMapLocationLis
     }
 
     @Override
-    protected String setActionBarTitle() {
+    protected String actionBarTitle() {
         return "我说";
     }
 

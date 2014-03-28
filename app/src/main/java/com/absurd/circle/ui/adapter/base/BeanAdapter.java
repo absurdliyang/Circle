@@ -1,9 +1,14 @@
-package com.absurd.circle.ui.adapter;
+package com.absurd.circle.ui.adapter.base;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+
+import com.absurd.circle.app.AppContext;
+import com.absurd.circle.app.R;
 
 import java.util.Collections;
 import java.util.List;
@@ -12,6 +17,9 @@ import java.util.List;
  * Created by absurd on 14-3-11.
  */
 public class BeanAdapter<E> extends BaseAdapter {
+    protected Bitmap mAvatarDefaultBitmap = ((BitmapDrawable) AppContext.getContext().getResources().getDrawable(R.drawable.default_avatar)).getBitmap();
+    protected Bitmap mMediaDefaultBitmap = ((BitmapDrawable) AppContext.getContext().getResources().getDrawable(R.drawable.default_media)).getBitmap();
+
 
     protected Context mContext;
     private List<E> mItems = Collections.emptyList();

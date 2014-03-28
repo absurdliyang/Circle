@@ -26,7 +26,7 @@ public class MessageDetailActivity extends BaseActivity {
     }
 
     @Override
-    protected String setActionBarTitle() {
+    protected String actionBarTitle() {
         return "详情";
     }
 

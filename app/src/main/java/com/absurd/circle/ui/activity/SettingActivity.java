@@ -15,7 +15,7 @@ public class SettingActivity extends BaseActivity {
     }
 
     @Override
-    protected String setActionBarTitle() {
+    protected String actionBarTitle() {
         return "设置";
     }
 
