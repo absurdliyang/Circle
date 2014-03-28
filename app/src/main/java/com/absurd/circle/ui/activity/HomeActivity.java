@@ -86,12 +86,12 @@ public class HomeActivity extends SlidingFragmentActivity implements Refreshable
             mContent = (HomeFragment)getSupportFragmentManager().getFragment(savedInstanceState, "mContent");
         if (mContent == null)
             mContent = new HomeFragment();
+
         // Init Data component
         mUserService = new UserService();
         init();
         initDefaultFilter();
         getAuth();
-
 
         // Configur some UI control
         configureSlidingMenu();
@@ -118,7 +118,6 @@ public class HomeActivity extends SlidingFragmentActivity implements Refreshable
 
         // customize the SlidingMenu
         getSlidingMenu().setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
-
 
 
     }
@@ -153,47 +152,58 @@ public class HomeActivity extends SlidingFragmentActivity implements Refreshable
     }
 
     private void getAuth(){
-        AppContext.token = AppContext.sharedPreferenceUtil.getAuthToken();
-        AppContext.userId = AppContext.sharedPreferenceUtil.getUserId();
-        if(!StringUtil.isEmpty(AppContext.token) && !StringUtil.isEmpty(AppContext.userId)){
-            AzureClient.setToken(AppContext.token);
-            mUserService.getUser(AppContext.userId,new TableQueryCallback<User>() {
-                @Override
-                public void onCompleted(List<User> result, int count, Exception exception, ServiceFilterResponse response) {
-                    if(result == null){
-                        if (exception != null) {
-                            exception.printStackTrace();
-                            Toast.makeText(HomeActivity.this, "get auth info failed!", Toast.LENGTH_SHORT).show();
-                        }
-                    }else {
-                        AppContext.auth = result.get(0);
-                        mSlidingMenuFragment.invalidateView();
-                    }
-                }
-            });
+        User u = AppContext.cacheService.getUser();
+        if(u != null) {
+            AppContext.auth = u;
+            AppContext.token = u.getToken();
+            AppContext.userId = u.getUserId();
+            //mSlidingMenuFragment.invalidateView();
+            return;
         }else {
-            User user = new User();
-            user.setLoginType(1);
-            user.setUserId(AppConstant.TEST_USER_ID);
-            mUserService.insertUser(user, new TableOperationCallback<User>() {
-                @Override
-                public void onCompleted(User entity, Exception exception, ServiceFilterResponse response) {
-                    if(entity == null){
-                        if (exception != null) {
-                            exception.printStackTrace();
-                            Toast.makeText(HomeActivity.this, "get auth info failed!", Toast.LENGTH_SHORT).show();
+            AppContext.token = AppContext.sharedPreferenceUtil.getAuthToken();
+            AppContext.userId = AppContext.sharedPreferenceUtil.getUserId();
+            if (!StringUtil.isEmpty(AppContext.token) && !StringUtil.isEmpty(AppContext.userId)) {
+                AzureClient.setToken(AppContext.token);
+                mUserService.getUser(AppContext.userId, new TableQueryCallback<User>() {
+                    @Override
+                    public void onCompleted(List<User> result, int count, Exception exception, ServiceFilterResponse response) {
+                        if (result == null) {
+                            if (exception != null) {
+                                exception.printStackTrace();
+                                Toast.makeText(HomeActivity.this, "get auth info failed!", Toast.LENGTH_SHORT).show();
+                            }
+                        } else {
+                            AppContext.auth = result.get(0);
+                            AppContext.cacheService.deleteUser();
+                            AppContext.cacheService.inserUser(AppContext.auth);
+                            mSlidingMenuFragment.invalidateView();
                         }
-                    }else {
-                        AppContext.auth = entity;
-                        AppContext.userId = entity.getUserId();
-                        AppContext.token = entity.getToken();
-                        AppContext.sharedPreferenceUtil.setAuthTokem(entity.getToken());
-                        AppContext.sharedPreferenceUtil.setUserId(entity.getUserId());
-                        mSlidingMenuFragment.invalidateView();
-                        mContent.refreshTranscation();
                     }
-                }
-            });
+                });
+            } else {
+                User user = new User();
+                user.setLoginType(1);
+                user.setUserId(AppConstant.TEST_USER_ID);
+                mUserService.insertUser(user, new TableOperationCallback<User>() {
+                    @Override
+                    public void onCompleted(User entity, Exception exception, ServiceFilterResponse response) {
+                        if (entity == null) {
+                            if (exception != null) {
+                                exception.printStackTrace();
+                                Toast.makeText(HomeActivity.this, "get auth info failed!", Toast.LENGTH_SHORT).show();
+                            }
+                        } else {
+                            AppContext.auth = entity;
+                            AppContext.userId = entity.getUserId();
+                            AppContext.token = entity.getToken();
+                            AppContext.sharedPreferenceUtil.setAuthTokem(entity.getToken());
+                            AppContext.sharedPreferenceUtil.setUserId(entity.getUserId());
+                            mContent.refreshTranscation();
+                            getAuth();
+                        }
+                    }
+                });
+            }
         }
     }
 

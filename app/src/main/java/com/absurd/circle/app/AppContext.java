@@ -3,6 +3,7 @@ package com.absurd.circle.app;
 import android.app.Application;
 import android.content.Context;
 
+import com.absurd.circle.data.cache.CacheService;
 import com.absurd.circle.data.model.Position;
 import com.absurd.circle.data.model.User;
 import com.absurd.circle.util.CommonLog;
@@ -19,6 +20,7 @@ public class AppContext extends Application{
     public static CommonLog commonLog = LogFactory.createLog(AppConstant.TAG);
 
     public static SharedPreferenceUtil sharedPreferenceUtil;
+    public static CacheService cacheService;
 
     public static User auth = new User();
     public static String token;
@@ -31,6 +33,7 @@ public class AppContext extends Application{
         super.onCreate();
         mContext = getApplicationContext();
         sharedPreferenceUtil = SharedPreferenceUtil.getInstance();
+        cacheService = CacheService.getInstance(this);
     }
 
     public static Context getContext(){

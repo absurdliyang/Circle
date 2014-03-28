@@ -1,4 +1,4 @@
-package com.absurd.circle.data.db;
+package com.absurd.circle.data.cache;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
@@ -9,7 +9,7 @@ import android.database.sqlite.SQLiteOpenHelper;
  */
 public class DBHelper extends SQLiteOpenHelper {
 
-    private static final String DB_NAME = "circle.db";
+    private static final String DB_NAME = "circle_db";
     private static final int DB_VERSION = 1;
 
 
@@ -19,9 +19,8 @@ public class DBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
-        String sql = "CREATE TABLE IF NOT EXISTS user" +
-                "(id INTEGER PRIMARY KEY AUTOINCREMENT, userid TEXT , json TEXT)";
-        sqLiteDatabase.execSQL(sql);
+        MessageDBInfo.TABLE.create(sqLiteDatabase);
+        UserDBInfo.TABLE.create(sqLiteDatabase);
     }
 
     @Override

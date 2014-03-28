@@ -15,6 +15,7 @@ import android.widget.Toast;
 import com.absurd.circle.app.AppConstant;
 import com.absurd.circle.app.AppContext;
 import com.absurd.circle.app.R;
+import com.absurd.circle.data.client.volley.RequestManager;
 import com.absurd.circle.data.model.Message;
 import com.absurd.circle.data.service.MessageService;
 import com.absurd.circle.ui.activity.MessageDetailActivity;
@@ -36,7 +37,7 @@ import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshAttacher;
  */
 public class MessageListFragment extends Fragment{
     private CommonLog mLog = LogFactory.createLog(AppConstant.TAG);
-    private ListView mContentLv;
+    protected ListView mContentLv;
     private TextView mEmptyTv;
 
     private PullToRefreshAttacher mAttacher;
@@ -108,9 +109,10 @@ public class MessageListFragment extends Fragment{
             if (result == null) {
                 if (exception != null) {
                     exception.printStackTrace();
-                    Toast.makeText(MessageListFragment.this.getActivity(), "getNearMessage error!", Toast.LENGTH_SHORT).show();
+                    AppContext.commonLog.i("Get NearMessage error!");
                 }
             } else {
+                handleResult(result);
                 HeaderViewListAdapter headerAdapter = (HeaderViewListAdapter)mContentLv.getAdapter();
                 ((MessageAdapter) headerAdapter.getWrappedAdapter()).setItems(result);
             }
@@ -126,7 +128,7 @@ public class MessageListFragment extends Fragment{
             if (result == null) {
                 if (exception != null) {
                     exception.printStackTrace();
-                    Toast.makeText(MessageListFragment.this.getActivity(), "Get message error!", Toast.LENGTH_SHORT).show();
+                    AppContext.commonLog.i("Get message error!");
                 }
             } else {
                 HeaderViewListAdapter headerAdapter = (HeaderViewListAdapter)mContentLv.getAdapter();
@@ -151,5 +153,16 @@ public class MessageListFragment extends Fragment{
 
     protected void loadData(int pageIndex,TableQueryCallback<Message> callback){
     }
+
+    protected void handleResult(List<Message> result){
+
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        RequestManager.cancelAll(this);
+    }
+
 
 }

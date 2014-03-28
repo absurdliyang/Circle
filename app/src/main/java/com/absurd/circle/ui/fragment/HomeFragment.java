@@ -4,12 +4,16 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.HeaderViewListAdapter;
 
 import com.absurd.circle.app.AppContext;
 import com.absurd.circle.data.model.Message;
 import com.absurd.circle.ui.activity.HomeActivity;
+import com.absurd.circle.ui.adapter.MessageAdapter;
 import com.absurd.circle.ui.fragment.base.MessageListFragment;
 import com.microsoft.windowsazure.mobileservices.TableQueryCallback;
+
+import java.util.List;
 
 /**
  * Created by absurd on 14-3-28.
@@ -25,9 +29,28 @@ public class HomeFragment extends MessageListFragment {
     }
 
     @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        List<Message> messages = AppContext.cacheService.getAllMessages();
+        if(messages != null && !messages.isEmpty()){
+            HeaderViewListAdapter headerAdapter = (HeaderViewListAdapter)mContentLv.getAdapter();
+            ((MessageAdapter) headerAdapter.getWrappedAdapter()).setItems(messages);
+        }
+    }
+
+    @Override
     protected void loadData(int pageIndex,TableQueryCallback<Message> callback){
         mMessageService.getNearMessage(pageIndex, AppContext.lastPosition.getLatitude(), AppContext.lastPosition.getLongitude(),
                 mHomeActivity.distanceFilter * 1000 , mHomeActivity.categoryFilter, true, "1", callback);
     }
 
+
+    @Override
+    protected void handleResult(List<Message> result) {
+        super.handleResult(result);
+        AppContext.cacheService.deleteAllMessage();
+        for(Message message : result){
+            AppContext.cacheService.inserMessage(message);
+        }
+    }
 }
