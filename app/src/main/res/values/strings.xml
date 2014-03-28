@@ -131,5 +131,6 @@
     <string name="weibosdk_demo_get_comment">获取微博评论信息流</string>
     <string name="weibosdk_demo_get_group">获取微博好友分组</string>
     <string name="title_activity_dsfsdf">dsfsdf</string>
+    <string name="title_activity_user_message">UserMessageActivity</string>
 
 </resources>

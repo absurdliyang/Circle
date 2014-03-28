@@ -18,6 +18,7 @@ import com.absurd.circle.data.client.volley.BitmapFilter;
 import com.absurd.circle.data.client.volley.RequestManager;
 import com.absurd.circle.data.model.Message;
 import com.absurd.circle.ui.activity.ImageDetailActivity;
+import com.absurd.circle.ui.activity.UserMessageActivity;
 import com.absurd.circle.util.DistanceUtil;
 import com.absurd.circle.util.ImageUtil;
 import com.absurd.circle.util.IntentUtil;
@@ -93,6 +94,12 @@ public class MessageAdapter extends BeanAdapter<Message> {
                                 return ImageUtil.roundBitmap(bitmap);
                             }
                         }));
+                holder.avatarIv.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        IntentUtil.startActivity(mContext, UserMessageActivity.class,"userId",message.getUserId());
+                    }
+                });
             }
             holder.usernameTv.setText(message.getUser().getName());
         }

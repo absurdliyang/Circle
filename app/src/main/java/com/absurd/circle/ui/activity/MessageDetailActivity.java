@@ -19,7 +19,7 @@ public class MessageDetailActivity extends BaseActivity {
         message = (Message)getIntent().getSerializableExtra("messageId");
 
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.flyt_comment_container,new MessageDetailFragment(this))
+                .replace(R.id.flyt_comment_container,new MessageDetailFragment())
                 .commit();
 
 

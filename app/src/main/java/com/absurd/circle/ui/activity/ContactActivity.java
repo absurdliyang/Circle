@@ -11,13 +11,14 @@ public class ContactActivity extends BaseActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_contact);
+        setContentView(R.layout.activity_home);
     }
 
     @Override
     protected String setActionBarTitle() {
         return "关注";
     }
+
 
 
 }

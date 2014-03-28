@@ -15,12 +15,14 @@
         android:layout_height="wrap_content">
     </GridView>
     <View
+        android:id="@+id/v_cat_divider1"
         android:layout_marginTop="12dp"
         android:background="#ffffffff"
         android:layout_width="match_parent"
         android:layout_height="1.5dp"/>
 
     <LinearLayout
+        android:id="@+id/llyt_cat_distance"
         android:layout_marginTop="18dp"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
@@ -91,11 +93,13 @@
         </LinearLayout>
     </LinearLayout>
     <View
+        android:id="@+id/v_cat_divider2"
         android:layout_marginTop="18dp"
         android:background="#ffffffff"
         android:layout_width="match_parent"
         android:layout_height="1.5dp"/>
     <LinearLayout
+        android:id="@+id/llyt_cat_order"
         android:layout_marginTop="18dp"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"

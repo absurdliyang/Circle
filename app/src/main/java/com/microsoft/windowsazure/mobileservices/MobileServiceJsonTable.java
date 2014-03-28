@@ -222,6 +222,7 @@ MobileServiceTableBase<TableJsonQueryCallback> {
 		if (parameters != null && parameters.size() > 0) {
 			for (Pair<String, String> parameter : parameters) {
 				uriBuilder.appendQueryParameter(parameter.first, parameter.second);
+                AppContext.commonLog.i("Insert uri parameter ----> " + parameter.first + " : " + parameter.second);
 			}
 		}
 		post = new ServiceFilterRequestImpl(new HttpPost(uriBuilder.build().toString()), mClient.getAndroidHttpClientFactory());
@@ -443,7 +444,9 @@ MobileServiceTableBase<TableJsonQueryCallback> {
 								results = json;
 							}
 						} catch (Exception e) {
-                            AppContext.azureLog.i("Error reponse ----> " + response.getContent().toString());
+                            if(response != null) {
+                                AppContext.azureLog.i("Error reponse ----> " + response.getContent().toString());
+                            }
 							callback.onCompleted(
 									null,
 									0,
@@ -456,7 +459,7 @@ MobileServiceTableBase<TableJsonQueryCallback> {
 						callback.onCompleted(results, count, null, response);
 
 					} else {
-                        AppContext.azureLog.i("Error Task ----> " + response.getContent().toString());
+                        AppContext.azureLog.i("Error Task ----> No response");
 						callback.onCompleted(null, 0, mTaskException, response);
 					}
 				}

@@ -13,7 +13,6 @@
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_CONFIGURATION" />
 
-
     <application
         android:name="com.absurd.circle.app.AppContext"
         android:allowBackup="true"
@@ -22,7 +21,8 @@
         android:theme="@style/AppTheme" >
         <meta-data
             android:name="com.amap.api.v2.apikey"
-            android:value="80837d6d2302e9567a379416f49bee46"/>
+            android:value="80837d6d2302e9567a379416f49bee46" />
+
         <activity
             android:name="com.absurd.circle.ui.activity.HomeActivity"
             android:label="@string/title_activity_home" >
@@ -61,7 +61,11 @@
         </activity>
         <activity
             android:name="com.absurd.circle.ui.activity.ImageDetailActivity"
-            android:label="ImageDetailActivity">
+            android:label="ImageDetailActivity" >
+        </activity>
+        <activity
+            android:name="com.absurd.circle.ui.activity.UserMessageActivity"
+            android:label="@string/title_activity_user_message" >
         </activity>
     </application>
 

@@ -13,9 +13,6 @@ import com.microsoft.windowsazure.mobileservices.TableQueryCallback;
  * Created by absurd on 14-3-26.
  */
 public class CommentService extends BaseService {
-    public CommentService(Context context) {
-        super(context);
-    }
 
     /**
      *

@@ -1,6 +1,7 @@
 package com.absurd.circle.ui.activity;
 
 
+import android.graphics.Rect;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -19,8 +20,10 @@ import com.absurd.circle.app.R;
 import com.absurd.circle.data.client.AzureClient;
 import com.absurd.circle.data.model.Position;
 import com.absurd.circle.data.model.User;
+import com.absurd.circle.data.service.BlobStorgeService;
 import com.absurd.circle.data.service.UserService;
 import com.absurd.circle.ui.fragment.CategoryFragment;
+import com.absurd.circle.ui.fragment.HomeFragment;
 import com.absurd.circle.ui.fragment.MessageListFragment;
 import com.absurd.circle.ui.fragment.SlidingMenuFragment;
 import com.absurd.circle.util.CommonLog;
@@ -51,7 +54,7 @@ public class HomeActivity extends SlidingFragmentActivity implements Refreshable
                                 ,AMapLocationListener, LocationSource {
     private CommonLog mLog = LogFactory.createLog();
     private PullToRefreshAttacher mAttacher;
-    private Fragment mContent;
+    private HomeFragment mContent;
     /**
      * false MessageListFragment
      * true CategoryFragment
@@ -84,11 +87,11 @@ public class HomeActivity extends SlidingFragmentActivity implements Refreshable
         mAttacher = PullToRefreshAttacher.get(this);
         // set the Above View
         if (savedInstanceState != null)
-            mContent = getSupportFragmentManager().getFragment(savedInstanceState, "mContent");
+            mContent = (HomeFragment)getSupportFragmentManager().getFragment(savedInstanceState, "mContent");
         if (mContent == null)
-            mContent = new MessageListFragment();
+            mContent = new HomeFragment();
         // Init Data component
-        mUserService = new UserService(this);
+        mUserService = new UserService();
         init();
         initDefaultFilter();
         getAuth();
@@ -119,6 +122,9 @@ public class HomeActivity extends SlidingFragmentActivity implements Refreshable
 
         // customize the SlidingMenu
         getSlidingMenu().setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
+
+
+
     }
 
     private void initDefaultFilter(){
@@ -188,6 +194,7 @@ public class HomeActivity extends SlidingFragmentActivity implements Refreshable
                         AppContext.sharedPreferenceUtil.setAuthTokem(entity.getToken());
                         AppContext.sharedPreferenceUtil.setUserId(entity.getUserId());
                         mSlidingMenuFragment.invalidateView();
+                        mContent.refreshTranscation();
                     }
                 }
             });
@@ -201,7 +208,9 @@ public class HomeActivity extends SlidingFragmentActivity implements Refreshable
         sm.setShadowWidth(15);
         sm.setBehindOffset(40);
         sm.setFadeDegree(0.35f);
-        sm.setBehindWidth(700);
+        Rect rect = new Rect();
+        getWindowManager().getDefaultDisplay().getRectSize(rect);
+        sm.setBehindWidth((int)(rect.width() * 0.7));
         sm.setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
     }
 
@@ -216,16 +225,31 @@ public class HomeActivity extends SlidingFragmentActivity implements Refreshable
         View titleV = actionBarView.findViewById(R.id.llyt_actionbar_title);
         titleV.setOnClickListener(new View.OnClickListener() {
             @Override
-                public void onClick(View view) {
-                    FragmentManager fm = getSupportFragmentManager();
+            public void onClick(View view) {
+                FragmentManager fm = getSupportFragmentManager();
+                CategoryFragment fragment = CategoryFragment.getInstance();
                 if(fm.getBackStackEntryCount() == 0){
                     FragmentTransaction ft = fm.beginTransaction();
                     ft.setCustomAnimations(R.anim.fragment_slide_bottom_in, R.anim.fragment_slide_bottom_out);
-                    ft.add(R.id.container,CategoryFragment.getInstance())
+                    fragment.setStatus(0);
+                    ft.add(R.id.container,fragment)
                             .addToBackStack("categoryFragment")
                             .commit();
                 }else{
+                    FragmentTransaction ft = fm.beginTransaction();
+                    ft.setCustomAnimations(R.anim.fragment_slide_bottom_in, R.anim.fragment_slide_bottom_out);
+                    ft.remove(fragment).commit();
                     fm.popBackStack();
+                    if(fragment.getStatus() == 0){
+                        mContent.refreshTranscation();
+                    }else{
+                        FragmentTransaction ft1 = fm.beginTransaction();
+                        ft1.setCustomAnimations(R.anim.fragment_slide_bottom_in, R.anim.fragment_slide_bottom_out);
+                        fragment.setStatus(0);
+                        ft1.add(R.id.container,fragment)
+                                .addToBackStack("categoryFragment")
+                                .commit();
+                    }
                 }
             }
         });
@@ -233,7 +257,31 @@ public class HomeActivity extends SlidingFragmentActivity implements Refreshable
         editTv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                IntentUtil.startActivity(HomeActivity.this,EditMessageActivity.class);
+                FragmentManager fm = getSupportFragmentManager();
+                CategoryFragment fragment = CategoryFragment.getInstance();
+                if(fm.getBackStackEntryCount() == 0){
+                    FragmentTransaction ft = fm.beginTransaction();
+                    ft.setCustomAnimations(R.anim.fragment_slide_bottom_in, R.anim.fragment_slide_bottom_out);
+                    fragment.setStatus(1);
+                    ft.add(R.id.container,fragment)
+                            .addToBackStack("categoryFragment")
+                            .commit();
+                }else{
+                    FragmentTransaction ft = fm.beginTransaction();
+                    ft.setCustomAnimations(R.anim.fragment_slide_bottom_in, R.anim.fragment_slide_bottom_out);
+                    ft.remove(fragment).commit();
+                    fm.popBackStack();
+                    if(fragment.getStatus() == 1){
+                        mContent.refreshTranscation();
+                    }else{
+                        FragmentTransaction ft1 = fm.beginTransaction();
+                        ft1.setCustomAnimations(R.anim.fragment_slide_bottom_in, R.anim.fragment_slide_bottom_out);
+                        fragment.setStatus(1);
+                        ft1.add(R.id.container,fragment)
+                                .addToBackStack("categoryFragment")
+                                .commit();
+                    }
+                }
             }
         });
         ImageView homeTv = (ImageView)actionBarView.findViewById(R.id.iv_actionbar_home);
@@ -245,6 +293,7 @@ public class HomeActivity extends SlidingFragmentActivity implements Refreshable
         });
         actionBar.setCustomView(actionBarView,params);
     }
+
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -312,6 +361,9 @@ public class HomeActivity extends SlidingFragmentActivity implements Refreshable
     @Override
     public void onLocationChanged(AMapLocation aMapLocation) {
         AppContext.commonLog.i("Location changed");
+        if(aMapLocation == null){
+            Toast.makeText(this,"Get location failed!",Toast.LENGTH_SHORT).show();
+        }
         if(mOnLocationChangedListener != null) {
             mOnLocationChangedListener.onLocationChanged(aMapLocation);
             AppContext.lastPosition = new Position();

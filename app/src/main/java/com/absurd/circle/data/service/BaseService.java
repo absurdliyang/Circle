@@ -36,19 +36,15 @@ public class BaseService{
     public static final String TABLE_SCORE = "Score";
     public static final String TABLE_USER_LOCATION = "UserLocation";
 
+
     protected CommonLog mLog = LogFactory.createLog(AppConstant.TAG);
-    private MobileServiceClient mClient = AzureClient.getInstance(AppContext.getContext());
+    protected MobileServiceClient mClient = AzureClient.getInstance(AppContext.getContext());
 
 
     public BaseService(){
     }
 
-    public BaseService(Context context){
-        mClient = AzureClient.getInstance(context);
-    }
-
-    public BaseService(Context context, String token) {
-        mClient = AzureClient.getInstance(context);
+    public BaseService(String token) {
         MobileServiceUser user = new MobileServiceUser("");
         user.setAuthenticationToken(token);
         mClient.setCurrentUser(user);
@@ -79,7 +75,7 @@ public class BaseService{
         return mClient.getTable(TABLE_FOLLOW, Follow.class);
     }
 
-    protected MobileServiceTable<BlackList> getBlackList(){
+    protected MobileServiceTable<BlackList> getBlackListTable(){
         return mClient.getTable(TABLE_BLACK_LIST,BlackList.class);
     }
 

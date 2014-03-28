@@ -5,15 +5,26 @@
                 android:layout_height="match_parent"
                 android:background="@color/theme_color">
 
-        <TextView
-            android:id="@+id/tv_custom_actionbar_title"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:clickable="true"
-            android:textColor="#ffffffff"
-            android:textSize="20sp" />
+    <TextView
+        android:id="@+id/tv_custom_actionbar_title"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:textColor="#ffffffff"
+        android:textSize="20sp" />
+    <TextView
+        android:id="@+id/tv_custom_actionbar_right_btn"
+        android:layout_centerVertical="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:textColor="#ffffffff"
+        android:textSize="20sp"/>
+
 
 
 

@@ -10,9 +10,12 @@ import android.widget.GridView;
 
 import com.absurd.circle.app.AppContext;
 import com.absurd.circle.app.R;
+import com.absurd.circle.ui.activity.EditMessageActivity;
 import com.absurd.circle.ui.activity.HomeActivity;
 import com.absurd.circle.ui.adapter.CategoryAdapter;
+import com.absurd.circle.util.IntentUtil;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,6 +31,10 @@ public class CategoryFragment extends Fragment {
     private GridView mCategoryGv;
 
     private static CategoryFragment mCategoryFragment;
+    // 0 for category selected
+    // 1 for edit new message
+    private int mStatus = 0;
+
 
     public static CategoryFragment getInstance(){
         if(mCategoryFragment == null)
@@ -49,21 +56,43 @@ public class CategoryFragment extends Fragment {
         itemsMap.put(8,"交友");
         final CategoryAdapter adapter = new CategoryAdapter(CategoryFragment.this.getActivity(),itemsMap,mHomeActivity.categoryFilter);
         mCategoryGv.setAdapter(adapter);
-        mCategoryGv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                if(mHomeActivity.categoryFilter.contains(adapter.getItem(i))){
-                    mHomeActivity.categoryFilter.remove(adapter.getItem(i));
-                    adapter.setSelectedItems(mHomeActivity.categoryFilter);
-                    adapter.notifyDataSetChanged();
-                }else{
-                    mHomeActivity.categoryFilter.add((Integer)adapter.getItem(i));
-                    adapter.setSelectedItems(mHomeActivity.categoryFilter);
-                    adapter.notifyDataSetChanged();
-                }
-            }
-        });
+
         rootView.findViewById(R.id.iv_distance_flag1).setVisibility(View.VISIBLE);
+        if(mStatus == 1){
+            rootView.findViewById(R.id.llyt_cat_distance).setVisibility(View.GONE);
+            rootView.findViewById(R.id.llyt_cat_order).setVisibility(View.GONE);
+            rootView.findViewById(R.id.v_cat_divider1).setVisibility(View.GONE);
+            rootView.findViewById(R.id.v_cat_divider2).setVisibility(View.GONE);
+            mCategoryGv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                    IntentUtil.startActivity(mHomeActivity, EditMessageActivity.class,"contentType",(Serializable)adapter.getItem(i));
+                }
+            });
+        }else{
+            mCategoryGv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                    if(mHomeActivity.categoryFilter.contains(adapter.getItem(i))){
+                        mHomeActivity.categoryFilter.remove(adapter.getItem(i));
+                        adapter.setSelectedItems(mHomeActivity.categoryFilter);
+                        adapter.notifyDataSetChanged();
+                    }else{
+                        mHomeActivity.categoryFilter.add((Integer)adapter.getItem(i));
+                        adapter.setSelectedItems(mHomeActivity.categoryFilter);
+                        adapter.notifyDataSetChanged();
+                    }
+                }
+            });
+        }
         return rootView;
+    }
+
+    public int getStatus(){
+        return mStatus;
+    }
+
+    public void setStatus(int status){
+        this.mStatus = status;
     }
 }

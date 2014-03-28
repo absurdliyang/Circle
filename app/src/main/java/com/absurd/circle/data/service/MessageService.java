@@ -14,16 +14,10 @@ import java.util.List;
  * Created by absurd on 14-3-14.
  */
 public class MessageService extends BaseService{
-    public MessageService(Context context){
-        super(context);
-    }
     public MessageService(){
         super();
     }
 
-    public MessageService(Context context, String token) {
-        super(context, token);
-    }
 
     public void getNearMessage(int pageIndex, double latitude, double longitude, double around,
                                List<Integer> messageTypes, boolean isNew, String cityCode,

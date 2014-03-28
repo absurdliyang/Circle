@@ -21,7 +21,7 @@ public class UserServiceTest  extends BaseTestCase{
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        mUserService = new UserService(getContext(), AppConstant.TEST_USER_TOKEN);
+        mUserService = new UserService();
         mLog.d("UserServiceTest");
     }
     /**

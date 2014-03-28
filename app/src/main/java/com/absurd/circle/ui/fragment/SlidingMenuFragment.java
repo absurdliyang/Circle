@@ -19,6 +19,7 @@ import com.absurd.circle.ui.activity.HomeActivity;
 import com.absurd.circle.ui.activity.ImageDetailActivity;
 import com.absurd.circle.ui.activity.NotificationActivity;
 import com.absurd.circle.ui.activity.SettingActivity;
+import com.absurd.circle.ui.activity.UserMessageActivity;
 import com.absurd.circle.util.ImageUtil;
 import com.absurd.circle.util.IntentUtil;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
@@ -68,6 +69,7 @@ public class SlidingMenuFragment extends Fragment {
         mAvatarIv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                IntentUtil.startActivity(mHomeActivity, UserMessageActivity.class,"userId",AppContext.auth.getUserId());
             }
         });
         mUsernameTv.setText(AppContext.auth.getName());

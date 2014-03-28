@@ -8,6 +8,12 @@ public interface AppConstant {
     public static final String AZURE_MOBILE_TAG = "AzureMobileService";
 
     /**
+     * Azure Setting
+     */
+    public static final String AZURE_APP_URL = "https://incircle.azure-mobile.net/";
+    public static final String AZURE_APP_KEY = "MAkLcGohZvbPjwEVDXZixPyYGlerDW93";
+
+    /**
      * Badidu authentication infos
      * Campus
      */
@@ -36,6 +42,8 @@ public interface AppConstant {
      */
     public static final String AMAP_KEY = "80837d6d2302e9567a379416f49bee46";
 
+    public static final String TAKE_PHOTO_PATH = "/circle/Camera/";
+
     /**
      * setting
      * Campus
@@ -44,8 +52,6 @@ public interface AppConstant {
     public static final String TOKEN = "token";
     public static final String USERNAME = "username";
 
-    public static final String AZURE_APP_URL = "https://incircle.azure-mobile.net/";
-    public static final String AZURE_APP_KEY = "MAkLcGohZvbPjwEVDXZixPyYGlerDW93";
 
 
 }

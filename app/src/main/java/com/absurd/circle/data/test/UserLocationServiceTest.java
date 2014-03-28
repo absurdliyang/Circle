@@ -18,7 +18,7 @@ public class UserLocationServiceTest extends BaseTestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        mService = new UserLocationService(getContext(), AppConstant.TEST_USER_TOKEN);
+        mService = new UserLocationService();
     }
 
     public void testGetUserLocation() throws Exception {

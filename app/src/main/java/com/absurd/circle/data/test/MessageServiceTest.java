@@ -21,12 +21,12 @@ public class MessageServiceTest extends BaseTestCase {
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        mMessageService = new MessageService(getContext(), AppConstant.TEST_USER_TOKEN);
+        mMessageService = new MessageService();
     }
 
     public void testGetMessageByUser() throws Exception{
         final Object lock = new Object();
-        mMessageService.getMessageByUser(1,"qq:7F234A6D96FB2B9A45F2AD02B196AC37",false, new TableQueryCallback<Message>() {
+        mMessageService.getMessageByUser(0,"sina:3345514604",false, new TableQueryCallback<Message>() {
 
             @Override
             public void onCompleted(List<Message> messages, int i, Exception e, ServiceFilterResponse serviceFilterResponse) {

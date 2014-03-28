@@ -15,6 +15,13 @@ public class Position implements Serializable{
     @SerializedName("lng")
     private double mLongitude;
 
+    public Position(){}
+
+    public Position(double lat, double lng){
+        this.mLatitude = lat;
+        this.mLatitude = lng;
+    }
+
     public double getLatitude() {
         return mLatitude;
     }
