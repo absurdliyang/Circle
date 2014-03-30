@@ -13,7 +13,7 @@ import com.absurd.circle.ui.fragment.UserMessageListFragment;
 
 import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshAttacher;
 
-public class UserMessageActivity extends BaseActivity implements RefreshableActivity{
+public class UserDynamicActivity extends BaseActivity implements RefreshableActivity{
 
     private PullToRefreshAttacher mPullToRefreshAttacher;
 

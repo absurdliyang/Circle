@@ -15,7 +15,8 @@ import com.absurd.circle.data.client.volley.BitmapFilter;
 import com.absurd.circle.data.client.volley.RequestManager;
 import com.absurd.circle.data.model.Message;
 import com.absurd.circle.ui.activity.ImageDetailActivity;
-import com.absurd.circle.ui.activity.UserMessageActivity;
+import com.absurd.circle.ui.activity.UserDynamicActivity;
+import com.absurd.circle.ui.activity.UserProfileActivity;
 import com.absurd.circle.ui.adapter.base.BeanAdapter;
 import com.absurd.circle.util.DistanceUtil;
 import com.absurd.circle.util.ImageUtil;
@@ -92,7 +93,7 @@ public class MessageAdapter extends BeanAdapter<Message> {
                 holder.avatarIv.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        IntentUtil.startActivity(mContext, UserMessageActivity.class,"userId",message.getUserId());
+                        IntentUtil.startActivity(mContext, UserProfileActivity.class,"user",message.getUser());
                     }
                 });
             }

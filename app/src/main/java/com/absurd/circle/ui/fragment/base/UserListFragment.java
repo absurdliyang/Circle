@@ -14,7 +14,7 @@ import android.widget.Toast;
 import com.absurd.circle.app.R;
 import com.absurd.circle.data.model.User;
 import com.absurd.circle.data.service.UserService;
-import com.absurd.circle.ui.activity.UserMessageActivity;
+import com.absurd.circle.ui.activity.UserDynamicActivity;
 import com.absurd.circle.ui.adapter.UserAdapter;
 import com.absurd.circle.ui.view.LoadingFooter;
 import com.absurd.circle.util.IntentUtil;
@@ -76,7 +76,7 @@ public abstract class UserListFragment<V> extends Fragment {
         mContentLv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                IntentUtil.startActivity(UserListFragment.this.getActivity(), UserMessageActivity.class, "userId", ((User) mContentLv.getAdapter().getItem(i)).getUserId());
+                IntentUtil.startActivity(UserListFragment.this.getActivity(), UserDynamicActivity.class, "userId", ((User) mContentLv.getAdapter().getItem(i)).getUserId());
             }
         });
         mEmptyTv = (TextView)rootView.findViewById(R.id.tv_empty);

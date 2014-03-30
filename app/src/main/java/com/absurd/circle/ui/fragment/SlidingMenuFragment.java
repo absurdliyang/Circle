@@ -1,6 +1,5 @@
 package com.absurd.circle.ui.fragment;
 
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -16,15 +15,11 @@ import com.absurd.circle.data.client.volley.BitmapFilter;
 import com.absurd.circle.data.client.volley.RequestManager;
 import com.absurd.circle.ui.activity.ContactActivity;
 import com.absurd.circle.ui.activity.HomeActivity;
-import com.absurd.circle.ui.activity.ImageDetailActivity;
 import com.absurd.circle.ui.activity.NotificationActivity;
 import com.absurd.circle.ui.activity.SettingActivity;
-import com.absurd.circle.ui.activity.UserMessageActivity;
+import com.absurd.circle.ui.activity.UserProfileActivity;
 import com.absurd.circle.util.ImageUtil;
 import com.absurd.circle.util.IntentUtil;
-import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
-
-import org.w3c.dom.Text;
 
 public class SlidingMenuFragment extends Fragment {
     private HomeActivity mHomeActivity;
@@ -69,7 +64,7 @@ public class SlidingMenuFragment extends Fragment {
         mAvatarIv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                IntentUtil.startActivity(mHomeActivity, UserMessageActivity.class,"userId",AppContext.auth.getUserId());
+                IntentUtil.startActivity(SlidingMenuFragment.this.getActivity(), UserProfileActivity.class,"user",AppContext.auth);
             }
         });
         mUsernameTv.setText(AppContext.auth.getName());

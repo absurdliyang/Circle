@@ -64,7 +64,7 @@
             android:label="ImageDetailActivity" >
         </activity>
         <activity
-            android:name="com.absurd.circle.ui.activity.UserMessageActivity"
+            android:name="com.absurd.circle.ui.activity.UserDynamicActivity"
             android:label="@string/title_activity_user_message" >
         </activity>
         <activity
@@ -74,6 +74,10 @@
         <activity
             android:name="com.absurd.circle.ui.activity.UnReadPraiseActivity"
             android:label="UnReadPraiseActivity" >
+        </activity>
+        <activity
+            android:name="com.absurd.circle.ui.activity.UserProfileActivity"
+            android:label="@string/title_activity_user_profile" >
         </activity>
     </application>
 

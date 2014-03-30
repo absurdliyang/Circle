@@ -9,6 +9,7 @@ import com.absurd.circle.util.CommonLog;
 import com.absurd.circle.util.LogFactory;
 import com.microsoft.windowsazure.mobileservices.MobileServiceAuthenticationProvider;
 import com.microsoft.windowsazure.mobileservices.ServiceFilterResponse;
+import com.microsoft.windowsazure.mobileservices.TableDeleteCallback;
 import com.microsoft.windowsazure.mobileservices.TableOperationCallback;
 import com.microsoft.windowsazure.mobileservices.TableQueryCallback;
 
@@ -26,16 +27,14 @@ public class UserService extends BaseService {
 
 
     public void insertUser(User user, TableOperationCallback<User> callback){
-        getUserTable().insert(user,callback);
+        getUserTable().insert(user, callback);
     }
 
     public void getUser(String userId,TableQueryCallback<User> callback){
         getUserTable().where().field("userId").eq(userId).execute(callback);
     }
 
-    public void getUserFollowers(String userId, TableQueryCallback<Follow> callback){
-        getFollowTable().where().field("userId").eq(userId).execute(callback);
-    }
+
 
     public void getUserFuns(String userId, TableQueryCallback<Follow> callback){
         getFollowTable().where().field("followuserid").eq(userId).execute(callback);
@@ -43,6 +42,17 @@ public class UserService extends BaseService {
 
     public void getBlackList(String userId, TableQueryCallback<BlackList> callback){
         getBlackListTable().where().field("userid").eq(userId).execute(callback);
+    }
+    public void getUserFollowers(String userId, TableQueryCallback<Follow> callback){
+        getFollowTable().where().field("userId").eq(userId).execute(callback);
+    }
+
+    public void insertFollower(Follow follow, TableOperationCallback<Follow> callback){
+        getFollowTable().insert(follow,callback);
+    }
+
+    public void deleteFollower(Follow follow, TableDeleteCallback callback){
+        getFollowTable().delete(follow,callback);
     }
 
 }

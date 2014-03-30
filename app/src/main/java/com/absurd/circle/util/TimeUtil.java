@@ -1,5 +1,7 @@
 package com.absurd.circle.util;
 
+import android.provider.CalendarContract;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Calendar;
@@ -36,6 +38,13 @@ public class TimeUtil {
             SimpleDateFormat formater = new SimpleDateFormat("MM-dd HH:mm");
             return formater.format(time);
         }
+
     }
 
+    public static String toAge(Date birthday){
+        Calendar birth = Calendar.getInstance();
+        birth.setTime(birthday);
+        Calendar now = Calendar.getInstance();
+        return now.get(Calendar.YEAR) - birth.get(Calendar.YEAR) + "";
+    }
 }

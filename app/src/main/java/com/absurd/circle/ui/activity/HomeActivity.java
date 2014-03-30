@@ -17,6 +17,7 @@ import com.absurd.circle.app.AppConstant;
 import com.absurd.circle.app.AppContext;
 import com.absurd.circle.app.R;
 import com.absurd.circle.data.client.AzureClient;
+import com.absurd.circle.data.model.Follow;
 import com.absurd.circle.data.model.Position;
 import com.absurd.circle.data.model.User;
 import com.absurd.circle.data.service.UserService;
@@ -92,7 +93,7 @@ public class HomeActivity extends SlidingFragmentActivity implements Refreshable
         init();
         initDefaultFilter();
         getAuth();
-
+        getFollowers();
         // Configur some UI control
         configureSlidingMenu();
         configureActionBar();
@@ -148,6 +149,26 @@ public class HomeActivity extends SlidingFragmentActivity implements Refreshable
             ///////
         }else{
             ///////
+        }
+    }
+    // It shoeld be called when the uer firstly login
+    private void getFollowers(){
+        AppContext.cacheService.deleteAllFollow();
+        if(AppContext.auth != null) {
+            mUserService.getUserFollowers(AppContext.auth.getUserId(), new TableQueryCallback<Follow>() {
+                @Override
+                public void onCompleted(List<Follow> result, int count, Exception exception, ServiceFilterResponse response) {
+                    if(result == null){
+                        if(exception != null){
+                            exception.printStackTrace();
+                        }
+                    }else{
+                        for(Follow follow : result ){
+                            AppContext.cacheService.insertFollow(follow);
+                        }
+                    }
+                }
+            });
         }
     }
 

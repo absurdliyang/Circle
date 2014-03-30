@@ -6,9 +6,9 @@ import com.absurd.circle.data.cache.util.SQLiteTable;
 /**
  * Created by absurd on 14-3-29.
  */
-public class MessageDBInfo {
+public class MessageDBManager {
 
-    private MessageDBInfo() {
+    private MessageDBManager() {
     }
 
     public static final String TABLE_NAME = "message";

@@ -132,5 +132,6 @@
     <string name="weibosdk_demo_get_group">获取微博好友分组</string>
     <string name="title_activity_dsfsdf">dsfsdf</string>
     <string name="title_activity_user_message">UserMessageActivity</string>
+    <string name="title_activity_user_profile">UserProfileActivity</string>
 
 </resources>

@@ -8,8 +8,8 @@ import com.absurd.circle.data.cache.util.SQLiteTable;
 /**
  * Created by absurd on 14-3-27.
  */
-public class UserDBInfo {
-    public UserDBInfo(){
+public class UserDBManager {
+    public UserDBManager(){
 
     }
     public static final String TABLE_NAME = "user";

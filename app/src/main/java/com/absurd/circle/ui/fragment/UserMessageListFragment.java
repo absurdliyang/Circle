@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 
 import com.absurd.circle.app.AppContext;
 import com.absurd.circle.data.model.Message;
-import com.absurd.circle.ui.activity.UserMessageActivity;
+import com.absurd.circle.ui.activity.UserDynamicActivity;
 import com.absurd.circle.ui.fragment.base.MessageListFragment;
 import com.microsoft.windowsazure.mobileservices.TableQueryCallback;
 
@@ -16,11 +16,11 @@ import com.microsoft.windowsazure.mobileservices.TableQueryCallback;
  */
 public class UserMessageListFragment extends MessageListFragment {
 
-    private UserMessageActivity mUserMessageActivity;
+    private UserDynamicActivity mUserMessageActivity;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mUserMessageActivity = (UserMessageActivity)getActivity();
+        mUserMessageActivity = (UserDynamicActivity)getActivity();
         return super.onCreateView(inflater, container, savedInstanceState);
     }
 

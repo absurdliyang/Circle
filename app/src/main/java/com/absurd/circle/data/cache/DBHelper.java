@@ -19,8 +19,9 @@ public class DBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
-        MessageDBInfo.TABLE.create(sqLiteDatabase);
-        UserDBInfo.TABLE.create(sqLiteDatabase);
+        MessageDBManager.TABLE.create(sqLiteDatabase);
+        UserDBManager.TABLE.create(sqLiteDatabase);
+        FollowDBManager.TABLE.create(sqLiteDatabase);
     }
 
     @Override
