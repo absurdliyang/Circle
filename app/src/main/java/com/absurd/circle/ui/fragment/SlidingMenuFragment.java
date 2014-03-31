@@ -17,7 +17,9 @@ import com.absurd.circle.ui.activity.ContactActivity;
 import com.absurd.circle.ui.activity.HomeActivity;
 import com.absurd.circle.ui.activity.NotificationActivity;
 import com.absurd.circle.ui.activity.SettingActivity;
+import com.absurd.circle.ui.activity.UserDynamicActivity;
 import com.absurd.circle.ui.activity.UserProfileActivity;
+import com.absurd.circle.ui.adapter.UserMessageAdapter;
 import com.absurd.circle.util.ImageUtil;
 import com.absurd.circle.util.IntentUtil;
 
@@ -64,7 +66,7 @@ public class SlidingMenuFragment extends Fragment {
         mAvatarIv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                IntentUtil.startActivity(SlidingMenuFragment.this.getActivity(), UserProfileActivity.class,"user",AppContext.auth);
+                IntentUtil.startActivity(SlidingMenuFragment.this.getActivity(), UserDynamicActivity.class,"userId",AppContext.auth.getUserId() +"");
             }
         });
         mUsernameTv.setText(AppContext.auth.getName());

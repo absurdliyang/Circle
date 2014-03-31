@@ -10,19 +10,22 @@ import java.io.Serializable;
  * Created by absurd on 14-3-25.
  */
 public class BlackList implements Serializable{
+    @Expose
     @SerializedName("id")
     private int mId;
 
+    @Expose
     @SerializedName("userid")
     private String mUserId;
 
+    @Expose
     @SerializedName("followuserid")
     private String mFollowUserId;
 
+    @Expose
     @SerializedName("User")
     private String mStrUser;
 
-    @Expose
     private User mUser;
 
     public User getUser(){

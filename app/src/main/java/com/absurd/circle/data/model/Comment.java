@@ -1,5 +1,6 @@
 package com.absurd.circle.data.model;
 
+import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
@@ -9,21 +10,27 @@ import java.io.Serializable;
  */
 public class Comment extends Message implements Serializable {
 
+    @Expose
     @SerializedName("messageid")
     private int mMessageId;
 
+    @Expose
     @SerializedName("parentid")
     private int mParentId;
 
+    @Expose
     @SerializedName("touserid")
     private String mToUserId;
 
+    @Expose
     @SerializedName("state")
     private int mState;
 
+    @Expose
     @SerializedName("ParentText")
     private String mParentText;
 
+    @Expose
     @SerializedName("seconds")
     private int mSeconds;
 

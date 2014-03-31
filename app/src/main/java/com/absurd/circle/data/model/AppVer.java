@@ -1,5 +1,6 @@
 package com.absurd.circle.data.model;
 
+import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
@@ -9,15 +10,19 @@ import java.io.Serializable;
  */
 public class AppVer implements Serializable {
 
+    @Expose
     @SerializedName("id")
     private int mId;
 
+    @Expose
     @SerializedName("appver")
     private double mAppVerNumber;
 
+    @Expose
     @SerializedName("updatecontent")
     private String mUpdateContent;
 
+    @Expose
     @SerializedName("isforce")
     private boolean mForce;
 

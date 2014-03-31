@@ -1,5 +1,6 @@
 package com.absurd.circle.data.model;
 
+import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
@@ -9,30 +10,39 @@ import java.io.Serializable;
  */
 public class Group implements Serializable {
 
+    @Expose
     @SerializedName("id")
     private int mId;
 
+    @Expose
     @SerializedName("name")
     private String mName;
 
+    @Expose
     @SerializedName("total")
     private int mTotal;
 
+    @Expose
     @SerializedName("current")
     private int mCurrent;
 
+    @Expose
     @SerializedName("description")
     private String mDescription;
 
+    @Expose
     @SerializedName("userid")
     private int mUserId;
 
+    @Expose
     @SerializedName("latitude")
     private double mLatitude;
 
+    @Expose
     @SerializedName("longitude")
     private double mLongitude;
 
+    @Expose
     @SerializedName("imageurl")
     private String mImageUrl;
 

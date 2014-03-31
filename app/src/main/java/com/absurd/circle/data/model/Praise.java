@@ -12,31 +12,38 @@ import java.util.Date;
  * Created by absurd on 14-3-25.
  */
 public class Praise implements Serializable {
+    @Expose
     @SerializedName("id")
     private int mId;
 
+    @Expose
     @SerializedName("messageid")
     private int mMessageId;
 
+    @Expose
     @SerializedName("touserid")
     private String mToUserId;
 
+    @Expose
     @SerializedName("state")
     private boolean mState;
 
+    @Expose
     @SerializedName("userid")
     private String mUserId;
 
+    @Expose
     @SerializedName("date")
     private Date mDate;
 
+    @Expose
     @SerializedName("ParentText")
     private String mParentText;
 
+    @Expose
     @SerializedName("User")
     private String mStrUser;
 
-    @Expose
     private User mUser;
 
     public User getUser(){

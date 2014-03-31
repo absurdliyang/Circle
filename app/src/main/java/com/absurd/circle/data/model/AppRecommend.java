@@ -1,5 +1,6 @@
 package com.absurd.circle.data.model;
 
+import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
@@ -9,24 +10,31 @@ import java.io.Serializable;
  */
 public class AppRecommend implements Serializable {
 
+    @Expose
     @SerializedName("id")
     private int mId;
 
+    @Expose
     @SerializedName("name")
     private String mName;
 
+    @Expose
     @SerializedName("dec")
     private String mDec;
 
+    @Expose
     @SerializedName("number")
     private String mNumber;
 
+    @Expose
     @SerializedName("icon")
     private String mIcon;
 
+    @Expose
     @SerializedName("link")
     private String mLink;
 
+    @Expose
     @SerializedName("isShow")
     private boolean mShow;
 

@@ -1,73 +1,63 @@
 package com.absurd.circle.data.service;
 
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
+
+import com.absurd.circle.app.AppConstant;
+import com.microsoft.windowsazure.services.blob.client.BlobContainerPermissions;
+import com.microsoft.windowsazure.services.blob.client.CloudBlobClient;
+import com.microsoft.windowsazure.services.blob.client.CloudBlobContainer;
+import com.microsoft.windowsazure.services.blob.client.CloudBlockBlob;
+import com.microsoft.windowsazure.services.core.storage.CloudStorageAccount;
+import com.microsoft.windowsazure.services.core.storage.StorageException;
+
+import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.UUID;
+import java.io.FileNotFoundException;
 
 /**
  * Created by absurd on 14-3-28.
  */
 public class BlobStorgeService{
 
-    public static final String PICS_CONTAINER_NAME = "pics";
-    public static final String PICS_FILE_EX = ".jpg";
-    public static final String VOICES_CONTAINER_NAME = "voices";
-    public static final String VOICES_FILE_EX = ".wav";
+    public static final String storageConnectionString =
+            "DefaultEndpointsProtocol=https;"
+                    + "AccountName=" + AppConstant.ACCOUNT_NAME + ";"
+                    + "AccountKey=" + AppConstant.ACCOUNT_KEY;
 
-    public static final String API_ADDR = "https://circle.blob.core.windows.net/";
 
-    public BlobStorgeService(){
-    }
-
-    public static boolean uploadImage(String absoluteFilePath,String strUrl){
-        FileInputStream fis = null;
+    public static void main(String[] args) {
         try {
-            fis = new FileInputStream(absoluteFilePath);
-            int bytesRead = 0;
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            byte[] b = new byte[1024];
-            while((bytesRead = fis.read(b)) != -1){
-                bos.write(b,0,bytesRead);
-            }
-            byte[] bytes = bos.toByteArray();
-            URL url = new URL(strUrl);
-            HttpURLConnection urlConnection = (HttpURLConnection)url.openConnection();
-            urlConnection.setDoOutput(true);
-            urlConnection.setRequestMethod("PUT");
-            urlConnection.addRequestProperty("Content-Type","image/jpeg");
-            urlConnection.setRequestProperty("Content-Length","" + bytes.length);
-            // Write image data to server
-            DataOutputStream wr = new DataOutputStream(urlConnection.getOutputStream());
-            wr.write(bytes);
-            wr.flush();
-            wr.close();
-            int responseCode = urlConnection.getResponseCode();
-            if(responseCode == 201 && urlConnection.getResponseMessage().equals("Created")){
-                return true;
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
+            CloudStorageAccount account;
+            CloudBlobClient serviceClient;
+            CloudBlobContainer container;
+            CloudBlockBlob blob;
 
-    public static boolean uploadImage(String absoluteFilePath){
-        String fileName = UUID.randomUUID().toString() + PICS_FILE_EX;
-        String strUrl = API_ADDR + PICS_CONTAINER_NAME + "/" + fileName;
-        System.out.println(strUrl);
-        return uploadImage(absoluteFilePath,strUrl);
-    }
+            account = CloudStorageAccount.parse(storageConnectionString);
+            serviceClient = account.createCloudBlobClient();
+            // Container name must be lower case.
+            container = serviceClient.getContainerReference("pics");
+            container.createIfNotExist();
 
-    public static void main(String[] args){
-        boolean res = BlobStorgeService.uploadImage("C:\\Users\\absurd\\Desktop\\Circle\\azure-mobile-services\\azure-mobile-service\\azure-mobile-services-master\\quickstart\\android\\ZUMOAPPNAME\\ic_launcher-web.png");
-        if(res){
-            System.out.println("ok");
-        }else{
-            System.out.println("not ok");
+            // Set anonymous access on the container.
+            BlobContainerPermissions containerPermissions;
+            containerPermissions = new BlobContainerPermissions();
+            container.uploadPermissions(containerPermissions);
+
+            // Upload an image file.
+            blob = container.getBlockBlobReference("123.jpg");
+            File fileReference = new File("D:\\photo\\123.jpg");
+            blob.upload(new FileInputStream(fileReference), fileReference.length());
+        } catch (FileNotFoundException fileNotFoundException) {
+            System.out.print("FileNotFoundException encountered: ");
+            System.out.println(fileNotFoundException.getMessage());
+            System.exit(-1);
+        } catch (StorageException storageException) {
+            System.out.print("StorageException encountered: ");
+            System.out.println(storageException.getMessage());
+            System.exit(-1);
+        } catch (Exception e) {
+            System.out.print("Exception encountered: ");
+            System.out.println(e.getMessage());
+            System.exit(-1);
         }
 
     }

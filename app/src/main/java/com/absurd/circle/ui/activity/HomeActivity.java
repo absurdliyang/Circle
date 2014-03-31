@@ -176,8 +176,9 @@ public class HomeActivity extends SlidingFragmentActivity implements Refreshable
         User u = AppContext.cacheService.getUser();
         if(u != null) {
             AppContext.auth = u;
-            AppContext.token = u.getToken();
             AppContext.userId = u.getUserId();
+            AppContext.token = AppContext.sharedPreferenceUtil.getAuthToken();
+            AzureClient.setToken(AppContext.token);
             //mSlidingMenuFragment.invalidateView();
             return;
         }else {

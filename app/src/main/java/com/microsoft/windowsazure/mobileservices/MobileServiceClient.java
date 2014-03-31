@@ -981,7 +981,7 @@ public class MobileServiceClient {
 	 * Gets the GsonBuilder used to in JSON Serialization/Deserialization
 	 */
 	public GsonBuilder getGsonBuilder() {
-		return mGsonBuilder.setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+		return mGsonBuilder.excludeFieldsWithoutExposeAnnotation().setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
 	}
 
 	/**

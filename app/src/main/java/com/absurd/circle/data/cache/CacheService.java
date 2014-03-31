@@ -106,7 +106,7 @@ public class CacheService {
     }
 
     public void deleteFollow(String followUserId){
-        String sql = "delete from " + FollowDBManager.TABLE_NAME + " where " + FollowDBManager.FOLLOW_USER_ID + " = " + followUserId;
+        String sql = "delete from " + FollowDBManager.TABLE_NAME + " where " + FollowDBManager.FOLLOW_USER_ID + " = '" + followUserId + "'";
         mDatabase.execSQL(sql);
     }
 

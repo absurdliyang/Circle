@@ -1,5 +1,6 @@
 package com.absurd.circle.data.model;
 
+import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
@@ -10,15 +11,19 @@ import java.util.Date;
  */
 public class Score implements Serializable {
 
+    @Expose
     @SerializedName("id")
     private int mId;
 
+    @Expose
     @SerializedName("date")
     private Date mDate;
 
+    @Expose
     @SerializedName("type")
     private int mType;
 
+    @Expose
     @SerializedName("userid")
     private String mUserId;
 

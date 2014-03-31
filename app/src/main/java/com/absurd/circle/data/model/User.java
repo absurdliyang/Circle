@@ -1,5 +1,6 @@
 package com.absurd.circle.data.model;
 
+import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
@@ -10,92 +11,115 @@ import java.sql.Date;
  */
 public class User implements Serializable{
 
+    @Expose
     @SerializedName("id")
     private int mId;
 
+    @Expose
     @SerializedName("userid")
     private String mUserId;
 
+    @Expose
     @SerializedName("name")
     private String mName;
 
+    @Expose
     @SerializedName("loginname")
     private String mLoginName;
 
+    @Expose
     @SerializedName("password")
     private String mPassword;
 
+    @Expose
     @SerializedName("sex")
     private String mSex;
 
+    @Expose
     @SerializedName("age")
     private Date mAge;
 
+    @Expose
     @SerializedName("permission")
     private int mPermission;
 
+    @Expose
     @SerializedName("email")
     private String mEmail;
 
+    @Expose
     @SerializedName("qq")
     private String mQq;
 
+    @Expose
     @SerializedName("phone")
     private String mPhone;
 
+    @Expose
     @SerializedName("location")
     private String mLocation;
 
+    @Expose
     @SerializedName("date")
     private Date mDate;
 
+    @Expose
     @SerializedName("avatar")
     private String mAvatar;
 
+    @Expose
     @SerializedName("description")
     private String mDescription;
 
+    @Expose
     @SerializedName("token")
     private String mToken;
 
+    @Expose
     @SerializedName("channelUri")
     private String mChannelUri;
 
+    @Expose
     @SerializedName("osname")
     private String mOsName;
 
+    @Expose
     @SerializedName("loginType")
     private int mLoginType;
 
+    @Expose
     @SerializedName("hobby")
     private String mHobby;
 
+    @Expose
     @SerializedName("profession")
     private String mProfession;
 
+    @Expose
     @SerializedName("backgroundImage")
     private String mBackgroundImage;
 
+    @Expose
     @SerializedName("city")
     private String mCity;
 
+    @Expose
     @SerializedName("lastlogindate")
     private Date mLastLoginDate;
 
+    @Expose
     @SerializedName("corpse")
     private int mCorpse;
 
+    @Expose
     @SerializedName("appver")
     private String appVer;
 
+    @Expose
     @SerializedName("isanonymity")
     private int mIsAnnoymity;
 
 
-    @Override
-    public String toString() {
-        return mName + "------------" + mUserId;
-    }
 
     public int getId() {
         return mId;

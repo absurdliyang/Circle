@@ -12,6 +12,8 @@ public interface AppConstant {
      */
     public static final String AZURE_APP_URL = "https://incircle.azure-mobile.net/";
     public static final String AZURE_APP_KEY = "MAkLcGohZvbPjwEVDXZixPyYGlerDW93";
+    public static final String ACCOUNT_NAME = "circle";
+    public static final String ACCOUNT_KEY = "eMsSCf1ps3iLkpbrF7q4HnC8+M32r8FDRsreW3/U/ULmHxNzV0giXVW9zf1KK2ZUmdvvjThcH3lrc8ZJXd3zRw==";
 
     /**
      * Badidu authentication infos

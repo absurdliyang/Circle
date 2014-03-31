@@ -11,59 +11,74 @@ import java.util.Date;
  * Created by absurd on 14-3-14.
  */
 public class Message implements Serializable{
-
+    @Expose
     @SerializedName("id")
     protected int mId;
 
+    @Expose
     @SerializedName("content")
     protected String mContent;
 
+    @Expose
     @SerializedName("contenttype")
     protected int mContentType;
 
+    @Expose
     @SerializedName("latitude")
     protected double mLatitude;
 
+    @Expose
     @SerializedName("longitude")
     protected double mLongitude;
 
+    @Expose
     @SerializedName("weiboid")
     protected String mWeiboId;
 
+    @Expose
     @SerializedName("locationdec")
     protected String mLocationDec;
 
+    @Expose
     @SerializedName("userid")
     protected String mUserId;
 
+    @Expose
     @SerializedName("title")
     protected String mTitle;
 
+    @Expose
     @SerializedName("mediaurl")
     protected String mMediaUrl;
 
+    @Expose
     @SerializedName("mediatype")
     protected int mMediaType;
 
+    @Expose
     @SerializedName("date")
     protected Date mDate;
 
+    @Expose
     @SerializedName("commentdate")
     protected Date mCommentDate;
 
+    @Expose
     @SerializedName("commentcount")
     protected int mCommentCount;
 
+    @Expose
     @SerializedName("praisecount")
     protected int mPraiseCount;
 
+    @Expose
     @SerializedName("User")
     protected String mStrUser;
 
+    @Expose
     @SerializedName("messagetype")
     protected int mMessagetType;
 
-    @Expose
     protected User mUser;
 
     public User getUser(){
