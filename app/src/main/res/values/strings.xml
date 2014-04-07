@@ -19,6 +19,17 @@
     <string name="title_activity_tweet_detail">TweetDetailActivity</string>
     <string name="title_activity_login">LoginActivity</string>
 
+
+    <string name="weibo_description">想对附近的人说点儿什么呢？交流身边的新闻，趣事？分享你的所见所闻？还是需要找附近的人求助、帮忙呢？</string>
+    <string name="food_description">推荐附近好吃好喝的特色、SHOW一下DIY的家常菜、一起交流各地的特色美食！</string>
+    <string name="mood_description">在这里表达真实的自己，匿名发表让你不必担心熟人看到，向陌生人倾诉心中的秘密，心情，和有共鸣的新朋友相遇。</string>
+    <string name="show_description">分享附近的美图、趣图、记录精彩生活瞬间！</string>
+    <string name="party_description">发起你感兴趣的约会、活动并邀请附近的陌生人或好友参加，找到相同的话题，让你轻松找到新的朋友！</string>
+    <string name="friend_description">介绍展示自己，完善你的个人资料，并说出你的交友要求，快速找到心中的TA！</string>
+    <string name="warning_message_null">亲，内容不能为空哦！</string>
+    <string name="warinig_image_null">请添加图片！</string>
+    <string name="error_send_message">消息发送失败！</string>
+
     <!-- sina weibo -->
     <string name="com_sina_weibo_sdk_login_with_weibo_account">用微博登錄</string>
     <string name="com_sina_weibo_sdk_login">登錄</string>

@@ -23,6 +23,14 @@ public interface AppConstant {
     public static final String SECRET_KEY = "Ku0yGkDm4RW5SlHtpSuFtPR44IUBzgia";
 
     /**
+     * BCS Constants
+     */
+    public static final String BCS_ACCESS_KEY = "3de4772c4c4d00162c355b7f0d803f41";
+    public static final String BCS_SECURE_KEY = "A96c98e72bbcfd46e2f94095039af09e";
+
+
+
+    /**
      * Sina Oauth
      */
     public static final String SINA_AUTH_API_URL = "https://api.weibo.com/oauth2/authorize?client_id={0}&response_type=code&redirect_uri={1}&state=mobile&scope=follow_app_official_microblog&display=mobile";
@@ -37,7 +45,7 @@ public interface AppConstant {
     public static final String BAIDU_GEOCODER_URL= "http://api.map.baidu.com/geocoder?output=json&location=%s,%s&key=EGFpCFxPKo3hLG5u0xSnNljbgAGFGynb";
 
     public static final String TEST_USER_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6MH0.eyJleHAiOjE0MjcyNzIzMTYuMzEyLCJpc3MiOiJ1cm46bWljcm9zb2Z0OndpbmRvd3MtYXp1cmU6enVtbyIsInZlciI6MSwiYXVkIjoiIiwidWlkIjoicXE6RTE5MkNBMTREMTA4Q0U1MDlCMjBEMEI2NjMwQkE4RTQifQ.b797TOr2Cu_V0nCBec4qPSe26MrRWt9UuURABEKMl9Q";
-    public static final String TEST_USER_ID = "qq:7F234A6D96FB2B9A45F2AD02B196AC37";
+    public static final String TEST_USER_ID = "sina:2350634675";
 
     /**
      * AMap key

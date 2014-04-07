@@ -26,8 +26,11 @@ public class JsonUtil {
 
 
     public static <V> V fromJson(String jsonStr,Type type){
-        if(jsonStr.startsWith("{")){
-            return gson.fromJson(jsonStr, type);
+        if(jsonStr != null) {
+            if (jsonStr.startsWith("{")) {
+                return gson.fromJson(jsonStr, type);
+            }
+            return null;
         }
         return null;
     }

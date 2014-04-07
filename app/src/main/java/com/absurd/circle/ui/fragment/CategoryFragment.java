@@ -2,6 +2,8 @@ package com.absurd.circle.ui.fragment;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -67,6 +69,13 @@ public class CategoryFragment extends Fragment {
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                     IntentUtil.startActivity(mHomeActivity, EditMessageActivity.class,"contentType",(Serializable)adapter.getItem(i));
+                    // remove the category fragment from showed view
+                    FragmentManager fm = mHomeActivity.getSupportFragmentManager();
+                    FragmentTransaction ft = fm.beginTransaction();
+                    ft.setCustomAnimations(R.anim.fragment_slide_bottom_in, R.anim.fragment_slide_bottom_out);
+                    CategoryFragment fragment = CategoryFragment.getInstance();
+                    ft.remove(fragment).commit();
+                    fm.popBackStack();
                 }
             });
         }else{

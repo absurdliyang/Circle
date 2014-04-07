@@ -3,9 +3,11 @@ package com.absurd.circle.ui.activity;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.location.Location;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -20,7 +22,9 @@ import com.absurd.circle.app.AppConstant;
 import com.absurd.circle.app.AppContext;
 import com.absurd.circle.app.R;
 import com.absurd.circle.data.model.Message;
+import com.absurd.circle.data.model.MessageType;
 import com.absurd.circle.data.model.Position;
+import com.absurd.circle.data.service.BCSService;
 import com.absurd.circle.data.service.MessageService;
 import com.absurd.circle.ui.view.IUploadImage;
 import com.absurd.circle.ui.view.PhotoFragment;
@@ -45,11 +49,10 @@ public class EditMessageActivity extends BaseActivity implements AMapLocationLis
     private TextView mLocationTv;
     private ImageView mMediaIv;
     private CheckBox mIsAnonyCb;
-    private EditText mTitleEt;
     private EditText mContentEt;
 
-    private String mTitle;
     private String mContent;
+    private String mImageUrl;
 
     private int mContentType;
 
@@ -58,13 +61,13 @@ public class EditMessageActivity extends BaseActivity implements AMapLocationLis
         super.onCreate(savedInstanceState);
         mContentType = (Integer)getIntent().getExtras().get("contentType");
 
+
         setContentView(R.layout.activity_edit_message);
         mLocationTv = (TextView)findViewById(R.id.tv_edit_msg_location);
         mMediaIv = (ImageView)findViewById(R.id.iv_edit_msg_photo);
         mIsAnonyCb = (CheckBox)findViewById(R.id.cb_edit_msg_is_anony);
-        mTitleEt = (EditText)findViewById(R.id.et_edit_msg_title);
         mContentEt = (EditText)findViewById(R.id.et_edit_msg_content);
-
+        initView();
         // Get user's current location
         mLocationManagerProxy = LocationManagerProxy.getInstance(this);
         mLocationManagerProxy.requestLocationUpdates(LocationProviderProxy.AMapNetwork,5000,10,this);
@@ -82,28 +85,51 @@ public class EditMessageActivity extends BaseActivity implements AMapLocationLis
 
     @Override
     public void onRightBtnClicked(View view) {
-        if(invalidateTitle() && invalidateContent()){
+        if(invalidateContent()){
             sendMessage();
-        }else{
-            Toast.makeText(this,"error",Toast.LENGTH_SHORT).show();
         }
     }
 
-    private boolean invalidateTitle(){
-        mTitle = mTitleEt.getText().toString();
-        if(StringUtil.isEmpty(mTitle)){
-            return false;
+    private void initView(){
+        switch(mContentType){
+            case MessageType.WEIBO:
+                mContentEt.setHint(R.string.weibo_description);
+                break;
+            case MessageType.FOOD:
+                mContentEt.setHint(R.string.food_description);
+                mIsAnonyCb.setVisibility(View.GONE);
+                break;
+            case MessageType.MOOD:
+                mContentEt.setHint(R.string.mood_description);
+                break;
+            case MessageType.SHOW:
+                mContentEt.setHint(R.string.show_description);
+                mIsAnonyCb.setVisibility(View.GONE);
+                break;
+            case MessageType.PARTY:
+                mContentEt.setHint(R.string.party_description);
+                mIsAnonyCb.setVisibility(View.GONE);
+                break;
+            case MessageType.FRIEND:
+                mContentEt.setHint(R.string.friend_description);
+                mIsAnonyCb.setVisibility(View.GONE);
+                break;
         }
-        return true;
     }
 
     private boolean invalidateContent(){
         mContent = mContentEt.getText().toString();
         if(StringUtil.isEmpty(mContent)){
+            AppContext.commonLog.i("Message content can not be null!");
+            Toast.makeText(this,R.string.warning_message_null,Toast.LENGTH_SHORT).show();
             return false;
         }
         mContent = mContent.trim();
-        mContent = "#" + mTitle + "# " + mContent;
+        if(mContentType == MessageType.SHOW && StringUtil.isEmpty(mImageUrl)){
+            AppContext.commonLog.i("Image can not be null");
+            Toast.makeText(this,R.string.warinig_image_null,Toast.LENGTH_SHORT).show();
+            return false;
+        }
         return true;
     }
 
@@ -116,8 +142,10 @@ public class EditMessageActivity extends BaseActivity implements AMapLocationLis
         }
 
         message.setContentType(mContentType);
-        message.setTitle(mTitle);
         message.setContent(mContent);
+        if(!StringUtil.isEmpty(mImageUrl)){
+            message.setMediaUrl(mImageUrl);
+        }
         if(AppContext.lastPosition != null){
             message.setLatitude(AppContext.lastPosition.getLatitude());
             message.setLongitude(AppContext.lastPosition.getLongitude());
@@ -130,25 +158,29 @@ public class EditMessageActivity extends BaseActivity implements AMapLocationLis
                 if(entity == null){
                     if(exception != null){
                         exception.printStackTrace();
+                        Toast.makeText(EditMessageActivity.this,R.string.error_send_message,Toast.LENGTH_SHORT).show();
                     }
                 }else{
                     AppContext.commonLog.i(entity.getContent());
                 }
             }
         });
+        this.finish();
+    }
 
-
+    private void uploadImage(Uri imageUri){
+        new UploadImageTask().execute(imageUri);
     }
 
     public void onBtnClick(View view){
         switch(view.getId()){
-            case R.id.iv_edit_msg_btn_emotion:
+            case R.id.iv_edit_msg_btn_photo:
+                onTakePhoto();
                 break;
             case R.id.iv_edit_msg_btn_galley:
                 onGallary();
                 break;
-            case R.id.iv_edit_msg_btn_photo:
-                onTakePhoto();
+            case R.id.iv_edit_msg_btn_emotion:
                 break;
             default:
                 break;
@@ -234,6 +266,24 @@ public class EditMessageActivity extends BaseActivity implements AMapLocationLis
         } catch (IOException e) {
             e.printStackTrace();
         }
+        uploadImage(uri);
+    }
+
+    public class UploadImageTask extends AsyncTask<Uri,Void,Void>{
+
+        @Override
+        protected Void doInBackground(Uri... voids) {
+            Uri imageUri = voids[0];
+            if(imageUri != null){
+                Cursor cursor = getContentResolver().query(imageUri, null, null, null, null);
+                cursor.moveToFirst();
+                int index = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
+                String absoluteFilePath = cursor.getString(index);
+                File f = new File(absoluteFilePath);
+                mImageUrl = BCSService.uploadImageByFile(f);
+            }
+            return null;
+        }
     }
 
     public void onResultByTake(Intent data) {
@@ -254,9 +304,14 @@ public class EditMessageActivity extends BaseActivity implements AMapLocationLis
         AppContext.commonLog.i("Location changed");
         if(aMapLocation == null){
             AppContext.commonLog.i("Get user's location error");
+            return;
         }
-        mLocationTv.setText(aMapLocation.getLatitude() + aMapLocation.getLongitude() + "");
+        String locationDesc = aMapLocation.getProvince() + " " + aMapLocation.getCity() + aMapLocation.getDistrict();
+        AppContext.commonLog.i(locationDesc + " " + aMapLocation.getLongitude() + " " + aMapLocation.getLatitude());
+        mLocationTv.setText(locationDesc);
         AppContext.sharedPreferenceUtil.setLastPosition(new Position(aMapLocation.getLatitude(),aMapLocation.getLongitude()));
+        // Cancel refresh location
+        mLocationManagerProxy.destory();
     }
 
     @Override
