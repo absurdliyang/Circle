@@ -2,11 +2,17 @@ package com.absurd.circle.data.service;
 
 import android.content.Context;
 
+import com.absurd.circle.app.AppContext;
+import com.absurd.circle.data.client.volley.GsonRequest;
+import com.absurd.circle.data.client.volley.RequestManager;
 import com.absurd.circle.data.model.BlackList;
 import com.absurd.circle.data.model.Follow;
+import com.absurd.circle.data.model.FunsCount;
 import com.absurd.circle.data.model.User;
 import com.absurd.circle.util.CommonLog;
 import com.absurd.circle.util.LogFactory;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.microsoft.windowsazure.mobileservices.MobileServiceAuthenticationProvider;
 import com.microsoft.windowsazure.mobileservices.ServiceFilterResponse;
 import com.microsoft.windowsazure.mobileservices.TableDeleteCallback;
@@ -53,6 +59,19 @@ public class UserService extends BaseService {
 
     public void deleteFollower(Follow follow, TableDeleteCallback callback){
         getFollowTable().delete(follow,callback);
+    }
+
+    public void getFunsCount(String userId,Response.Listener<FunsCount> responseListener){
+        String url = "https://incircle.azure-mobile.net/api/getfunscount?userid=" + userId;
+
+        GsonRequest<FunsCount> gsonReqeust = new GsonRequest<FunsCount>(url,FunsCount.class,null,
+                responseListener,new Response.ErrorListener(){
+            @Override
+            public void onErrorResponse(VolleyError volleyError) {
+                AppContext.commonLog.i("Get funs count error");
+            }
+        });
+        RequestManager.addRequest(gsonReqeust,"getFunsCount");
     }
 
 }

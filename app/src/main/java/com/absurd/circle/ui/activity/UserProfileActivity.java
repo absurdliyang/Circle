@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -12,14 +13,20 @@ import com.absurd.circle.app.R;
 import com.absurd.circle.data.client.volley.BitmapFilter;
 import com.absurd.circle.data.client.volley.RequestManager;
 import com.absurd.circle.data.model.Follow;
+import com.absurd.circle.data.model.FunsCount;
 import com.absurd.circle.data.model.User;
 import com.absurd.circle.data.service.UserService;
+import com.absurd.circle.ui.view.ItemDialog;
 import com.absurd.circle.util.ImageUtil;
 import com.absurd.circle.util.IntentUtil;
 import com.absurd.circle.util.TimeUtil;
+import com.android.volley.Response;
 import com.microsoft.windowsazure.mobileservices.ServiceFilterResponse;
 import com.microsoft.windowsazure.mobileservices.TableDeleteCallback;
 import com.microsoft.windowsazure.mobileservices.TableOperationCallback;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class UserProfileActivity extends BaseActivity {
     private Bitmap mAvatarDefaultBitmap = ((BitmapDrawable) AppContext.getContext().getResources().getDrawable(R.drawable.default_avatar)).getBitmap();
@@ -42,6 +49,7 @@ public class UserProfileActivity extends BaseActivity {
     private TextView mInterestTv;
     private TextView mJobTv;
     private TextView mBadRecordTv;
+    private TextView mFunsCountTv;
 
     private TextView mAddFolloeBtn;
 
@@ -50,6 +58,9 @@ public class UserProfileActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_profile);
         mUser = (User)getIntent().getExtras().get("user");
+
+        // Set custom actionbar
+        setRightBtnStatus(RIGHT_MORE_BTN);
 
         mUserBackGroundIv = (ImageView)findViewById(R.id.iv_user_profile_background);
         mAvatarIv = (ImageView)findViewById(R.id.iv_user_profile_avatar);
@@ -62,9 +73,22 @@ public class UserProfileActivity extends BaseActivity {
         mInterestTv = (TextView)findViewById(R.id.tv_user_profile_interest);
         mJobTv = (TextView)findViewById(R.id.tv_user_profile_job);
         mBadRecordTv = (TextView)findViewById(R.id.tv_user_profile_bad_record);
+        mFunsCountTv = (TextView)findViewById(R.id.tv_user_profile_info);
 
         mAddFolloeBtn = (TextView)findViewById(R.id.tv_user_profile_add_follow_btn);
 
+        // Get Data
+        UserService userService = new UserService();
+        userService.getFunsCount(mUser.getUserId(), new Response.Listener<FunsCount>() {
+            @Override
+            public void onResponse(FunsCount funsCount) {
+                AppContext.commonLog.i(funsCount.toString());
+                mFunsCountTv.setText(String.format("关注 %d     粉丝 %d    动态 %d  ",
+                        funsCount.getFollowCount(),
+                        funsCount.getFunsCount(),
+                        funsCount.getMessageCount()));
+            }
+        });
         RequestManager.loadImage(mUser.getAvatar(),RequestManager.getImageListener(mAvatarIv,
                 mAvatarDefaultBitmap,mAvatarDefaultBitmap,new BitmapFilter() {
                     @Override
@@ -144,6 +168,22 @@ public class UserProfileActivity extends BaseActivity {
 
     }
 
+    @Override
+    public void onMoreClicked(View view){
+        List<String> items = new ArrayList<String>();
+        items.add("加入黑名单");
+        items.add("举报此人");
+        items.add("屏蔽此人说说");
+        final ItemDialog dialog = new ItemDialog(this, items);
+        dialog.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                dialog.cancel();
+            }
+        });
+        dialog.show();
+
+    }
 
 
     public void onSendMessageClick(View view){

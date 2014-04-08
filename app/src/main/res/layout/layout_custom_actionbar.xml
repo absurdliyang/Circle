@@ -5,6 +5,16 @@
                 android:layout_height="match_parent"
                 android:background="@color/theme_color">
 
+    <ImageView
+        android:id="@+id/iv_custom_actionbar_back"
+        android:layout_centerVertical="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:src="@drawable/ic_back"/>
+
     <TextView
         android:id="@+id/tv_custom_actionbar_title"
         android:layout_centerHorizontal="true"
@@ -14,6 +24,16 @@
         android:clickable="true"
         android:textColor="#ffffffff"
         android:textSize="20sp" />
+
+    <ImageView
+        android:id="@+id/iv_custom_actionbar_more"
+        android:layout_centerVertical="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:src="@drawable/ic_more"/>
     <TextView
         android:id="@+id/tv_custom_actionbar_right_btn"
         android:layout_centerVertical="true"

@@ -9,18 +9,29 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.absurd.circle.app.R;
 import com.absurd.circle.data.client.volley.RequestManager;
+import com.absurd.circle.ui.view.ItemDialog;
 
 import me.imid.swipebacklayout.lib.app.SwipeBackActivity;
 
 public abstract class BaseActivity extends SwipeBackActivity {
 
+    public static final int RIGHT_TEXT = 1;
+    public static final int RIGHT_MORE_BTN = 2;
+    public static final int RIGHT_BLANK = 3;
+
     private String mTitle;
     private TextView mActionBarTitleTv;
     private TextView mActionBarRightBtn;
+
+    private ImageView mActionBarBackIv;
+    private ImageView mActionBarMoreIv;
+
+    protected int mRightBtnStatus = 3;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -49,6 +60,18 @@ public abstract class BaseActivity extends SwipeBackActivity {
                 onRightBtnClicked(view);
             }
         });
+        mActionBarBackIv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackClicked(view);
+            }
+        });
+        mActionBarMoreIv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onMoreClicked(view);
+            }
+        });
         return true;
     }
 
@@ -62,6 +85,16 @@ public abstract class BaseActivity extends SwipeBackActivity {
         View actionBarView = LayoutInflater.from(this).inflate(R.layout.layout_custom_actionbar,null);
         mActionBarTitleTv = (TextView)actionBarView.findViewById(R.id.tv_custom_actionbar_title);
         mActionBarRightBtn = (TextView)actionBarView.findViewById(R.id.tv_custom_actionbar_right_btn);
+        mActionBarBackIv = (ImageView)actionBarView.findViewById(R.id.iv_custom_actionbar_back);
+        mActionBarMoreIv = (ImageView)actionBarView.findViewById(R.id.iv_custom_actionbar_more);
+        if(mRightBtnStatus == RIGHT_MORE_BTN){
+            mActionBarRightBtn.setVisibility(View.GONE);
+        }else if(mRightBtnStatus == RIGHT_TEXT){
+            mActionBarMoreIv.setVisibility(View.GONE);
+        }else if(mRightBtnStatus == RIGHT_BLANK){
+            mActionBarMoreIv.setVisibility(View.GONE);
+            mActionBarRightBtn.setVisibility(View.GONE);
+        }
         actionBar.setCustomView(actionBarView,params);
     }
 
@@ -87,5 +120,16 @@ public abstract class BaseActivity extends SwipeBackActivity {
 
     }
 
+
+    public void onBackClicked(View view){
+        this.finish();
+    }
+
+    public void onMoreClicked(View view){
+    }
+
+    public void setRightBtnStatus(int status){
+        this.mRightBtnStatus = status;
+    }
 
 }

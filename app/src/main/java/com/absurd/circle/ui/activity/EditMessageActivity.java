@@ -61,8 +61,10 @@ public class EditMessageActivity extends BaseActivity implements AMapLocationLis
         super.onCreate(savedInstanceState);
         mContentType = (Integer)getIntent().getExtras().get("contentType");
 
-
         setContentView(R.layout.activity_edit_message);
+        // Set custom actionbar
+        setRightBtnStatus(RIGHT_TEXT);
+
         mLocationTv = (TextView)findViewById(R.id.tv_edit_msg_location);
         mMediaIv = (ImageView)findViewById(R.id.iv_edit_msg_photo);
         mIsAnonyCb = (CheckBox)findViewById(R.id.cb_edit_msg_is_anony);
@@ -266,6 +268,7 @@ public class EditMessageActivity extends BaseActivity implements AMapLocationLis
         } catch (IOException e) {
             e.printStackTrace();
         }
+        mImageUrl = uri.toString();
         uploadImage(uri);
     }
 

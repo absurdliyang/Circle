@@ -12,7 +12,7 @@
         android:scrollbars="vertical">
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="200dp">
+            android:layout_height="230dp">
             <ImageView
                 android:id="@+id/iv_user_profile_background"
                 android:layout_width="match_parent"
@@ -37,10 +37,9 @@
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
                 android:layout_alignParentBottom="true"
-                android:layout_marginBottom="25dp"
+                android:layout_marginBottom="45dp"
                 android:textSize="16dp"
                 android:textColor="#ffffffff"
-                android:text="Chidongxi-"
                 android:layout_toRightOf="@id/iv_user_profile_avatar"
                 android:layout_marginLeft="5dp"/>
             <ImageView
@@ -48,7 +47,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
-                android:layout_marginBottom="20dp"
+                android:layout_marginBottom="40dp"
                 android:layout_alignParentRight="true"
                 android:layout_marginRight="18dp"
                 android:src="@drawable/user_profile_male"/>
@@ -59,10 +58,21 @@
                 android:layout_toLeftOf="@+id/iv_user_profile_sex"
                 android:layout_marginRight="8dp"
                 android:layout_alignParentBottom="true"
-                android:layout_marginBottom="20dp"
+                android:layout_marginBottom="40dp"
+                android:textSize="16dp"
+                android:textColor="#ffffffff"/>
+            <TextView
+                android:id="@+id/tv_user_profile_info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_toRightOf="@id/iv_user_profile_avatar"
+                android:layout_marginBottom="10dp"
+                android:layout_marginLeft="8dp"
                 android:textSize="16dp"
                 android:textColor="#ffffffff"
-                android:text="12"/>
+                android:text="关注     粉丝      动态"
+                />
         </RelativeLayout>
         <LinearLayout
             android:layout_marginTop="10dp"
