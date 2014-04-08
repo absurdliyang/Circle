@@ -12,9 +12,12 @@ import com.absurd.circle.app.R;
 import com.absurd.circle.data.client.volley.BitmapFilter;
 import com.absurd.circle.data.client.volley.RequestManager;
 import com.absurd.circle.data.model.Comment;
+import com.absurd.circle.ui.activity.UserProfileActivity;
 import com.absurd.circle.ui.adapter.base.BeanAdapter;
 import com.absurd.circle.util.ImageUtil;
+import com.absurd.circle.util.IntentUtil;
 import com.absurd.circle.util.StringUtil;
+import com.absurd.circle.util.TimeUtil;
 import com.android.volley.toolbox.ImageLoader;
 
 import java.util.List;
@@ -39,7 +42,6 @@ public class CommentAdapter extends BeanAdapter<Comment> {
         TextView commentCreatedTv;
         TextView commentContentTv;
         ImageView replyIconIv;
-        ImageView deleteIconIv;
         ImageLoader.ImageContainer avatarRequest;
         ImageLoader.ImageContainer mediaRequest;
     }
@@ -57,7 +59,6 @@ public class CommentAdapter extends BeanAdapter<Comment> {
             holder.commentCreatedTv = (TextView)view.findViewById(R.id.tv_comment_created);
             holder.commentContentTv = (TextView)view.findViewById(R.id.tv_comment_content);
             holder.replyIconIv = (ImageView)view.findViewById(R.id.iv_comment_reply_icon);
-            holder.deleteIconIv = (ImageView)view.findViewById(R.id.iv_comment_delete_icon);
             view.setTag(holder);;
         }else{
             holder = (ViewHolder)view.getTag();
@@ -72,7 +73,6 @@ public class CommentAdapter extends BeanAdapter<Comment> {
 
         if(comment.getUser() != null) {
             if(comment.getUser().getAvatar() != null && StringUtil.isUrl(comment.getUser().getAvatar()) ) {
-                //AppContext.commonLog.i(message.getUser().getName()+ "---------" + message.getUser().getAvatar());
                 holder.avatarRequest = RequestManager.loadImage(comment.getUser().getAvatar(),
                         RequestManager.getImageListener(holder.userAvatarIv, mAvatarDefaultBitmap, mAvatarDefaultBitmap,new BitmapFilter() {
                             @Override
@@ -82,7 +82,14 @@ public class CommentAdapter extends BeanAdapter<Comment> {
                         }));
             }
             holder.usernameTv.setText(comment.getUser().getName());
+            holder.userAvatarIv.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    IntentUtil.startActivity(mContext,UserProfileActivity.class,"user",comment.getUser());
+                }
+            });
         }
+        holder.commentCreatedTv.setText(TimeUtil.formatShowTime(comment.getDate()));
         holder.commentContentTv.setText(comment.getContent());
         return view;
     }

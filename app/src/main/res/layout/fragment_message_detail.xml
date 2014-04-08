@@ -5,20 +5,92 @@
     android:background="#ffffffff"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <ListView
-        android:id="@+id/lv_comment_content"
-        android:divider="@null"
-        android:dividerHeight="0dp"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
     <RelativeLayout
-        android:id="@+id/rlyt_comment_empty"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <TextView
-            android:id="@+id/tv_comment_empty"
-            android:layout_centerInParent="true"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"/>
+        android:layout_height="match_parent"
+        android:layout_marginLeft="6dp"
+        android:layout_marginRight="6dp"
+        android:layout_marginBottom="48dp">
+        <ListView
+            android:id="@+id/lv_comment_content"
+            android:divider="@null"
+            android:dividerHeight="0dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+        <RelativeLayout
+            android:id="@+id/rlyt_comment_empty"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <TextView
+                android:id="@+id/tv_comment_empty"
+                android:layout_centerInParent="true"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"/>
+        </RelativeLayout>
     </RelativeLayout>
+    <View android:background="#ff3b3b3b"
+          android:layout_width="match_parent"
+          android:layout_height="0.8dp"/>
+    <LinearLayout
+        android:id="@+id/llyt_message_edit_bottom_bar"
+        android:background="#ffffffff"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_alignParentBottom="true">
+        <LinearLayout
+            android:gravity="center"
+            android:id="@+id/llyt_bar_btn_praise"
+            android:layout_width="0.0dip"
+            android:layout_height="fill_parent"
+            android:layout_weight="3.0"
+            android:clickable="true"
+            android:onClick="barClicked">
+            <ImageView android:id="@+id/iv_btn_praise_icon"
+                       android:layout_width="25dp"
+                       android:layout_height="25dp" />
+            <TextView android:textColor="#ff999999"
+                      android:gravity="center"
+                      android:id="@+id/tv_btn_praise_text"
+                      android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:layout_marginLeft="6.0dip"
+                      android:text="赞" />
+            <TextView android:textColor="#ff999999"
+                      android:gravity="center"
+                      android:id="@+id/tv_praise_count"
+                      android:layout_height="wrap_content"
+                      android:layout_width="wrap_content"
+                      android:layout_marginLeft="3dp"/>
+        </LinearLayout>
+        <View android:background="#ff3b3b3b"
+              android:layout_width="0.5dip"
+              android:layout_marginTop="4dp"
+              android:layout_marginBottom="4dp"
+              android:layout_height="match_parent" />
+        <LinearLayout android:gravity="center" android:id="@+id/llyt_btn_comment"
+                      android:layout_width="0.0dip"
+                      android:layout_height="fill_parent"
+                      android:layout_weight="3.0"
+                      android:clickable="true"
+                      android:onClick="barClicked">
+            <ImageView android:id="@+id/iv_btn_comment_icon"
+                       android:layout_width="20dp"
+                       android:layout_height="20dp" />
+            <TextView
+                android:textColor="#ff999999"
+                android:gravity="center"
+                android:id="@+id/tv_btn_comment_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="6.0dip"
+                android:text="评论" />
+            <TextView
+                android:textColor="#ff999999"
+                android:gravity="center"
+                android:id="@+id/tv_comment_count"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_marginLeft="3dp"/>
+        </LinearLayout>
+    </LinearLayout>
 </RelativeLayout>

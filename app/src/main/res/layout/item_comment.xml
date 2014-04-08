@@ -2,6 +2,7 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
+    android:paddingTop="10dp"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
     <LinearLayout
@@ -9,15 +10,14 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <ImageView android:id="@+id/iv_comment_user_avatar"
-            android:layout_width="40.0dip"
-            android:layout_height="40.0dip"
+            android:layout_width="50.0dip"
+            android:layout_height="50.0dip"
             android:scaleType="fitCenter"
             android:padding="1.0dip"
             android:layout_margin="5dip"  />
         <RelativeLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/comment_card_bg"
             android:orientation="vertical"
             android:layout_marginRight="5dip">
             <RelativeLayout
@@ -39,17 +39,30 @@
                     android:layout_height="wrap_content"
                     android:textSize="12.0sp"
                     android:textColor="#ffa3a1a3"
-                    android:layout_below="@id/tv_comment_username"
-                    android:layout_alignLeft="@id/tv_comment_username"
-                    android:layout_marginBottom="5dip"
-                    />
+                    android:layout_alignParentRight="true"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginRight="10dp"/>
+
                 <ImageView
                     android:id="@+id/iv_comment_reply_icon"
-                    android:layout_height="13dip"
-                    android:layout_width="13dip"
+                    android:layout_height="20dip"
+                    android:layout_width="20dip"
+                    android:src="@drawable/ic_reply"
                     android:layout_alignParentRight="true"
-                    android:layout_centerInParent="true"
+                    android:layout_below="@id/tv_comment_created"
+                    android:layout_marginTop="8dp"
                     android:layout_marginRight="20dip"/>
+                <TextView android:id="@+id/tv_comment_content"
+                      android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:layout_below="@id/tv_comment_username"
+                      android:layout_alignLeft="@id/tv_header_title_username"
+                      android:layout_marginRight="50dp"
+                      android:layout_marginTop="5dp"
+                      android:layout_marginLeft="10dip"
+                      android:textSize="12.0sp"
+                      android:textColor="#ff433d3d"/>
+                <!--
                 <ImageView
                     android:visibility="invisible"
                     android:id="@+id/iv_comment_delete_icon"
@@ -58,22 +71,8 @@
                     android:layout_alignParentRight="true"
                     android:layout_centerInParent="true"
                     android:layout_marginRight="20dip"/>
+                    -->
             </RelativeLayout>
-            <View
-                android:id="@+id/v_comment_divider"
-                android:background="#fff1f0f0"
-                android:layout_below="@id/rlyt_comment_user"
-                android:layout_height="1.5dip"
-                android:layout_width="match_parent"/>
-            <TextView android:id="@+id/tv_comment_content"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/v_comment_divider"
-                android:layout_marginLeft="10dip"
-                android:paddingBottom="7dip"
-                android:textSize="14.0sp"
-                android:textColor="#ff433d3d"
-                android:paddingTop="7dip"/>
         </RelativeLayout>
     </LinearLayout>
 </LinearLayout>

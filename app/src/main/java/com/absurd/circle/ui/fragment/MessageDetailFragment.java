@@ -20,10 +20,14 @@ import com.absurd.circle.data.client.volley.BitmapFilter;
 import com.absurd.circle.data.client.volley.RequestManager;
 import com.absurd.circle.data.model.Comment;
 import com.absurd.circle.data.service.CommentService;
+import com.absurd.circle.ui.activity.ImageDetailActivity;
 import com.absurd.circle.ui.activity.MessageDetailActivity;
+import com.absurd.circle.ui.activity.UserProfileActivity;
 import com.absurd.circle.ui.adapter.CommentAdapter;
 import com.absurd.circle.util.ImageUtil;
+import com.absurd.circle.util.IntentUtil;
 import com.absurd.circle.util.StringUtil;
+import com.absurd.circle.util.TimeUtil;
 import com.microsoft.windowsazure.mobileservices.ServiceFilterResponse;
 import com.microsoft.windowsazure.mobileservices.TableQueryCallback;
 
@@ -62,10 +66,12 @@ public class MessageDetailFragment extends Fragment{
     private void initCommentList(LayoutInflater inflater, View rootView){
         View headerView = inflater.inflate(R.layout.header_message_detail,null);
         ((TextView)headerView.findViewById(R.id.tv_header_content)).setText(mMessageDetailActivity.message.getContent());
+        ((TextView)headerView.findViewById(R.id.tv_header_title_created)).setText(TimeUtil.formatShowTime(mMessageDetailActivity.message.getDate()));
         ImageView headerAvaterView = (ImageView)headerView.findViewById(R.id.iv_header_title_avatar);
         ImageView headerMediaView = (ImageView)headerView.findViewById(R.id.iv_header_media);
         if(mMessageDetailActivity.message != null && mMessageDetailActivity.message.getUser() != null){
             ((TextView)headerView.findViewById(R.id.tv_header_title_username)).setText(mMessageDetailActivity.message.getUser().getName());
+            ((TextView)headerView.findViewById(R.id.tv_header_title_description)).setText(mMessageDetailActivity.message.getUser().getDescription());
             if(!StringUtil.isEmpty(mMessageDetailActivity.message.getUser().getAvatar()) && StringUtil.isUrl(mMessageDetailActivity.message.getUser().getAvatar())) {
                 RequestManager.loadImage(mMessageDetailActivity.message.getUser().getAvatar(), RequestManager.getImageListener(headerAvaterView,
                         mAvatarDefaultBitmap, mAvatarDefaultBitmap, new BitmapFilter() {
@@ -76,10 +82,32 @@ public class MessageDetailFragment extends Fragment{
                         }
                 ));
             }
+            headerAvaterView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    IntentUtil.startActivity(mMessageDetailActivity,
+                            UserProfileActivity.class, "user",
+                            mMessageDetailActivity.message.getUser());
+                }
+            });
+            headerView.findViewById(R.id.tv_header_title_username).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    IntentUtil.startActivity(mMessageDetailActivity,
+                            UserProfileActivity.class, "user",
+                            mMessageDetailActivity.message.getUser());
+                }
+            });
         }
         if(!StringUtil.isEmpty(mMessageDetailActivity.message.getMediaUrl()) && StringUtil.isUrl(mMessageDetailActivity.message.getMediaUrl())){
             RequestManager.loadImage(mMessageDetailActivity.message.getMediaUrl(),RequestManager.getImageListener(headerMediaView,
                     mMediaDefaultBitmap,mMediaDefaultBitmap,null));
+            headerMediaView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    IntentUtil.startActivity(mMessageDetailActivity,ImageDetailActivity.class,"mediaUrl",mMessageDetailActivity.message.getMediaUrl());
+                }
+            });
         }else{
             headerMediaView.setVisibility(View.GONE);
         }
@@ -151,5 +179,8 @@ public class MessageDetailFragment extends Fragment{
             }
         });
     }
+
+
+
 
 }
