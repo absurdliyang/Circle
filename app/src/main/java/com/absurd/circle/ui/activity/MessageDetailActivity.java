@@ -56,7 +56,4 @@ public class MessageDetailActivity extends BaseActivity {
     }
 
 
-    public void barClicked(View view){
-
-    }
 }

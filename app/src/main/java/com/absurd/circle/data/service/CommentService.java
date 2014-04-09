@@ -38,7 +38,7 @@ public class CommentService extends BaseService {
     }
 
 
-    public void addComment(Comment comment, TableOperationCallback<Comment> callback){
+    public void insertComment(Comment comment, TableOperationCallback<Comment> callback){
         getCommentTable().insert(comment,callback);
     }
 

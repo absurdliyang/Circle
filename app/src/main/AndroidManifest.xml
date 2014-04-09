@@ -79,6 +79,10 @@
             android:name="com.absurd.circle.ui.activity.UserProfileActivity"
             android:label="@string/title_activity_user_profile" >
         </activity>
+        <activity
+            android:name="com.absurd.circle.ui.activity.EditCommentActivity"
+            android:label="@string/title_activity_edit_comment" >
+        </activity>
     </application>
 
 </manifest>

@@ -81,4 +81,35 @@ public class Comment extends Message implements Serializable {
     public void setSeconds(int seconds) {
         mSeconds = seconds;
     }
+
+    @Override
+    public String toString() {
+        return "Message{" +
+                "mId=" + mId +
+                ", mContent='" + mContent + '\'' +
+                ", mContentType=" + mContentType +
+                ", mLatitude=" + mLatitude +
+                ", mLongitude=" + mLongitude +
+                ", mWeiboId='" + mWeiboId + '\'' +
+                ", mLocationDec='" + mLocationDec + '\'' +
+                ", mUserId='" + mUserId + '\'' +
+                ", mTitle='" + mTitle + '\'' +
+                ", mMediaUrl='" + mMediaUrl + '\'' +
+                ", mMediaType=" + mMediaType +
+                ", mDate=" + mDate +
+                ", mCommentDate=" + mCommentDate +
+                ", mCommentCount=" + mCommentCount +
+                ", mPraiseCount=" + mPraiseCount +
+                ", mStrUser='" + mStrUser + '\'' +
+                ", mMessagetType=" + mMessagetType +
+                ", mUser=" + mUser +
+                ", mMessageId=" + mMessageId +
+                ", mParentId=" + mParentId +
+                ", mToUserId='" + mToUserId + '\'' +
+                ", mState=" + mState +
+                ", mParentText='" + mParentText + '\'' +
+                ", mSeconds=" + mSeconds +
+                '}';
+
+    }
 }

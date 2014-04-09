@@ -226,6 +226,7 @@ MobileServiceTableBase<TableJsonQueryCallback> {
 			}
 		}
 		post = new ServiceFilterRequestImpl(new HttpPost(uriBuilder.build().toString()), mClient.getAndroidHttpClientFactory());
+        AppContext.commonLog.i("Insert uri ----> " + uriBuilder.build().toString());
 		post.addHeader(HTTP.CONTENT_TYPE, MobileServiceConnection.JSON_CONTENTTYPE);
 
 		try {

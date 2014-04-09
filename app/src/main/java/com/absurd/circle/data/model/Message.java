@@ -234,4 +234,27 @@ public class Message implements Serializable{
     }
 
 
+    @Override
+    public String toString() {
+        return "Message{" +
+                "mId=" + mId +
+                ", mContent='" + mContent + '\'' +
+                ", mContentType=" + mContentType +
+                ", mLatitude=" + mLatitude +
+                ", mLongitude=" + mLongitude +
+                ", mWeiboId='" + mWeiboId + '\'' +
+                ", mLocationDec='" + mLocationDec + '\'' +
+                ", mUserId='" + mUserId + '\'' +
+                ", mTitle='" + mTitle + '\'' +
+                ", mMediaUrl='" + mMediaUrl + '\'' +
+                ", mMediaType=" + mMediaType +
+                ", mDate=" + mDate +
+                ", mCommentDate=" + mCommentDate +
+                ", mCommentCount=" + mCommentCount +
+                ", mPraiseCount=" + mPraiseCount +
+                ", mStrUser='" + mStrUser + '\'' +
+                ", mMessagetType=" + mMessagetType +
+                ", mUser=" + mUser +
+                '}';
+    }
 }

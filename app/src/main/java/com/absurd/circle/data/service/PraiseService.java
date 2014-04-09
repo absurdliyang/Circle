@@ -12,7 +12,7 @@ import com.microsoft.windowsazure.mobileservices.TableQueryCallback;
 public class PraiseService extends BaseService {
 
 
-    public void addPraise(Praise praise, TableOperationCallback<Praise> callback){
+    public void insertPraise(Praise praise, TableOperationCallback<Praise> callback){
         getPraiseTable().insert(praise,callback);
     }
 

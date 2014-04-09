@@ -20,6 +20,7 @@ import com.absurd.circle.data.client.volley.BitmapFilter;
 import com.absurd.circle.data.client.volley.RequestManager;
 import com.absurd.circle.data.model.Comment;
 import com.absurd.circle.data.service.CommentService;
+import com.absurd.circle.ui.activity.EditCommentActivity;
 import com.absurd.circle.ui.activity.ImageDetailActivity;
 import com.absurd.circle.ui.activity.MessageDetailActivity;
 import com.absurd.circle.ui.activity.UserProfileActivity;
@@ -33,7 +34,6 @@ import com.microsoft.windowsazure.mobileservices.TableQueryCallback;
 
 import java.util.List;
 
-
 /**
  * Created by absurd on 14-3-14.
  */
@@ -45,11 +45,14 @@ public class MessageDetailFragment extends Fragment{
     private ListView mContentLv;
     private TextView mEmptyTv;
 
+    private TextView mPraiseCountTv;
+    private TextView mCommentCountTv;
+
     private MessageDetailActivity mMessageDetailActivity;
 
     private CommentService mCommentService;
 
-    private int mCurrentPageIndex = 1;
+    private int mCurrentPageIndex = 0;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -58,6 +61,7 @@ public class MessageDetailFragment extends Fragment{
         View rootView = inflater.inflate(R.layout.fragment_message_detail,null);
 
         initCommentList(inflater, rootView);
+        initBottomBar(rootView);
         refresh();
 
         return rootView;
@@ -136,6 +140,25 @@ public class MessageDetailFragment extends Fragment{
         refresh();
     }
 
+    private void initBottomBar(View rootView){
+        mCommentCountTv = (TextView)rootView.findViewById(R.id.tv_comment_count);
+        mPraiseCountTv = (TextView)rootView.findViewById(R.id.tv_praise_count);
+        mCommentCountTv.setText(mMessageDetailActivity.message.getCommentCount() + "");
+        mPraiseCountTv.setText(mMessageDetailActivity.message.getPraiseCount() + "");
+        rootView.findViewById(R.id.llyt_bar_btn_comment).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                IntentUtil.startActivity(mMessageDetailActivity, EditCommentActivity.class, "message", mMessageDetailActivity.message);
+            }
+        });
+        rootView.findViewById(R.id.llyt_bar_btn_praise).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+    }
+
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
@@ -143,7 +166,7 @@ public class MessageDetailFragment extends Fragment{
     }
 
     private void refresh(){
-        mCurrentPageIndex = 1;
+        mCurrentPageIndex = 0;
         mCommentService.getComments(mMessageDetailActivity.message.getId(), mCurrentPageIndex,10,true,new TableQueryCallback<Comment>() {
             @Override
             public void onCompleted(List<Comment> result, int count, Exception exception, ServiceFilterResponse response) {
@@ -163,7 +186,7 @@ public class MessageDetailFragment extends Fragment{
 
     private void nextPage(){
         mCurrentPageIndex ++;
-        mCommentService.getComments(mMessageDetailActivity.message.getId(),1,10,true,new TableQueryCallback<Comment>(){
+        mCommentService.getComments(mMessageDetailActivity.message.getId(),mCurrentPageIndex,10,true,new TableQueryCallback<Comment>(){
 
             @Override
             public void onCompleted(List<Comment> result, int count, Exception exception, ServiceFilterResponse response) {
@@ -181,6 +204,11 @@ public class MessageDetailFragment extends Fragment{
     }
 
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        refresh();
+    }
 
 
 }
