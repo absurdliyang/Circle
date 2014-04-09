@@ -69,15 +69,15 @@ public class MessageDetailFragment extends Fragment{
 
     private void initCommentList(LayoutInflater inflater, View rootView){
         View headerView = inflater.inflate(R.layout.header_message_detail,null);
-        ((TextView)headerView.findViewById(R.id.tv_header_content)).setText(mMessageDetailActivity.message.getContent());
-        ((TextView)headerView.findViewById(R.id.tv_header_title_created)).setText(TimeUtil.formatShowTime(mMessageDetailActivity.message.getDate()));
+        ((TextView)headerView.findViewById(R.id.tv_header_content)).setText(MessageDetailActivity.message.getContent());
+        ((TextView)headerView.findViewById(R.id.tv_header_title_created)).setText(TimeUtil.formatShowTime(MessageDetailActivity.message.getDate()));
         ImageView headerAvaterView = (ImageView)headerView.findViewById(R.id.iv_header_title_avatar);
         ImageView headerMediaView = (ImageView)headerView.findViewById(R.id.iv_header_media);
-        if(mMessageDetailActivity.message != null && mMessageDetailActivity.message.getUser() != null){
-            ((TextView)headerView.findViewById(R.id.tv_header_title_username)).setText(mMessageDetailActivity.message.getUser().getName());
-            ((TextView)headerView.findViewById(R.id.tv_header_title_description)).setText(mMessageDetailActivity.message.getUser().getDescription());
-            if(!StringUtil.isEmpty(mMessageDetailActivity.message.getUser().getAvatar()) && StringUtil.isUrl(mMessageDetailActivity.message.getUser().getAvatar())) {
-                RequestManager.loadImage(mMessageDetailActivity.message.getUser().getAvatar(), RequestManager.getImageListener(headerAvaterView,
+        if(MessageDetailActivity.message != null && MessageDetailActivity.message.getUser() != null){
+            ((TextView)headerView.findViewById(R.id.tv_header_title_username)).setText(MessageDetailActivity.message.getUser().getName());
+            ((TextView)headerView.findViewById(R.id.tv_header_title_description)).setText(MessageDetailActivity.message.getUser().getDescription());
+            if(!StringUtil.isEmpty(MessageDetailActivity.message.getUser().getAvatar()) && StringUtil.isUrl(MessageDetailActivity.message.getUser().getAvatar())) {
+                RequestManager.loadImage(MessageDetailActivity.message.getUser().getAvatar(), RequestManager.getImageListener(headerAvaterView,
                         mAvatarDefaultBitmap, mAvatarDefaultBitmap, new BitmapFilter() {
                             @Override
                             public Bitmap filter(Bitmap bitmap) {
@@ -91,7 +91,7 @@ public class MessageDetailFragment extends Fragment{
                 public void onClick(View view) {
                     IntentUtil.startActivity(mMessageDetailActivity,
                             UserProfileActivity.class, "user",
-                            mMessageDetailActivity.message.getUser());
+                            MessageDetailActivity.message.getUser());
                 }
             });
             headerView.findViewById(R.id.tv_header_title_username).setOnClickListener(new View.OnClickListener() {
@@ -99,17 +99,17 @@ public class MessageDetailFragment extends Fragment{
                 public void onClick(View view) {
                     IntentUtil.startActivity(mMessageDetailActivity,
                             UserProfileActivity.class, "user",
-                            mMessageDetailActivity.message.getUser());
+                            MessageDetailActivity.message.getUser());
                 }
             });
         }
-        if(!StringUtil.isEmpty(mMessageDetailActivity.message.getMediaUrl()) && StringUtil.isUrl(mMessageDetailActivity.message.getMediaUrl())){
-            RequestManager.loadImage(mMessageDetailActivity.message.getMediaUrl(),RequestManager.getImageListener(headerMediaView,
+        if(!StringUtil.isEmpty(MessageDetailActivity.message.getMediaUrl()) && StringUtil.isUrl(MessageDetailActivity.message.getMediaUrl())){
+            RequestManager.loadImage(MessageDetailActivity.message.getMediaUrl(),RequestManager.getImageListener(headerMediaView,
                     mMediaDefaultBitmap,mMediaDefaultBitmap,null));
             headerMediaView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    IntentUtil.startActivity(mMessageDetailActivity,ImageDetailActivity.class,"mediaUrl",mMessageDetailActivity.message.getMediaUrl());
+                    IntentUtil.startActivity(mMessageDetailActivity,ImageDetailActivity.class,"mediaUrl",MessageDetailActivity.message.getMediaUrl());
                 }
             });
         }else{
@@ -140,15 +140,16 @@ public class MessageDetailFragment extends Fragment{
         refresh();
     }
 
+
     private void initBottomBar(View rootView){
         mCommentCountTv = (TextView)rootView.findViewById(R.id.tv_comment_count);
         mPraiseCountTv = (TextView)rootView.findViewById(R.id.tv_praise_count);
-        mCommentCountTv.setText(mMessageDetailActivity.message.getCommentCount() + "");
-        mPraiseCountTv.setText(mMessageDetailActivity.message.getPraiseCount() + "");
+        mCommentCountTv.setText(MessageDetailActivity.message.getCommentCount() + "");
+        mPraiseCountTv.setText(MessageDetailActivity.message.getPraiseCount() + "");
         rootView.findViewById(R.id.llyt_bar_btn_comment).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                IntentUtil.startActivity(mMessageDetailActivity, EditCommentActivity.class, "message", mMessageDetailActivity.message);
+                IntentUtil.startActivity(mMessageDetailActivity, EditCommentActivity.class, "message", MessageDetailActivity.message);
             }
         });
         rootView.findViewById(R.id.llyt_bar_btn_praise).setOnClickListener(new View.OnClickListener() {
@@ -159,6 +160,11 @@ public class MessageDetailFragment extends Fragment{
         });
     }
 
+    private void refreshBottomBar(){
+        mCommentCountTv.setText(MessageDetailActivity.message.getCommentCount() + "");
+        mPraiseCountTv.setText(MessageDetailActivity.message.getPraiseCount() + "");
+    }
+
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
@@ -167,7 +173,7 @@ public class MessageDetailFragment extends Fragment{
 
     private void refresh(){
         mCurrentPageIndex = 0;
-        mCommentService.getComments(mMessageDetailActivity.message.getId(), mCurrentPageIndex,10,true,new TableQueryCallback<Comment>() {
+        mCommentService.getComments(MessageDetailActivity.message.getId(), mCurrentPageIndex,10,true,new TableQueryCallback<Comment>() {
             @Override
             public void onCompleted(List<Comment> result, int count, Exception exception, ServiceFilterResponse response) {
                 if(result == null){
@@ -186,7 +192,7 @@ public class MessageDetailFragment extends Fragment{
 
     private void nextPage(){
         mCurrentPageIndex ++;
-        mCommentService.getComments(mMessageDetailActivity.message.getId(),mCurrentPageIndex,10,true,new TableQueryCallback<Comment>(){
+        mCommentService.getComments(MessageDetailActivity.message.getId(),mCurrentPageIndex,10,true,new TableQueryCallback<Comment>(){
 
             @Override
             public void onCompleted(List<Comment> result, int count, Exception exception, ServiceFilterResponse response) {
@@ -208,6 +214,7 @@ public class MessageDetailFragment extends Fragment{
     public void onResume() {
         super.onResume();
         refresh();
+        refreshBottomBar();
     }
 
 

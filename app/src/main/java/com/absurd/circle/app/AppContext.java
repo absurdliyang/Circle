@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 
 import com.absurd.circle.data.cache.CacheService;
+import com.absurd.circle.data.model.Message;
 import com.absurd.circle.data.model.Position;
 import com.absurd.circle.data.model.User;
 import com.absurd.circle.util.CommonLog;
@@ -27,6 +28,7 @@ public class AppContext extends Application{
     public static String userId;
 
     public static Position lastPosition;
+
 
     @Override
     public void onCreate() {

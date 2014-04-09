@@ -48,7 +48,6 @@ public class MessageListFragment extends Fragment{
     private int mCurrentPageIndex = 0;
 
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         //mHomeActivity = (HomeActivity)getActivity();
@@ -75,6 +74,7 @@ public class MessageListFragment extends Fragment{
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 IntentUtil.startActivity(MessageListFragment.this.getActivity(), MessageDetailActivity.class,"messageId",(Message)mContentLv.getAdapter().getItem(i));
+
             }
         });
         mEmptyTv = (TextView)rootView.findViewById(R.id.tv_empty);

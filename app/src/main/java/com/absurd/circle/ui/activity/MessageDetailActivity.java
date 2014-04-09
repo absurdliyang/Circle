@@ -15,7 +15,7 @@ import java.util.List;
 
 public class MessageDetailActivity extends BaseActivity {
 
-    public Message message;
+    public static Message message;
 
 
     @Override
