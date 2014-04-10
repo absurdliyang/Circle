@@ -29,9 +29,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <LinearLayout
+            android:id="@+id/iv_distance_btn1"
             android:layout_weight="1"
             android:clickable="true"
-            android:onClick="onDistanceItem1Click"
             android:orientation="horizontal"
             android:layout_width="wrap_content"
             android:layout_height="match_parent">
@@ -50,9 +50,9 @@
                 android:text="5 km"/>
         </LinearLayout>
         <LinearLayout
+            android:id="@+id/iv_distance_btn2"
             android:layout_weight="1"
             android:clickable="true"
-            android:onClick="onDistanceItem2Click"
             android:orientation="horizontal"
             android:layout_width="wrap_content"
             android:layout_height="match_parent">
@@ -71,9 +71,9 @@
                 android:text="10 km"/>
         </LinearLayout>
         <LinearLayout
+            android:id="@+id/iv_distance_btn3"
             android:layout_weight="1"
             android:clickable="true"
-            android:onClick="onDistanceItem3Click"
             android:orientation="horizontal"
             android:layout_width="wrap_content"
             android:layout_height="match_parent">
@@ -108,6 +108,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
         <TextView
+            android:id="@+id/tv_order_last_comment"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
@@ -115,16 +116,15 @@
             android:textColor="#ffffffff"
             android:textSize="18dp"
             android:clickable="true"
-            android:onClick="onSortItem1Click"
             android:text="最后回复"/>
         <TextView
+            android:id="@+id/tv_order_last_publish"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
             android:layout_gravity="center_vertical"
             android:textColor="#ffffffff"
             android:clickable="true"
-            android:onClick="onSortItem2Click"
             android:textSize="18dp"
             android:text="最新发表"/>
     </LinearLayout>

@@ -57,7 +57,6 @@ public class MessageAdapter extends BeanAdapter<Message> {
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
         final Message message = (Message) getItem(i);
-        AppContext.commonLog.i("Refresh item view ----> " + message.getPraiseCount() + "  " + message.getCommentCount());
         ViewHolder holder = null;
         if(view == null){
             view = LayoutInflater.from(mContext).inflate(R.layout.item_message,null);
@@ -104,8 +103,8 @@ public class MessageAdapter extends BeanAdapter<Message> {
         holder.contentTv.setText(message.getContent());
         holder.createdTv.setText(TimeUtil.formatShowTime(message.getDate()));
         if(AppContext.lastPosition != null) {
-            holder.locationTv.setText(DistanceUtil.caculate(AppContext.lastPosition.getLatitude(),AppContext.lastPosition.getLongitude()
-                                              ,message.getLatitude(),message.getLongitude()) + "");
+            holder.locationTv.setText(StringUtil.parseDistance(DistanceUtil.caculate(AppContext.lastPosition.getLatitude(),AppContext.lastPosition.getLongitude()
+                                              ,message.getLatitude(),message.getLongitude())));
         }
         holder.praiseCommentTv.setText("赞 " + message.getPraiseCount() + " 评论 " + message.getCommentCount());
         if(message.getMediaUrl() != null){

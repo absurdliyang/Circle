@@ -23,17 +23,17 @@ public class CommentService extends BaseService {
      * @param callback
      */
     public void getComments(int messageId, int pageIndex, int count, boolean order, TableQueryCallback<Comment> callback){
-        String orderItem = null;
-        if(order){
-            orderItem = "date";
+        QueryOrder queryOrder;
+        if(order) {
+            queryOrder = QueryOrder.Ascending;
         }else{
-            orderItem = "id";
+            queryOrder = QueryOrder.Descending;
         }
         getCommentTable().where()
                 .field("messageid").eq(val(messageId))
                 .skip(pageIndex * count)
                 .top(count)
-                .orderBy(orderItem, QueryOrder.Ascending)
+                .orderBy("id", queryOrder)
                 .execute(callback);
     }
 

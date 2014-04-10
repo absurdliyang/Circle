@@ -1,5 +1,7 @@
 package com.absurd.circle.util;
 
+import java.text.DecimalFormat;
+
 /**
  * Created by absurd on 14-3-26.
  */
@@ -17,6 +19,10 @@ public class StringUtil {
             return true;
         }
         return false;
+    }
 
+    public static String parseDistance(double distance){
+        DecimalFormat df = new DecimalFormat("#.##");
+        return df.format(distance) + " km";
     }
 }

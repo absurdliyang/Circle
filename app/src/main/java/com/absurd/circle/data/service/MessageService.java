@@ -5,6 +5,7 @@ import android.content.Context;
 
 import com.absurd.circle.data.model.Message;
 import com.absurd.circle.data.model.Praise;
+import com.microsoft.windowsazure.mobileservices.QueryOrder;
 import com.microsoft.windowsazure.mobileservices.TableDeleteCallback;
 import com.microsoft.windowsazure.mobileservices.TableOperationCallback;
 import com.microsoft.windowsazure.mobileservices.TableQueryCallback;
@@ -39,7 +40,7 @@ public class MessageService extends BaseService{
                 .parameter("longitude",Double.toString(longitude))
                 .parameter("around",around + "")
                 .parameter("isnew",isNew + "")
-                .parameter("contenttypelist",strMessageTypes)
+                .parameter("contenttypelist", strMessageTypes)
                 .parameter("citycode", cityCode).execute(callback);
     }
 

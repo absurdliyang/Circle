@@ -68,10 +68,7 @@ public class HomeActivity extends SlidingFragmentActivity implements Refreshable
     private OnLocationChangedListener mOnLocationChangedListener;
     private LocationManagerProxy mLocationManagerProxy;
 
-    // Message Filter
-    public List<Integer> categoryFilter;
-    public int distanceFilter;
-    public boolean orderFilter;
+
 
     public PullToRefreshAttacher getAttacher(){
         return mAttacher;
@@ -91,7 +88,6 @@ public class HomeActivity extends SlidingFragmentActivity implements Refreshable
         // Init Data component
         mUserService = new UserService();
         init();
-        initDefaultFilter();
         getAuth();
         getFollowers();
         // Configur some UI control
@@ -123,12 +119,7 @@ public class HomeActivity extends SlidingFragmentActivity implements Refreshable
 
     }
 
-    private void initDefaultFilter(){
-        categoryFilter = new ArrayList<Integer>();
-        categoryFilter.add(1);
-        orderFilter = true;
-        distanceFilter = 5;
-    }
+
 
     private void initAMap(){
         if(mAMap == null) {
@@ -269,7 +260,10 @@ public class HomeActivity extends SlidingFragmentActivity implements Refreshable
                     ft.remove(fragment).commit();
                     fm.popBackStack();
                     if(fragment.getStatus() == 0){
-                        mContent.refreshTranscation();
+                        if(fragment.hasChanged) {
+                            mContent.refreshTranscation();
+                            fragment.hasChanged = false;
+                        }
                     }else{
                         FragmentTransaction ft1 = fm.beginTransaction();
                         ft1.setCustomAnimations(R.anim.fragment_slide_bottom_in, R.anim.fragment_slide_bottom_out);
@@ -300,7 +294,7 @@ public class HomeActivity extends SlidingFragmentActivity implements Refreshable
                     ft.remove(fragment).commit();
                     fm.popBackStack();
                     if(fragment.getStatus() == 1){
-                        mContent.refreshTranscation();
+
                     }else{
                         FragmentTransaction ft1 = fm.beginTransaction();
                         ft1.setCustomAnimations(R.anim.fragment_slide_bottom_in, R.anim.fragment_slide_bottom_out);
@@ -340,31 +334,6 @@ public class HomeActivity extends SlidingFragmentActivity implements Refreshable
         return super.onOptionsItemSelected(item);
     }
 
-    public void onSortItem1Click(View view){
-
-    }
-
-    public void onSortItem2Click(View view){
-
-    }
-
-    public void onDistanceItem1Click(View view){
-        findViewById(R.id.iv_distance_flag1).setVisibility(View.VISIBLE);
-        findViewById(R.id.iv_distance_flag2).setVisibility(View.INVISIBLE);
-        findViewById(R.id.iv_distance_flag3).setVisibility(View.INVISIBLE);
-    }
-
-    public void onDistanceItem2Click(View view){
-        findViewById(R.id.iv_distance_flag2).setVisibility(View.VISIBLE);
-        findViewById(R.id.iv_distance_flag1).setVisibility(View.INVISIBLE);
-        findViewById(R.id.iv_distance_flag3).setVisibility(View.INVISIBLE);
-    }
-
-    public void onDistanceItem3Click(View view){
-        findViewById(R.id.iv_distance_flag3).setVisibility(View.VISIBLE);
-        findViewById(R.id.iv_distance_flag1).setVisibility(View.INVISIBLE);
-        findViewById(R.id.iv_distance_flag2).setVisibility(View.INVISIBLE);
-    }
 
 
     @Override

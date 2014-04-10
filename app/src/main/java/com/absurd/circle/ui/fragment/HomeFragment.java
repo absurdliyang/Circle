@@ -41,8 +41,9 @@ public class HomeFragment extends MessageListFragment {
 
     @Override
     protected void loadData(int pageIndex,TableQueryCallback<Message> callback){
+        CategoryFragment categoryFragment = CategoryFragment.getInstance();
         mMessageService.getNearMessage(pageIndex, AppContext.lastPosition.getLatitude(), AppContext.lastPosition.getLongitude(),
-                mHomeActivity.distanceFilter * 1000 , mHomeActivity.categoryFilter, true, "1", callback);
+                categoryFragment.distanceFilter * 1000 , categoryFragment.categoryFilter, categoryFragment.orderFilter, "1", callback);
     }
 
 

@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.HeaderViewListAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -27,6 +28,7 @@ import com.absurd.circle.ui.activity.ImageDetailActivity;
 import com.absurd.circle.ui.activity.MessageDetailActivity;
 import com.absurd.circle.ui.activity.UserProfileActivity;
 import com.absurd.circle.ui.adapter.CommentAdapter;
+import com.absurd.circle.ui.view.ItemDialog;
 import com.absurd.circle.util.ImageUtil;
 import com.absurd.circle.util.IntentUtil;
 import com.absurd.circle.util.StringUtil;
@@ -36,6 +38,7 @@ import com.microsoft.windowsazure.mobileservices.TableDeleteCallback;
 import com.microsoft.windowsazure.mobileservices.TableOperationCallback;
 import com.microsoft.windowsazure.mobileservices.TableQueryCallback;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -59,6 +62,7 @@ public class MessageDetailFragment extends Fragment{
     private MessageService mMessageService;
 
     private int mCurrentPageIndex = 0;
+    private boolean mQueryOrder = true;
 
     private Praise mPraise = new Praise(-1);
 
@@ -182,7 +186,7 @@ public class MessageDetailFragment extends Fragment{
         rootView.findViewById(R.id.llyt_bar_btn_comment).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                IntentUtil.startActivity(mMessageDetailActivity, EditCommentActivity.class, "message", MessageDetailActivity.message);
+                IntentUtil.startActivity(mMessageDetailActivity, EditCommentActivity.class);
             }
         });
         rootView.findViewById(R.id.llyt_bar_btn_praise).setOnClickListener(new View.OnClickListener() {
@@ -248,9 +252,9 @@ public class MessageDetailFragment extends Fragment{
         super.onViewCreated(view, savedInstanceState);
     }
 
-    private void refresh(){
+    public void refresh(){
         mCurrentPageIndex = 0;
-        mCommentService.getComments(MessageDetailActivity.message.getId(), mCurrentPageIndex,10,true,new TableQueryCallback<Comment>() {
+        mCommentService.getComments(MessageDetailActivity.message.getId(), mCurrentPageIndex,10,mQueryOrder,new TableQueryCallback<Comment>() {
             @Override
             public void onCompleted(List<Comment> result, int count, Exception exception, ServiceFilterResponse response) {
                 if(result == null){
@@ -267,9 +271,9 @@ public class MessageDetailFragment extends Fragment{
         });
     }
 
-    private void nextPage(){
+    public void nextPage(){
         mCurrentPageIndex ++;
-        mCommentService.getComments(MessageDetailActivity.message.getId(),mCurrentPageIndex,10,true,new TableQueryCallback<Comment>(){
+        mCommentService.getComments(MessageDetailActivity.message.getId(),mCurrentPageIndex,10,mQueryOrder,new TableQueryCallback<Comment>(){
 
             @Override
             public void onCompleted(List<Comment> result, int count, Exception exception, ServiceFilterResponse response) {
@@ -285,6 +289,35 @@ public class MessageDetailFragment extends Fragment{
             }
         });
     }
+
+
+    public void onMoreClicked(View view){
+        List<String> items = new ArrayList<String>();
+        items.add("倒叙查看评论");
+        items.add("举报该信息");
+        items.add("复制信息");
+        final ItemDialog dialog = new ItemDialog(mMessageDetailActivity,items);
+        dialog.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                switch(i){
+                    case 0:
+                        mQueryOrder  = !mQueryOrder;
+                        refresh();
+                        break;
+                    case 1:
+
+                        break;
+                    case 2:
+
+                        break;
+                }
+                dialog.cancel();
+            }
+        });
+        dialog.show();
+    }
+
 
 
     @Override

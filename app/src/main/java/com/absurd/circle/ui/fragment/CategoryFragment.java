@@ -37,6 +37,12 @@ public class CategoryFragment extends Fragment {
     // 1 for edit new message
     private int mStatus = 0;
 
+    public boolean hasChanged = false;
+
+    // Message Filter
+    public List<Integer> categoryFilter;
+    public int distanceFilter;
+    public boolean orderFilter;
 
     public static CategoryFragment getInstance(){
         if(mCategoryFragment == null)
@@ -44,10 +50,20 @@ public class CategoryFragment extends Fragment {
         return mCategoryFragment;
     }
 
+
+    private void initDefaultFilter(){
+        categoryFilter = new ArrayList<Integer>();
+        categoryFilter.add(1);
+        orderFilter = true;
+        distanceFilter = 5;
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        // Init default message filter
+        initDefaultFilter();
         mHomeActivity = (HomeActivity)getActivity();
-        View rootView = inflater.inflate(R.layout.fragment_category,null);
+        final View rootView = inflater.inflate(R.layout.fragment_category,null);
         mCategoryGv = (GridView)rootView.findViewById(R.id.gv_category);
         Map<Integer,String> itemsMap = new HashMap<Integer, String>();
         itemsMap.put(1,"新鲜事");
@@ -56,7 +72,7 @@ public class CategoryFragment extends Fragment {
         itemsMap.put(9,"随手拍");
         itemsMap.put(7,"活动");
         itemsMap.put(8,"交友");
-        final CategoryAdapter adapter = new CategoryAdapter(CategoryFragment.this.getActivity(),itemsMap,mHomeActivity.categoryFilter);
+        final CategoryAdapter adapter = new CategoryAdapter(CategoryFragment.this.getActivity(),itemsMap,categoryFilter);
         mCategoryGv.setAdapter(adapter);
 
         rootView.findViewById(R.id.iv_distance_flag1).setVisibility(View.VISIBLE);
@@ -82,20 +98,65 @@ public class CategoryFragment extends Fragment {
             mCategoryGv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                    if(mHomeActivity.categoryFilter.contains(adapter.getItem(i))){
-                        mHomeActivity.categoryFilter.remove(adapter.getItem(i));
-                        adapter.setSelectedItems(mHomeActivity.categoryFilter);
+                    hasChanged = true;
+                    if(categoryFilter.contains(adapter.getItem(i))){
+                        categoryFilter.remove(adapter.getItem(i));
+                        adapter.setSelectedItems(categoryFilter);
                         adapter.notifyDataSetChanged();
                     }else{
-                        mHomeActivity.categoryFilter.add((Integer)adapter.getItem(i));
-                        adapter.setSelectedItems(mHomeActivity.categoryFilter);
+                        categoryFilter.add((Integer)adapter.getItem(i));
+                        adapter.setSelectedItems(categoryFilter);
                         adapter.notifyDataSetChanged();
                     }
                 }
             });
         }
+        rootView.findViewById(R.id.iv_distance_btn1).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                hasChanged = true;
+                rootView.findViewById(R.id.iv_distance_flag1).setVisibility(View.VISIBLE);
+                rootView.findViewById(R.id.iv_distance_flag2).setVisibility(View.INVISIBLE);
+                rootView.findViewById(R.id.iv_distance_flag3).setVisibility(View.INVISIBLE);
+            }
+        });
+        rootView.findViewById(R.id.iv_distance_btn2).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                hasChanged = true;
+                rootView.findViewById(R.id.iv_distance_flag2).setVisibility(View.VISIBLE);
+                rootView.findViewById(R.id.iv_distance_flag1).setVisibility(View.INVISIBLE);
+                rootView.findViewById(R.id.iv_distance_flag3).setVisibility(View.INVISIBLE);
+            }
+        });
+        rootView.findViewById(R.id.iv_distance_btn3).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                hasChanged = true;
+                rootView.findViewById(R.id.iv_distance_flag3).setVisibility(View.VISIBLE);
+                rootView.findViewById(R.id.iv_distance_flag1).setVisibility(View.INVISIBLE);
+                rootView.findViewById(R.id.iv_distance_flag2).setVisibility(View.INVISIBLE);
+            }
+        });
+        rootView.findViewById(R.id.tv_order_last_comment).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                hasChanged = true;
+                orderFilter = true;
+
+            }
+        });
+        rootView.findViewById(R.id.tv_order_last_publish).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                hasChanged = true;
+                orderFilter = false;
+            }
+        });
         return rootView;
     }
+
+
 
     public int getStatus(){
         return mStatus;

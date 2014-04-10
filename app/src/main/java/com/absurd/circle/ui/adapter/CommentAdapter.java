@@ -12,6 +12,7 @@ import com.absurd.circle.app.R;
 import com.absurd.circle.data.client.volley.BitmapFilter;
 import com.absurd.circle.data.client.volley.RequestManager;
 import com.absurd.circle.data.model.Comment;
+import com.absurd.circle.ui.activity.EditCommentActivity;
 import com.absurd.circle.ui.activity.UserProfileActivity;
 import com.absurd.circle.ui.adapter.base.BeanAdapter;
 import com.absurd.circle.util.ImageUtil;
@@ -102,6 +103,12 @@ public class CommentAdapter extends BeanAdapter<Comment> {
         }
         content += comment.getContent();
         holder.commentContentTv.setText(content);
+        holder.replyIconIv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                IntentUtil.startActivity(mContext, EditCommentActivity.class, "parentComment", comment);
+            }
+        });
         return view;
     }
 

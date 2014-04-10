@@ -18,6 +18,7 @@ public class MessageDetailActivity extends BaseActivity {
 
     public static Message message;
 
+    private MessageDetailFragment mMessageDetailFragment;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -28,8 +29,9 @@ public class MessageDetailActivity extends BaseActivity {
         int indexId = (Integer)getIntent().getSerializableExtra("messageIndexId");
         message = MessageListFragment.messages.get(indexId);
 
+        mMessageDetailFragment = new MessageDetailFragment();
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.flyt_comment_container,new MessageDetailFragment())
+                .replace(R.id.flyt_comment_container, mMessageDetailFragment)
                 .commit();
     }
 
@@ -41,18 +43,8 @@ public class MessageDetailActivity extends BaseActivity {
     @Override
     public void onMoreClicked(View view) {
         super.onMoreClicked(view);
-        List<String> items = new ArrayList<String>();
-        items.add("倒叙查看评论");
-        items.add("举报该信息");
-        items.add("复制信息");
-        final ItemDialog dialog = new ItemDialog(this,items);
-        dialog.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                dialog.cancel();
-            }
-        });
-        dialog.show();
+        mMessageDetailFragment.onMoreClicked(view);
+
     }
 
 

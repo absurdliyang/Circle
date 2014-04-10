@@ -25,6 +25,7 @@ public class CategoryAdapter extends BaseAdapter{
     private List<Integer> mItems;
     private Map<Integer,String> mItemsMap;
 
+
     public CategoryAdapter(Context context, Map<Integer,String> items, List<Integer> selected){
         this.mContext = context;
         mItemsMap = items;
@@ -74,11 +75,14 @@ public class CategoryAdapter extends BaseAdapter{
         if(view == null){
             view = LayoutInflater.from(mContext).inflate(R.layout.item_category,null);
         }
-        ((TextView) view.findViewById(R.id.tv_category_name)).setText(mItemsMap.get(category));
+        TextView categoryTv = (TextView) view.findViewById(R.id.tv_category_name);
+        categoryTv.setText(mItemsMap.get(category));
         if(mSelectedItems.contains(category)) {
-            view.setSelected(true);
+            categoryTv.setBackgroundResource(R.drawable.category_sel_bg);
+            categoryTv.setTextColor(AppContext.getContext().getResources().getColor(R.color.theme_color));
         }else{
-            view.setSelected(false);
+            categoryTv.setBackgroundResource(R.drawable.sel_category_btn);
+            categoryTv.setTextColor(AppContext.getContext().getResources().getColor(android.R.color.white));
         }
         return view;
     }
