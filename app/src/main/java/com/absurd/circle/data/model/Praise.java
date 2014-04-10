@@ -40,11 +40,17 @@ public class Praise implements Serializable {
     @SerializedName("ParentText")
     private String mParentText;
 
-    @Expose
-    @SerializedName("User")
     private String mStrUser;
 
     private User mUser;
+
+    public Praise(int id){
+        this.mId = id;
+    }
+
+    public Praise(){
+
+    }
 
     public User getUser(){
         User user = null;
@@ -124,4 +130,5 @@ public class Praise implements Serializable {
     public void setMessageId(int messageId) {
         mMessageId = messageId;
     }
+
 }

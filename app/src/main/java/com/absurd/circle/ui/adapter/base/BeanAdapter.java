@@ -44,6 +44,10 @@ public class BeanAdapter<E> extends BaseAdapter {
         notifyDataSetChanged();
     }
 
+    public List<E> getItems(){
+        return mItems;
+    }
+
     @Override
     public int getCount() {
         return mItems.size();

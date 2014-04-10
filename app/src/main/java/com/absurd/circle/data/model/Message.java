@@ -234,6 +234,23 @@ public class Message implements Serializable{
     }
 
 
+    public void incPraiseCount(){
+        this.mPraiseCount += 1;
+    }
+
+    public void decPraiseCount(){
+        this.mPraiseCount -= 1;
+    }
+
+    public void incCommentCount(){
+        this.mCommentCount += 1;
+    }
+
+    public void decCommentCount(){
+        this.mCommentCount -= 1;
+    }
+
+
     @Override
     public String toString() {
         return "Message{" +

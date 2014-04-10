@@ -19,7 +19,9 @@ import com.absurd.circle.app.R;
 import com.absurd.circle.data.client.volley.BitmapFilter;
 import com.absurd.circle.data.client.volley.RequestManager;
 import com.absurd.circle.data.model.Comment;
+import com.absurd.circle.data.model.Praise;
 import com.absurd.circle.data.service.CommentService;
+import com.absurd.circle.data.service.MessageService;
 import com.absurd.circle.ui.activity.EditCommentActivity;
 import com.absurd.circle.ui.activity.ImageDetailActivity;
 import com.absurd.circle.ui.activity.MessageDetailActivity;
@@ -30,6 +32,8 @@ import com.absurd.circle.util.IntentUtil;
 import com.absurd.circle.util.StringUtil;
 import com.absurd.circle.util.TimeUtil;
 import com.microsoft.windowsazure.mobileservices.ServiceFilterResponse;
+import com.microsoft.windowsazure.mobileservices.TableDeleteCallback;
+import com.microsoft.windowsazure.mobileservices.TableOperationCallback;
 import com.microsoft.windowsazure.mobileservices.TableQueryCallback;
 
 import java.util.List;
@@ -45,19 +49,24 @@ public class MessageDetailFragment extends Fragment{
     private ListView mContentLv;
     private TextView mEmptyTv;
 
+    private TextView mPraiseDescTv;
     private TextView mPraiseCountTv;
     private TextView mCommentCountTv;
 
     private MessageDetailActivity mMessageDetailActivity;
 
     private CommentService mCommentService;
+    private MessageService mMessageService;
 
     private int mCurrentPageIndex = 0;
+
+    private Praise mPraise = new Praise(-1);
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mMessageDetailActivity = (MessageDetailActivity)getActivity();
         mCommentService = new CommentService();
+        mMessageService = new MessageService();
         View rootView = inflater.inflate(R.layout.fragment_message_detail,null);
 
         initCommentList(inflater, rootView);
@@ -142,10 +151,34 @@ public class MessageDetailFragment extends Fragment{
 
 
     private void initBottomBar(View rootView){
+        mPraiseDescTv = (TextView)rootView.findViewById(R.id.tv_btn_praise_text);
         mCommentCountTv = (TextView)rootView.findViewById(R.id.tv_comment_count);
         mPraiseCountTv = (TextView)rootView.findViewById(R.id.tv_praise_count);
         mCommentCountTv.setText(MessageDetailActivity.message.getCommentCount() + "");
         mPraiseCountTv.setText(MessageDetailActivity.message.getPraiseCount() + "");
+        MessageService messageService = new MessageService();
+        if(AppContext.userId != null) {
+            messageService.isPraised(AppContext.userId, MessageDetailActivity.message.getId(),
+                    new TableQueryCallback<Praise>() {
+                        @Override
+                        public void onCompleted(List<Praise> result, int count, Exception exception, ServiceFilterResponse response) {
+                            if (result == null) {
+                                if (exception != null) {
+                                    exception.printStackTrace();
+                                }
+                            } else {
+                                if (!result.isEmpty()) {
+                                    mPraise = result.get(0);
+                                    mPraiseDescTv.setText("取消赞");
+                                }else{
+                                    mPraise = null;
+                                    mPraiseDescTv.setText("赞");
+                                }
+                            }
+                        }
+                    }
+            );
+        }
         rootView.findViewById(R.id.llyt_bar_btn_comment).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -155,9 +188,53 @@ public class MessageDetailFragment extends Fragment{
         rootView.findViewById(R.id.llyt_bar_btn_praise).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                praiseMessage();
             }
         });
+    }
+
+    private void praiseMessage(){
+        if(mPraise != null && mPraise.getId() == -1){
+            return;
+        }else{
+            if (mPraise != null) {
+                mMessageService.deletePraise(mPraise,new TableDeleteCallback() {
+                    @Override
+                    public void onCompleted(Exception exception, ServiceFilterResponse response) {
+                        if(exception != null){
+                            exception.printStackTrace();
+                        }else{
+                            AppContext.commonLog.i("Delete praise success");
+                            MessageDetailActivity.message.decPraiseCount();
+                            mPraise = null;
+                            mPraiseDescTv.setText("赞");
+                            refreshBottomBar();
+                        }
+                    }
+                });
+            } else {
+                mPraise = new Praise();
+                mPraise.setMessageId(MessageDetailActivity.message.getId());
+                mPraise.setUserId(AppContext.userId);
+                mPraise.setToUserId(MessageDetailActivity.message.getUserId());
+                mMessageService.insertPraise(mPraise,new TableOperationCallback<Praise>() {
+                    @Override
+                    public void onCompleted(Praise entity, Exception exception, ServiceFilterResponse response) {
+                        if(entity == null){
+                            if(exception != null){
+                                exception.printStackTrace();
+                            }
+                        }else{
+                            AppContext.commonLog.i("Insert Praise success");
+                            MessageDetailActivity.message.incPraiseCount();
+                            mPraise = entity;
+                            mPraiseDescTv.setText("取消赞");
+                            refreshBottomBar();
+                        }
+                    }
+                });
+            }
+        }
     }
 
     private void refreshBottomBar(){

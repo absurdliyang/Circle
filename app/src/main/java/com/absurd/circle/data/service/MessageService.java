@@ -4,6 +4,8 @@ import android.content.Context;
 
 
 import com.absurd.circle.data.model.Message;
+import com.absurd.circle.data.model.Praise;
+import com.microsoft.windowsazure.mobileservices.TableDeleteCallback;
 import com.microsoft.windowsazure.mobileservices.TableOperationCallback;
 import com.microsoft.windowsazure.mobileservices.TableQueryCallback;
 
@@ -62,6 +64,21 @@ public class MessageService extends BaseService{
         getMessageTable().insert(message,callback);
     }
 
+    public void isPraised(String userId, int messageId, TableQueryCallback<Praise> callback){
+        getPraiseTable().where()
+                .field("userid").eq(userId)
+                .and().field("messageid").eq(messageId)
+                .execute(callback);
+    }
+
+
+    public void insertPraise(Praise praise, TableOperationCallback<Praise> callback){
+        getPraiseTable().insert(praise, callback);
+    }
+
+    public void deletePraise(Praise praise, TableDeleteCallback callback){
+        getPraiseTable().delete(praise, callback);
+    }
 
 
 }

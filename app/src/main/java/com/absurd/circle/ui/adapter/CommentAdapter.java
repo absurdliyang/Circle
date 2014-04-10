@@ -90,7 +90,18 @@ public class CommentAdapter extends BeanAdapter<Comment> {
             });
         }
         holder.commentCreatedTv.setText(TimeUtil.formatShowTime(comment.getDate()));
-        holder.commentContentTv.setText(comment.getContent());
+        String content = "";
+        if(comment.getParentId() != 0){
+            String name = "";
+            for(Comment c : getItems()){
+                if(c.getId() == comment.getParentId()){
+                    name = c.getUser().getName();
+                }
+            }
+            content = "回复 " + name + ": ";
+        }
+        content += comment.getContent();
+        holder.commentContentTv.setText(content);
         return view;
     }
 

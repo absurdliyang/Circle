@@ -57,6 +57,7 @@ public class MessageAdapter extends BeanAdapter<Message> {
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
         final Message message = (Message) getItem(i);
+        AppContext.commonLog.i("Refresh item view ----> " + message.getPraiseCount() + "  " + message.getCommentCount());
         ViewHolder holder = null;
         if(view == null){
             view = LayoutInflater.from(mContext).inflate(R.layout.item_message,null);

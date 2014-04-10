@@ -35,6 +35,7 @@ public class HomeFragment extends MessageListFragment {
         if(messages != null && !messages.isEmpty()){
             HeaderViewListAdapter headerAdapter = (HeaderViewListAdapter)mContentLv.getAdapter();
             ((MessageAdapter) headerAdapter.getWrappedAdapter()).setItems(messages);
+            MessageListFragment.messages = messages;
         }
     }
 
@@ -53,4 +54,6 @@ public class HomeFragment extends MessageListFragment {
             AppContext.cacheService.inserMessage(message);
         }
     }
+
+
 }

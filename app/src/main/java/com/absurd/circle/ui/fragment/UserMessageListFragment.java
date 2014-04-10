@@ -4,10 +4,12 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.HeaderViewListAdapter;
 
 import com.absurd.circle.app.AppContext;
 import com.absurd.circle.data.model.Message;
 import com.absurd.circle.ui.activity.UserDynamicActivity;
+import com.absurd.circle.ui.adapter.MessageAdapter;
 import com.absurd.circle.ui.fragment.base.MessageListFragment;
 import com.microsoft.windowsazure.mobileservices.TableQueryCallback;
 

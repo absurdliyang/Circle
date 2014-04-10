@@ -89,7 +89,7 @@ public class EditCommentActivity extends BaseActivity{
                 }
                 AppContext.commonLog.i(entity.toString());
                 AppContext.commonLog.i("Add comment success!");
-                MessageDetailActivity.message.setCommentCount(MessageDetailActivity.message.getCommentCount() + 1);
+                MessageDetailActivity.message.incCommentCount();
                 EditCommentActivity.this.finish();
             }
         });

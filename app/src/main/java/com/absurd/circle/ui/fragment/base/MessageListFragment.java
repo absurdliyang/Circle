@@ -47,6 +47,7 @@ public class MessageListFragment extends Fragment{
 
     private int mCurrentPageIndex = 0;
 
+    public static List<Message> messages;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -73,7 +74,7 @@ public class MessageListFragment extends Fragment{
         mContentLv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                IntentUtil.startActivity(MessageListFragment.this.getActivity(), MessageDetailActivity.class,"messageId",(Message)mContentLv.getAdapter().getItem(i));
+                IntentUtil.startActivity(MessageListFragment.this.getActivity(), MessageDetailActivity.class,"messageIndexId",i);
 
             }
         });
@@ -103,8 +104,8 @@ public class MessageListFragment extends Fragment{
     private TableQueryCallback<Message> refreshCallBack = new TableQueryCallback<Message>() {
         @Override
         public void onCompleted(List<Message> result, int count, Exception exception, ServiceFilterResponse response) {
-            if(mLoadingFooter != null && mLoadingFooter.getState() == LoadingFooter.State.Loading){
-                mLoadingFooter.setState(LoadingFooter.State.TheEnd);
+            if(mAttacher.isRefreshing()){
+                mAttacher.setRefreshComplete();
             }
             if (result == null) {
                 if (exception != null) {
@@ -113,8 +114,8 @@ public class MessageListFragment extends Fragment{
                 }
             } else {
                 handleResult(result);
-                HeaderViewListAdapter headerAdapter = (HeaderViewListAdapter)mContentLv.getAdapter();
-                ((MessageAdapter) headerAdapter.getWrappedAdapter()).setItems(result);
+                getAdapter().setItems(result);
+                MessageListFragment.messages = result;
             }
         }
     };
@@ -131,12 +132,20 @@ public class MessageListFragment extends Fragment{
                     AppContext.commonLog.i("Get message error!");
                 }
             } else {
-                HeaderViewListAdapter headerAdapter = (HeaderViewListAdapter)mContentLv.getAdapter();
-                ((MessageAdapter) headerAdapter.getWrappedAdapter()).addItems(result);
+                getAdapter().addItems(result);
+                MessageListFragment.messages = getAdapter().getItems();
             }
         }
     };
 
+
+    private MessageAdapter getAdapter(){
+        HeaderViewListAdapter headerAdapter = (HeaderViewListAdapter)mContentLv.getAdapter();
+        if(headerAdapter != null){
+            return (MessageAdapter) headerAdapter.getWrappedAdapter();
+        }
+        return null;
+    }
 
 
     public void refreshTranscation(){
@@ -162,6 +171,15 @@ public class MessageListFragment extends Fragment{
     public void onStop() {
         super.onStop();
         RequestManager.cancelAll(this);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        // Keep the static member messages' consistency
+        MessageListFragment.messages = getAdapter().getItems();
+        // Keep the consistency between UI View and static member messages
+        getAdapter().notifyDataSetChanged();
     }
 
 
