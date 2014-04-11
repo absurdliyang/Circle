@@ -51,7 +51,10 @@ public class UserProfileActivity extends BaseActivity {
     private TextView mBadRecordTv;
     private TextView mFunsCountTv;
 
-    private TextView mAddFolloeBtn;
+    private View mBottomBar;
+    private View mAddFollowBtn;
+    private TextView mAddFollowTextTv;
+    private View mSendMessageBtn;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -75,7 +78,6 @@ public class UserProfileActivity extends BaseActivity {
         mBadRecordTv = (TextView)findViewById(R.id.tv_user_profile_bad_record);
         mFunsCountTv = (TextView)findViewById(R.id.tv_user_profile_info);
 
-        mAddFolloeBtn = (TextView)findViewById(R.id.tv_user_profile_add_follow_btn);
 
         // Get Data
         UserService userService = new UserService();
@@ -114,15 +116,40 @@ public class UserProfileActivity extends BaseActivity {
         mInterestTv.setText(mUser.getHobby());
         mJobTv.setText(mUser.getProfession());
 
+        initBottomBar();
+
+    }
+
+
+    private void initBottomBar(){
+        mBottomBar = findViewById(R.id.llyt_user_profile_bottom_bar);
+        mAddFollowBtn = findViewById(R.id.llyt_bar_btn_add_follow);
+        mAddFollowTextTv = (TextView)findViewById(R.id.tv_btn_add_follow);
+
+        mSendMessageBtn = findViewById(R.id.llyt_bar_btn_send_message);
+
         if(mUser.getUserId().equals(AppContext.auth.getUserId())){
-            mAddFolloeBtn.setVisibility(View.GONE);
+            mBottomBar.setVisibility(View.GONE);
         }
         mFollow = AppContext.cacheService.findFollow(mUser.getUserId());
         if(mFollow != null){
-            mAddFolloeBtn.setText("取消关注");
+            mAddFollowTextTv.setText("取消关注");
         }
-    }
 
+        mAddFollowBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                addFollow();
+            }
+        });
+
+        mSendMessageBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+    }
 
     @Override
     protected String actionBarTitle() {
@@ -134,9 +161,9 @@ public class UserProfileActivity extends BaseActivity {
         IntentUtil.startActivity(this,UserDynamicActivity.class,"userId",mUser.getUserId());
     }
 
-    public void onAddFollowClick(View view){
+    public void addFollow(){
         UserService service = new UserService();
-        if(mAddFolloeBtn.getText().equals("添加关注")){
+        if(mAddFollowTextTv.getText().equals("添加关注")){
             final Follow follow = new Follow();
             follow.setUserId(AppContext.auth.getUserId());
             follow.setFollowUserId(mUser.getUserId());
@@ -149,7 +176,8 @@ public class UserProfileActivity extends BaseActivity {
                         }
                     }else{
                         AppContext.cacheService.insertFollow(follow);
-                        mAddFolloeBtn.setText("取消关注");
+                        mAddFollowTextTv.setText("取消关注");
+                        mFollow = entity;
                     }
                 }
             });
@@ -161,6 +189,8 @@ public class UserProfileActivity extends BaseActivity {
                         exception.printStackTrace();
                     }else{
                         AppContext.cacheService.deleteFollow(mFollow.getFollowUserId());
+                        mAddFollowTextTv.setText("添加关注");
+                        mFollow = null;
                     }
                 }
             });
@@ -185,8 +215,4 @@ public class UserProfileActivity extends BaseActivity {
 
     }
 
-
-    public void onSendMessageClick(View view){
-
-    }
 }

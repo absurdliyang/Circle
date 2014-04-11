@@ -11,7 +11,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.absurd.circle.app.AppConstant;
+import com.absurd.circle.app.AppContext;
 import com.absurd.circle.app.R;
 import com.absurd.circle.data.client.volley.RequestManager;
 import com.absurd.circle.ui.view.ItemDialog;
@@ -130,6 +133,15 @@ public abstract class BaseActivity extends SwipeBackActivity {
 
     public void setRightBtnStatus(int status){
         this.mRightBtnStatus = status;
+    }
+
+    protected void warning(String content){
+        Toast.makeText(this, content, Toast.LENGTH_SHORT).show();
+    }
+
+    protected void warning(int resId){
+        String content = AppContext.getContext().getString(resId);
+        warning(content);
     }
 
 }

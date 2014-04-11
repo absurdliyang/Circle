@@ -80,8 +80,16 @@
             android:label="@string/title_activity_user_profile" >
         </activity>
         <activity
+            android:name="com.absurd.circle.ui.activity.MyProfileActivity"
+            android:label="@string/title_activity_my_profile" >
+        </activity>
+        <activity
             android:name="com.absurd.circle.ui.activity.EditCommentActivity"
             android:label="@string/title_activity_edit_comment" >
+        </activity>
+        <activity
+            android:name="com.absurd.circle.ui.activity.EditItemActivity"
+            android:label="@string/title_activity_edit_item" >
         </activity>
     </application>
 

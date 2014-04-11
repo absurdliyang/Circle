@@ -40,6 +40,9 @@ public class UserService extends BaseService {
         getUserTable().where().field("userId").eq(userId).execute(callback);
     }
 
+    public void updateUser(User user, TableOperationCallback<User> callback){
+        getUserTable().update(user,callback);
+    }
 
 
     public void getUserFuns(String userId, TableQueryCallback<Follow> callback){

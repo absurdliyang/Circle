@@ -40,11 +40,16 @@ public class CacheService {
         mDatabase.insert(UserDBManager.TABLE_NAME,null,value);
     }
 
-    public void inserUser(User user){
+    public void insertUser(User user){
         ContentValues value = new ContentValues();
         value.put(UserDBManager.USER_ID,user.getUserId());
         value.put(UserDBManager.JSON,JsonUtil.toJson(user));
         mDatabase.insert(UserDBManager.TABLE_NAME,null,value);
+    }
+
+    public void updateUser(User user){
+        deleteUser();
+        insertUser(user);
     }
 
     public void deleteUser(){

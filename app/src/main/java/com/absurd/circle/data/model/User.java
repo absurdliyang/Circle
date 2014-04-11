@@ -3,13 +3,18 @@ package com.absurd.circle.data.model;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.sql.Date;
 
 /**
  * Created by absurd on 14-3-14.
  */
-public class User implements Serializable{
+public class User implements Serializable, Cloneable{
 
     @Expose
     @SerializedName("id")
@@ -336,6 +341,17 @@ public class User implements Serializable{
         mIsAnnoymity = isAnnoymity;
     }
 
+
+    @Override
+    public Object clone(){
+        User user = null;
+        try {
+            user = (User)super.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
+        return user;
+    }
 
 
 }

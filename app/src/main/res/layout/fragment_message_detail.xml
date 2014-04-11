@@ -29,7 +29,7 @@
                 android:layout_width="wrap_content"/>
         </RelativeLayout>
     </RelativeLayout>
-    <View android:background="#ff3b3b3b"
+    <View android:background="#ff999999"
           android:layout_alignParentBottom="true"
           android:layout_marginBottom="48dp"
           android:layout_width="match_parent"
@@ -65,7 +65,7 @@
                       android:layout_width="wrap_content"
                       android:layout_marginLeft="3dp"/>
         </LinearLayout>
-        <View android:background="#ff3b3b3b"
+        <View android:background="#ff999999"
               android:layout_width="0.5dip"
               android:layout_marginTop="4dp"
               android:layout_marginBottom="4dp"

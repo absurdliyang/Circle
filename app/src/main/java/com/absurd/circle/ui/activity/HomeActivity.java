@@ -42,7 +42,6 @@ import com.microsoft.windowsazure.mobileservices.ServiceFilterResponse;
 import com.microsoft.windowsazure.mobileservices.TableOperationCallback;
 import com.microsoft.windowsazure.mobileservices.TableQueryCallback;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshAttacher;
@@ -188,7 +187,7 @@ public class HomeActivity extends SlidingFragmentActivity implements Refreshable
                         } else {
                             AppContext.auth = result.get(0);
                             AppContext.cacheService.deleteUser();
-                            AppContext.cacheService.inserUser(AppContext.auth);
+                            AppContext.cacheService.insertUser(AppContext.auth);
                             mSlidingMenuFragment.invalidateView();
                         }
                     }
