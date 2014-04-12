@@ -77,12 +77,14 @@ public class CategoryAdapter extends BaseAdapter{
         }
         TextView categoryTv = (TextView) view.findViewById(R.id.tv_category_name);
         categoryTv.setText(mItemsMap.get(category));
-        if(mSelectedItems.contains(category)) {
-            categoryTv.setBackgroundResource(R.drawable.category_sel_bg);
-            categoryTv.setTextColor(AppContext.getContext().getResources().getColor(R.color.theme_color));
-        }else{
-            categoryTv.setBackgroundResource(R.drawable.sel_category_btn);
-            categoryTv.setTextColor(AppContext.getContext().getResources().getColor(android.R.color.white));
+        if(mSelectedItems != null) {
+            if (mSelectedItems.contains(category)) {
+                categoryTv.setBackgroundResource(R.drawable.category_sel_bg);
+                categoryTv.setTextColor(AppContext.getContext().getResources().getColor(R.color.theme_color));
+            } else {
+                categoryTv.setBackgroundResource(R.drawable.sel_category_btn);
+                categoryTv.setTextColor(AppContext.getContext().getResources().getColor(android.R.color.white));
+            }
         }
         return view;
     }

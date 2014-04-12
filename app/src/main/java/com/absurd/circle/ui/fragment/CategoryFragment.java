@@ -44,6 +44,11 @@ public class CategoryFragment extends Fragment {
     public int distanceFilter;
     public boolean orderFilter;
 
+    public CategoryFragment(){
+        super();
+        initDefaultFilter();
+    }
+
     public static CategoryFragment getInstance(){
         if(mCategoryFragment == null)
             mCategoryFragment = new CategoryFragment();
@@ -61,7 +66,7 @@ public class CategoryFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Init default message filter
-        initDefaultFilter();
+        //initDefaultFilter();
         mHomeActivity = (HomeActivity)getActivity();
         final View rootView = inflater.inflate(R.layout.fragment_category,null);
         mCategoryGv = (GridView)rootView.findViewById(R.id.gv_category);
@@ -81,6 +86,7 @@ public class CategoryFragment extends Fragment {
             rootView.findViewById(R.id.llyt_cat_order).setVisibility(View.GONE);
             rootView.findViewById(R.id.v_cat_divider1).setVisibility(View.GONE);
             rootView.findViewById(R.id.v_cat_divider2).setVisibility(View.GONE);
+            mCategoryGv.setAdapter(new CategoryAdapter(CategoryFragment.this.getActivity(),itemsMap,null));
             mCategoryGv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
