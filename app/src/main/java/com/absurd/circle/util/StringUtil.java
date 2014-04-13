@@ -8,6 +8,9 @@ import java.text.DecimalFormat;
 public class StringUtil {
 
     public static boolean isUrl(String str){
+        if(str == null){
+            return false;
+        }
         if(str.startsWith("http")){
             return true;
         }

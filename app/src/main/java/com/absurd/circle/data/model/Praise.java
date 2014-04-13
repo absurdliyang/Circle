@@ -131,4 +131,19 @@ public class Praise implements Serializable {
         mMessageId = messageId;
     }
 
+
+    @Override
+    public String toString() {
+        return "Praise{" +
+                "mId=" + mId +
+                ", mMessageId=" + mMessageId +
+                ", mToUserId='" + mToUserId + '\'' +
+                ", mState=" + mState +
+                ", mUserId='" + mUserId + '\'' +
+                ", mDate=" + mDate +
+                ", mParentText='" + mParentText + '\'' +
+                ", mStrUser='" + mStrUser + '\'' +
+                ", mUser=" + mUser +
+                '}';
+    }
 }

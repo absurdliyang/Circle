@@ -143,7 +143,7 @@ public class HomeActivity extends SlidingFragmentActivity implements Refreshable
     }
     // It shoeld be called when the uer firstly login
     private void getFollowers(){
-        AppContext.cacheService.deleteAllFollow();
+        AppContext.cacheService.followDBManager.deleteAllFollow();
         if(AppContext.auth != null) {
             mUserService.getUserFollowers(AppContext.auth.getUserId(), new TableQueryCallback<Follow>() {
                 @Override
@@ -154,7 +154,7 @@ public class HomeActivity extends SlidingFragmentActivity implements Refreshable
                         }
                     }else{
                         for(Follow follow : result ){
-                            AppContext.cacheService.insertFollow(follow);
+                            AppContext.cacheService.followDBManager.insertFollow(follow);
                         }
                     }
                 }
@@ -163,7 +163,7 @@ public class HomeActivity extends SlidingFragmentActivity implements Refreshable
     }
 
     private void getAuth(){
-        User u = AppContext.cacheService.getUser();
+        User u = AppContext.cacheService.userDBManager.getUser();
         if(u != null) {
             AppContext.auth = u;
             AppContext.userId = u.getUserId();
@@ -186,8 +186,8 @@ public class HomeActivity extends SlidingFragmentActivity implements Refreshable
                             }
                         } else {
                             AppContext.auth = result.get(0);
-                            AppContext.cacheService.deleteUser();
-                            AppContext.cacheService.insertUser(AppContext.auth);
+                            AppContext.cacheService.userDBManager.deleteUser();
+                            AppContext.cacheService.userDBManager.insertUser(AppContext.auth);
                             mSlidingMenuFragment.invalidateView();
                         }
                     }

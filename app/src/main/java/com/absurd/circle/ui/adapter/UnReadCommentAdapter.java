@@ -4,11 +4,13 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.view.View;
 
+import com.absurd.circle.app.AppContext;
 import com.absurd.circle.data.client.volley.BitmapFilter;
 import com.absurd.circle.data.client.volley.RequestManager;
 import com.absurd.circle.data.model.Comment;
 import com.absurd.circle.ui.adapter.base.NotificationAdapter;
 import com.absurd.circle.util.ImageUtil;
+import com.absurd.circle.util.StringUtil;
 import com.absurd.circle.util.TimeUtil;
 
 /**
@@ -27,14 +29,18 @@ public class UnReadCommentAdapter extends NotificationAdapter<Comment> {
         holder.contentView.setText(item.getContent());
         if(item.getUser() != null) {
             holder.usernameView.setText(item.getUser().getName());
-            RequestManager.loadImage(item.getUser().getAvatar(), RequestManager.getImageListener(holder.avatarView,
-                    mAvatarDefaultBitmap, mAvatarDefaultBitmap, new BitmapFilter() {
-                        @Override
-                        public Bitmap filter(Bitmap bitmap) {
-                            return ImageUtil.roundBitmap(bitmap);
+            //AppContext.commonLog.i("user avatar ----> " + item.getUser().getAvatar() + "user name ----> " + item.getUser().getName());
+            AppContext.commonLog.i(item.toString());
+            if(StringUtil.isUrl(item.getUser().getAvatar())) {
+                RequestManager.loadImage(item.getUser().getAvatar(), RequestManager.getImageListener(holder.avatarView,
+                        mAvatarDefaultBitmap, mAvatarDefaultBitmap, new BitmapFilter() {
+                            @Override
+                            public Bitmap filter(Bitmap bitmap) {
+                                return ImageUtil.roundBitmap(bitmap);
+                            }
                         }
-                    }
-            ));
+                ));
+            }
         }
     }
 }

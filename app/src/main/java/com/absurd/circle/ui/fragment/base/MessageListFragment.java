@@ -132,6 +132,7 @@ public class MessageListFragment extends Fragment{
                     AppContext.commonLog.i("Get message error!");
                 }
             } else {
+                AppContext.commonLog.i("result ---- > " + result);
                 getAdapter().addItems(result);
                 MessageListFragment.messages = getAdapter().getItems();
             }

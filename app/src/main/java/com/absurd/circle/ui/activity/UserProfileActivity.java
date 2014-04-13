@@ -131,7 +131,7 @@ public class UserProfileActivity extends BaseActivity {
         if(mUser.getUserId().equals(AppContext.auth.getUserId())){
             mBottomBar.setVisibility(View.GONE);
         }
-        mFollow = AppContext.cacheService.findFollow(mUser.getUserId());
+        mFollow = AppContext.cacheService.followDBManager.findFollow(mUser.getUserId());
         if(mFollow != null){
             mAddFollowTextTv.setText("取消关注");
         }
@@ -175,7 +175,7 @@ public class UserProfileActivity extends BaseActivity {
                             exception.printStackTrace();
                         }
                     }else{
-                        AppContext.cacheService.insertFollow(follow);
+                        AppContext.cacheService.followDBManager.insertFollow(follow);
                         mAddFollowTextTv.setText("取消关注");
                         mFollow = entity;
                     }
@@ -188,7 +188,7 @@ public class UserProfileActivity extends BaseActivity {
                     if(exception != null){
                         exception.printStackTrace();
                     }else{
-                        AppContext.cacheService.deleteFollow(mFollow.getFollowUserId());
+                        AppContext.cacheService.followDBManager.deleteFollow(mFollow.getFollowUserId());
                         mAddFollowTextTv.setText("添加关注");
                         mFollow = null;
                     }

@@ -19,7 +19,7 @@ public class Column {
     }
 
     public static enum DataType {
-        NULL, INTEGER, REAL, TEXT, BLOB
+        NULL, INTEGER, REAL, TEXT, BLOB,
     }
 
     private String mColumnName;

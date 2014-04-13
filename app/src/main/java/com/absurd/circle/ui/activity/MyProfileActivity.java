@@ -235,7 +235,7 @@ public class MyProfileActivity extends BaseActivity{
                 }else{
                     AppContext.auth = entity;
                     warning(R.string.update_user_profile_success);
-                    AppContext.cacheService.updateUser(entity);
+                    AppContext.cacheService.userDBManager.updateUser(entity);
                     invalidateView();
                 }
             }

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.view.View;
 
+import com.absurd.circle.app.AppContext;
 import com.absurd.circle.data.client.volley.BitmapFilter;
 import com.absurd.circle.data.client.volley.RequestManager;
 import com.absurd.circle.data.model.Praise;
@@ -24,6 +25,7 @@ public class UnReadPraiseAdapter extends NotificationAdapter<Praise> {
         holder.timeView.setText(TimeUtil.formatShowTime(item.getDate()));
         holder.descView.setText("赞了我的微博:");
         holder.contentView.setText(item.getParentText());
+        AppContext.commonLog.i(item.toString());
         if(item.getUser() != null) {
             holder.usernameView.setText(item.getUser().getName());
             RequestManager.loadImage(item.getUser().getAvatar(), RequestManager.getImageListener(holder.avatarView,

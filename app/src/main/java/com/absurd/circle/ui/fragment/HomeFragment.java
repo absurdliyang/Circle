@@ -31,7 +31,7 @@ public class HomeFragment extends MessageListFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        List<Message> messages = AppContext.cacheService.getAllMessages();
+        List<Message> messages = AppContext.cacheService.messageDBManager.getAllMessages();
         if(messages != null && !messages.isEmpty()){
             HeaderViewListAdapter headerAdapter = (HeaderViewListAdapter)mContentLv.getAdapter();
             ((MessageAdapter) headerAdapter.getWrappedAdapter()).setItems(messages);
@@ -42,17 +42,19 @@ public class HomeFragment extends MessageListFragment {
     @Override
     protected void loadData(int pageIndex,TableQueryCallback<Message> callback){
         CategoryFragment categoryFragment = CategoryFragment.getInstance();
-        mMessageService.getNearMessage(pageIndex, AppContext.lastPosition.getLatitude(), AppContext.lastPosition.getLongitude(),
-                categoryFragment.distanceFilter * 1000 , categoryFragment.categoryFilter, categoryFragment.orderFilter, "1", callback);
+        if(AppContext.lastPosition != null) {
+            mMessageService.getNearMessage(pageIndex, AppContext.lastPosition.getLatitude(), AppContext.lastPosition.getLongitude(),
+                    categoryFragment.distanceFilter * 1000, categoryFragment.categoryFilter, categoryFragment.orderFilter, "1", callback);
+        }
     }
 
 
     @Override
     protected void handleResult(List<Message> result) {
         super.handleResult(result);
-        AppContext.cacheService.deleteAllMessage();
+        AppContext.cacheService.messageDBManager.deleteAllMessage();
         for(Message message : result){
-            AppContext.cacheService.inserMessage(message);
+            AppContext.cacheService.messageDBManager.insertMessage(message);
         }
     }
 

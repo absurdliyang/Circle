@@ -1,7 +1,6 @@
 package com.absurd.circle.ui.activity;
 
 import android.os.Bundle;
-import android.widget.HeaderViewListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -9,10 +8,10 @@ import android.widget.Toast;
 import com.absurd.circle.app.AppContext;
 import com.absurd.circle.app.R;
 import com.absurd.circle.data.model.Praise;
-import com.absurd.circle.data.model.UserMessage;
 import com.absurd.circle.data.service.NotificationService;
 import com.absurd.circle.ui.adapter.UnReadPraiseAdapter;
-import com.absurd.circle.ui.adapter.UserMessageAdapter;
+import com.absurd.circle.util.StringUtil;
+import com.absurd.circle.util.TimeUtil;
 import com.microsoft.windowsazure.mobileservices.ServiceFilterResponse;
 import com.microsoft.windowsazure.mobileservices.TableQueryCallback;
 
@@ -47,6 +46,10 @@ public class UnReadPraiseActivity extends BaseActivity {
                             Toast.makeText(UnReadPraiseActivity.this, "get Praises failed!", Toast.LENGTH_SHORT).show();
                         }
                     }else {
+                        for(Praise praise : result){
+                            AppContext.cacheService.praiseDBManager.insertPraise(praise);
+                        }
+
                         ((UnReadPraiseAdapter) mContentLv.getAdapter()).setItems(result);
                     }
                 }

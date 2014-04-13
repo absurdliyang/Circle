@@ -118,7 +118,7 @@ public class User implements Serializable, Cloneable{
 
     @Expose
     @SerializedName("appver")
-    private String appVer;
+    private String mAppVer;
 
     @Expose
     @SerializedName("isanonymity")
@@ -326,11 +326,11 @@ public class User implements Serializable, Cloneable{
     }
 
     public String getAppVer() {
-        return appVer;
+        return mAppVer;
     }
 
     public void setAppVer(String appVer) {
-        this.appVer = appVer;
+        this.mAppVer = appVer;
     }
 
     public int getIsAnnoymity() {
