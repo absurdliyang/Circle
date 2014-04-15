@@ -27,6 +27,8 @@ public class CacheService {
     public MessageDBManager messageDBManager;
     public CommentDBManager commnetDBManager;
     public FollowDBManager followDBManager;
+    public UserMessageDBManager userMessageDBManager;
+    public BlackListDBManager blackListDBManager;
 
     private CacheService(Context context){
         mDBHelper = new DBHelper(context);
@@ -37,6 +39,8 @@ public class CacheService {
         messageDBManager = new MessageDBManager(context);
         commnetDBManager = new CommentDBManager(context);
         followDBManager = new FollowDBManager(context);
+        userMessageDBManager = new UserMessageDBManager(context);
+        blackListDBManager = new BlackListDBManager(context);
 
     }
 
@@ -45,9 +49,5 @@ public class CacheService {
             mCacheService = new CacheService(context);
         return mCacheService;
     }
-
-
-
-
 
 }

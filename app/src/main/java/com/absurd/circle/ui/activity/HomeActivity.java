@@ -141,6 +141,10 @@ public class HomeActivity extends SlidingFragmentActivity implements Refreshable
             ///////
         }
     }
+
+    private void initClientCache(){
+
+    }
     // It shoeld be called when the uer firstly login
     private void getFollowers(){
         AppContext.cacheService.followDBManager.deleteAllFollow();

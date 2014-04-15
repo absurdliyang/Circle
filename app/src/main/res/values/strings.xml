@@ -28,11 +28,14 @@
     <string name="warinig_image_null">请添加图片！</string>
     <string name="error_send_message">消息发送失败！</string>
 
+    <string name="start_text">Hi,欢迎来到圈圈</string>
+    <string name="share_text">圈圈是一个很有趣又实用的附近生活社区APP，推荐给大家。下载地址：http://url.cn/N3iPeV @圈圈官博</string>
     <string name="edit_comment_hint">回复是一种鼓励！</string>
     <string name="warning_comment_content_null">回复内容不能为空！</string>
 
     <string name="update_user_profile_success">更新资料成功</string>
     <string name="update_user_profile_failed">更新资料失败</string>
+
 
     <!-- sina weibo -->
     <string name="com_sina_weibo_sdk_login_with_weibo_account">用微博登錄</string>

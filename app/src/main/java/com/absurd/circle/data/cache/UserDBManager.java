@@ -60,41 +60,58 @@ public class UserDBManager extends BaseDBManager{
         mDatabase.execSQL(sql);
     }
 
+    public User getUser(String userId){
+        User res = null;
+        String sql = "select * from " + UserDBInfo.TABLE_NAME + " where " + UserDBInfo.USER_ID + " = '"
+                + userId + "'";
+        Cursor cursor = mDatabase.rawQuery(sql, null);
+        if(cursor.moveToFirst()){
+            res = parseUser(cursor);
+        }
+        return res;
+    }
+
     public User getUser(){
         Cursor cursor = mDatabase.query(UserDBInfo.TABLE_NAME,null,null,null,null,null,null);
         User user = new User();
         if(cursor.moveToFirst()){
             cursor.move(0);
-            user.setId(cursor.getInt(1));
-            user.setUserId(cursor.getString(2));
-            user.setName(cursor.getString(3));
-            user.setLoginName(cursor.getString(4));
-            user.setPassword(cursor.getString(5));
-            user.setSex(cursor.getString(6));
-            user.setAge(new java.sql.Date(cursor.getLong(7)));
-            user.setPermission(cursor.getInt(8));
-            user.setEmail(cursor.getString(9));
-            user.setQq(cursor.getString(10));
-            user.setPhone(cursor.getString(11));
-            user.setLocation(cursor.getString(12));
-            user.setDate(new java.sql.Date(cursor.getLong(13)));
-            user.setAvatar(cursor.getString(14));
-            user.setDescription(cursor.getString(15));
-            user.setToken(cursor.getString(16));
-            user.setChannelUri(cursor.getString(17));
-            user.setOsName(cursor.getString(18));
-            user.setLoginType(cursor.getInt(19));
-            user.setHobby(cursor.getString(20));
-            user.setProfession(cursor.getString(21));
-            user.setBackgroundImage(cursor.getString(22));
-            user.setCity(cursor.getString(23));
-            user.setLastLoginDate(new java.sql.Date(cursor.getLong(24)));
-            user.setCorpse(cursor.getInt(25));
-            user.setAppVer(cursor.getString(26));
-            user.setIsAnnoymity(cursor.getInt(27));
-            return user;
+            return parseUser(cursor);
         }
         return null;
+    }
+
+
+    private User parseUser(Cursor cursor){
+        User user = new User();
+        user.setId(cursor.getInt(1));
+        user.setUserId(cursor.getString(2));
+        user.setName(cursor.getString(3));
+        user.setLoginName(cursor.getString(4));
+        user.setPassword(cursor.getString(5));
+        user.setSex(cursor.getString(6));
+        user.setAge(new java.sql.Date(cursor.getLong(7)));
+        user.setPermission(cursor.getInt(8));
+        user.setEmail(cursor.getString(9));
+        user.setQq(cursor.getString(10));
+        user.setPhone(cursor.getString(11));
+        user.setLocation(cursor.getString(12));
+        user.setDate(new java.sql.Date(cursor.getLong(13)));
+        user.setAvatar(cursor.getString(14));
+        user.setDescription(cursor.getString(15));
+        user.setToken(cursor.getString(16));
+        user.setChannelUri(cursor.getString(17));
+        user.setOsName(cursor.getString(18));
+        user.setLoginType(cursor.getInt(19));
+        user.setHobby(cursor.getString(20));
+        user.setProfession(cursor.getString(21));
+        user.setBackgroundImage(cursor.getString(22));
+        user.setCity(cursor.getString(23));
+        user.setLastLoginDate(new java.sql.Date(cursor.getLong(24)));
+        user.setCorpse(cursor.getInt(25));
+        user.setAppVer(cursor.getString(26));
+        user.setIsAnnoymity(cursor.getInt(27));
+        return user;
     }
 
 

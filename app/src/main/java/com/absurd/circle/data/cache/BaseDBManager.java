@@ -16,8 +16,10 @@ public class BaseDBManager {
         mDatabase = mDBHelper.getWritableDatabase();
     }
 
-    private void deleteAll(){
-
+    public void deleteAll(String tableName){
+        String sql = "delete from " + tableName;
+        mDatabase.execSQL(sql);
     }
+
 
 }

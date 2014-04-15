@@ -133,7 +133,6 @@ public class LoginoutButton extends Button implements OnClickListener {
 		mLogoutListener = logoutListener;
 
 		if (mAccessToken != null && mAccessToken.isSessionValid()) {
-            setText(R.string.com_sina_weibo_sdk_logout);
         }
 	}
     
@@ -220,21 +219,7 @@ public class LoginoutButton extends Button implements OnClickListener {
 	 */
 	private void loadDefaultStyle(AttributeSet attrs) {
 		if (attrs != null && 0 == attrs.getStyleAttribute()) {
-			Resources res = getResources();
-			this.setBackgroundResource(R.drawable.com_sina_weibo_sdk_button_blue);
-			this.setPadding(res.getDimensionPixelSize(R.dimen.com_sina_weibo_sdk_loginview_padding_left),
-					res.getDimensionPixelSize(R.dimen.com_sina_weibo_sdk_loginview_padding_top),
-					res.getDimensionPixelSize(R.dimen.com_sina_weibo_sdk_loginview_padding_right),
-					res.getDimensionPixelSize(R.dimen.com_sina_weibo_sdk_loginview_padding_bottom));
-			this.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_com_sina_weibo_sdk_logo, 0, 0, 0);
-			this.setCompoundDrawablePadding(
-					res.getDimensionPixelSize(R.dimen.com_sina_weibo_sdk_loginview_compound_drawable_padding));
-	        this.setTextColor(res.getColor(R.color.com_sina_weibo_sdk_loginview_text_color));
-	        this.setTextSize(TypedValue.COMPLEX_UNIT_PX,
-	        		res.getDimension(R.dimen.com_sina_weibo_sdk_loginview_text_size));
-	        this.setTypeface(Typeface.DEFAULT_BOLD);
-	        this.setGravity(Gravity.CENTER);
-	        this.setText(R.string.com_sina_weibo_sdk_login_with_weibo_account);
+			this.setBackgroundResource(R.drawable.weibo_auth_bg);
 		}
 	}
 	
@@ -257,7 +242,6 @@ public class LoginoutButton extends Button implements OnClickListener {
 					// 从 Bundle 中解析 Token
 					mAccessToken = Oauth2AccessToken.parseAccessToken(values);
 					if (mAccessToken.isSessionValid()) {
-						setText(R.string.com_sina_weibo_sdk_logout);
 					}
 					
 					if (mAuthListener != null) {
@@ -306,14 +290,11 @@ public class LoginoutButton extends Button implements OnClickListener {
 			                        //AccessTokenKeeper.clear(getContext());
 			                    	// 清空当前 Token
 			                        mAccessToken = null;
-			                        
-			                        setText(R.string.com_sina_weibo_sdk_login_with_weibo_account);
 			                    }
 		                    } else {
 		                    	String error_code = obj.getString("error_code");
 		                    	if(error_code.equals("21317")){
 		                    		 mAccessToken = null;
-				                     setText(R.string.com_sina_weibo_sdk_login_with_weibo_account);
 		                    	}
 		                    }
 		                } catch (JSONException e) {
@@ -330,7 +311,6 @@ public class LoginoutButton extends Button implements OnClickListener {
 				public void onWeiboException(WeiboException e) {
 					LogUtil.e(TAG, "WeiboException： " + e.getMessage());
 	                // 注销失败
-	                setText(R.string.com_sina_weibo_sdk_logout);
 	                if (mLogoutListener != null) {
 	                	mLogoutListener.onWeiboException(e);
 	                }

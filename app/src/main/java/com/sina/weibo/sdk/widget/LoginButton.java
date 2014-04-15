@@ -110,37 +110,19 @@ public class LoginButton extends Button implements OnClickListener {
 		mAuthInfo = new AuthInfo(mContext, appKey, redirectUrl, scope);
 		mAuthListener = authListener;
 	}
-    
+
     /**
      * 设置微博登陆按钮显示的样式，默认为同时带有新浪微博图标和文字的样式。
-     * 
+     *
      * @param style 登录按钮的样式。可以是以下几种样式中的一种：
      *              {@link #LOGIN_INCON_STYLE_1}，
      *              {@link #LOGIN_INCON_STYLE_2}，
      *              {@link #LOGIN_INCON_STYLE_3}
      */
     public void setStyle(int style) {
-    	int iconResId = R.drawable.com_sina_weibo_sdk_login_button_with_account_text;
-    	switch (style) {
-		case LOGIN_INCON_STYLE_1:
-			iconResId = R.drawable.com_sina_weibo_sdk_login_button_with_account_text;
-			break;
-			
-		case LOGIN_INCON_STYLE_2:
-			iconResId = R.drawable.com_sina_weibo_sdk_login_button_with_frame_logo;
-			break;
-			
-		case LOGIN_INCON_STYLE_3:
-			iconResId = R.drawable.com_sina_weibo_sdk_login_button_with_original_logo;
-			break;
-			
-		default:
-			break;
-		}
-    	
-    	setBackgroundResource(iconResId);
+    	setBackgroundResource(R.drawable.weibo_auth_bg);
 	}
-    
+
     /**
      * 设置一个额外的 Button 点击时的 Listener。
      * 当触发 Button 点击事件时，会先调用该 Listener，给使用者一个可访问的机会，

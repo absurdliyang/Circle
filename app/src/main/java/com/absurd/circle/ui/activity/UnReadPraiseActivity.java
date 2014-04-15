@@ -49,7 +49,6 @@ public class UnReadPraiseActivity extends BaseActivity {
                         for(Praise praise : result){
                             AppContext.cacheService.praiseDBManager.insertPraise(praise);
                         }
-
                         ((UnReadPraiseAdapter) mContentLv.getAdapter()).setItems(result);
                     }
                 }

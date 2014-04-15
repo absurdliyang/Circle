@@ -31,6 +31,7 @@ public class FollowersFragment extends UserListFragment<Follow> {
     protected void loadData(int pageIndex, TableQueryCallback<Follow> callback) {
         if(AppContext.auth != null) {
             mUserService.getUserFollowers(AppContext.auth.getUserId(),callback);
+
         }
     }
 }

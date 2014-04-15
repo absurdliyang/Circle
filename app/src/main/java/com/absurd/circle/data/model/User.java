@@ -353,5 +353,36 @@ public class User implements Serializable, Cloneable{
         return user;
     }
 
-
+    @Override
+    public String toString() {
+        return "User{" +
+                "mId=" + mId +
+                ", mUserId='" + mUserId + '\'' +
+                ", mName='" + mName + '\'' +
+                ", mLoginName='" + mLoginName + '\'' +
+                ", mPassword='" + mPassword + '\'' +
+                ", mSex='" + mSex + '\'' +
+                ", mAge=" + mAge +
+                ", mPermission=" + mPermission +
+                ", mEmail='" + mEmail + '\'' +
+                ", mQq='" + mQq + '\'' +
+                ", mPhone='" + mPhone + '\'' +
+                ", mLocation='" + mLocation + '\'' +
+                ", mDate=" + mDate +
+                ", mAvatar='" + mAvatar + '\'' +
+                ", mDescription='" + mDescription + '\'' +
+                ", mToken='" + mToken + '\'' +
+                ", mChannelUri='" + mChannelUri + '\'' +
+                ", mOsName='" + mOsName + '\'' +
+                ", mLoginType=" + mLoginType +
+                ", mHobby='" + mHobby + '\'' +
+                ", mProfession='" + mProfession + '\'' +
+                ", mBackgroundImage='" + mBackgroundImage + '\'' +
+                ", mCity='" + mCity + '\'' +
+                ", mLastLoginDate=" + mLastLoginDate +
+                ", mCorpse=" + mCorpse +
+                ", mAppVer='" + mAppVer + '\'' +
+                ", mIsAnnoymity=" + mIsAnnoymity +
+                '}';
+    }
 }

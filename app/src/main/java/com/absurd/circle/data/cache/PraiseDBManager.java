@@ -38,29 +38,55 @@ public class PraiseDBManager extends BaseDBManager {
         Cursor cursor = mDatabase.query(PraiseDBInfo.TABLE_NAME, null, null, null, null, null, null);
         if(cursor.moveToFirst()){
             do{
-                Praise praise = new Praise();
-                praise.setId(cursor.getInt(1));
-                praise.setMessageId(cursor.getInt(2));
-                praise.setToUserId(cursor.getString(3));
-                if(cursor.getInt(4) == 1){
-                    praise.setState(true);
-                }else{
-                    praise.setState(false);
-                }
-                praise.setUserId(cursor.getString(5));
-                praise.setDate(new java.sql.Date(cursor.getLong(6)));
-                praise.setParentText(cursor.getString(7));
-                resList.add(praise);
+                resList.add(parsePraise(cursor));
             }while(cursor.moveToNext());
         }
         return resList;
     }
 
+    public List<Praise> getUnReadPraises(){
+        List<Praise> resList = new ArrayList<Praise>();
+        String sql = "select * from " + PraiseDBInfo.TABLE_NAME + " where " + PraiseDBInfo.STATE + " = '"
+                + "0" + "'";
+        Cursor cursor = mDatabase.rawQuery(sql,null);
+        if(cursor.moveToFirst()){
+            do{
+                resList.add(parsePraise(cursor));
+            }while(cursor.moveToNext());
+        }
+        return resList;
+    }
+
+    public void updatePraiseState(int praiseId) {
+        String sql = "update " + PraiseDBInfo.TABLE_NAME + " set state = "
+                + "1 " + "where id = " + praiseId;
+        mDatabase.execSQL(sql);
+    }
+
+    public void deleteAll(){
+        deleteAll(PraiseDBInfo.TABLE_NAME);
+    }
+
+
+
+    private Praise parsePraise(Cursor cursor){
+        Praise praise = new Praise();
+        praise.setId(cursor.getInt(1));
+        praise.setMessageId(cursor.getInt(2));
+        praise.setToUserId(cursor.getString(3));
+        if(cursor.getInt(4) == 1){
+            praise.setState(true);
+        }else{
+            praise.setState(false);
+        }
+        praise.setUserId(cursor.getString(5));
+        praise.setDate(new java.sql.Date(cursor.getLong(6)));
+        praise.setParentText(cursor.getString(7));
+        return praise;
+    }
+
 
     public static class PraiseDBInfo{
-
-        private PraiseDBInfo(){}
-
 
         public static final String TABLE_NAME = "praise";
 
