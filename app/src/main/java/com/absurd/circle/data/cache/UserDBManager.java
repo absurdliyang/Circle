@@ -26,13 +26,15 @@ public class UserDBManager extends BaseDBManager{
         value.put(UserDBInfo.LOGIN_NAME, user.getLoginName());
         value.put(UserDBInfo.PASSWORD, user.getPassword());
         value.put(UserDBInfo.SEX,user.getSex());
-        value.put(UserDBInfo.AGE,user.getAge().getTime());
+        if(user.getAge() != null)
+            value.put(UserDBInfo.AGE,user.getAge().getTime());
         value.put(UserDBInfo.PERMISSION, user.getPermission());
         value.put(UserDBInfo.EMAIL, user.getEmail());
         value.put(UserDBInfo.QQ, user.getQq());
         value.put(UserDBInfo.PHONE, user.getPhone());
         value.put(UserDBInfo.LOCATION, user.getLocation());
-        value.put(UserDBInfo.DATE, user.getDate().getTime());
+        if(user.getDate() != null)
+            value.put(UserDBInfo.DATE, user.getDate().getTime());
         value.put(UserDBInfo.AVATAR, user.getAvatar());
         value.put(UserDBInfo.DESCRIPTION, user.getDescription());
         value.put(UserDBInfo.TOKEN, user.getToken());
@@ -43,7 +45,8 @@ public class UserDBManager extends BaseDBManager{
         value.put(UserDBInfo.PROFESSION, user.getProfession());
         value.put(UserDBInfo.BACKGROUND_IMAGE, user.getBackgroundImage());
         value.put(UserDBInfo.CITY, user.getCity());
-        value.put(UserDBInfo.LAST_LOGIN_DATE,user.getLastLoginDate().getTime());
+        if(user.getLastLoginDate() != null)
+            value.put(UserDBInfo.LAST_LOGIN_DATE,user.getLastLoginDate().getTime());
         value.put(UserDBInfo.CORPSE,user.getCorpse());
         value.put(UserDBInfo.APP_VER,user.getAppVer());
         value.put(UserDBInfo.IS_ANNOYMITY, user.getIsAnnoymity());
@@ -114,8 +117,9 @@ public class UserDBManager extends BaseDBManager{
         return user;
     }
 
-
-
+    public void deleteAll(){
+        super.deleteAll(UserDBInfo.TABLE_NAME);
+    }
 
     public static class UserDBInfo {
 

@@ -17,7 +17,7 @@ public class BaseDBManager {
     }
 
     public void deleteAll(String tableName){
-        String sql = "delete from " + tableName;
+        String sql = "delete  from " + tableName;
         mDatabase.execSQL(sql);
     }
 

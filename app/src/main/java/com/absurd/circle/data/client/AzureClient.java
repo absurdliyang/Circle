@@ -22,7 +22,7 @@ public class AzureClient {
         return mClient;
     }
 
-    private static void initClient(Context context){
+    public static void initClient(Context context){
         try {
             mClient = new MobileServiceClient(AppConstant.AZURE_APP_URL,AppConstant.AZURE_APP_KEY, context);
         } catch (MalformedURLException e) {

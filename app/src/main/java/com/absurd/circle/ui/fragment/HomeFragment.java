@@ -52,7 +52,7 @@ public class HomeFragment extends MessageListFragment {
     @Override
     protected void handleResult(List<Message> result) {
         super.handleResult(result);
-        AppContext.cacheService.messageDBManager.deleteAllMessage();
+        AppContext.cacheService.messageDBManager.deleteAll();
         for(Message message : result){
             AppContext.cacheService.messageDBManager.insertMessage(message);
         }

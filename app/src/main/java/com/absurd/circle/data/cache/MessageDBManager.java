@@ -50,10 +50,8 @@ public class MessageDBManager extends BaseDBManager{
         mDatabase.insert(MessageDBInfo.TABLE_NAME,null,value);
     }
 
-
-    public void deleteAllMessage(){
-        String sql = "delete from " + MessageDBInfo.TABLE_NAME;
-        mDatabase.execSQL(sql);
+    public void deleteAll(){
+        super.deleteAll(MessageDBInfo.TABLE_NAME);
     }
 
     public List<Message> getAllMessages(){

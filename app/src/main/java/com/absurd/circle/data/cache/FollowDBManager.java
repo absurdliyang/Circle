@@ -32,9 +32,8 @@ public class FollowDBManager extends BaseDBManager{
         mDatabase.insert(FollowDBInfo.TABLE_NAME,null,values);
     }
 
-    public void deleteAllFollow(){
-        String sql = "delete from " + FollowDBInfo.TABLE_NAME;
-        mDatabase.execSQL(sql);
+    public void deleteAll(){
+        super.deleteAll(FollowDBInfo.TABLE_NAME);
     }
 
     public void deleteFollow(String followUserId){

@@ -63,12 +63,8 @@ public class SharedPreferenceUtil {
         return null;
     }
 
-    public void setWeiboAccessToken(String token){
-        mEditor.putString("weiboAccessToken",token)
+    public void clearAll(){
+        mEditor.clear()
                 .commit();
-    }
-
-    public String getWeiboAccessToken(){
-        return mSharedPreferences.getString("weiboAccessToken","");
     }
 }

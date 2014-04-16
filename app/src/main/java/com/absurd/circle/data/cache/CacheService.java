@@ -50,4 +50,17 @@ public class CacheService {
         return mCacheService;
     }
 
+
+    public void clearAll(){
+        praiseDBManager.deleteAll();
+        userDBManager.deleteAll();
+        messageDBManager.deleteAll();
+        commnetDBManager.deleteAll();
+        followDBManager.deleteAll();
+        userMessageDBManager.deleteAll();
+        blackListDBManager.deleteAll();
+
+    }
+
+
 }

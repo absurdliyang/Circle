@@ -1,7 +1,5 @@
 package com.absurd.circle.ui.activity;
 
-import java.sql.Date;
-import java.text.SimpleDateFormat;
 import java.util.List;
 
 import android.os.Bundle;
@@ -14,6 +12,7 @@ import android.widget.Toast;
 import com.absurd.circle.app.AppConstant;
 import com.absurd.circle.app.AppContext;
 import com.absurd.circle.app.R;
+import com.absurd.circle.data.client.AzureClient;
 import com.absurd.circle.data.model.SinaWeiboUser;
 import com.absurd.circle.data.model.User;
 import com.absurd.circle.data.service.UserService;
@@ -60,6 +59,7 @@ public class LoginActivity extends ActionBarActivity {
     private void initConfig(User user){
         AppContext.sharedPreferenceUtil.setAuthTokem(user.getToken());
         AppContext.sharedPreferenceUtil.setUserId(user.getUserId());
+        AzureClient.setToken(user.getToken());
     }
 
 
@@ -76,13 +76,30 @@ public class LoginActivity extends ActionBarActivity {
                         exception.printStackTrace();
                     }
                 }else{
-                    AppContext.commonLog.i("login success ---->" + entity.toString());
+                    initConfig(entity);
                     if(entity.getId() != 0){
                         registerSinaUser(sinaUser);
                     }else{
-                        initConfig(entity);
-                        IntentUtil.startActivity(LoginActivity.this, HomeActivity.class);
+                        getUserInfo(entity.getUserId());
                     }
+                }
+            }
+        });
+    }
+
+    private void getUserInfo(String userId){
+        mUserService.getUser(userId, new TableQueryCallback<User>() {
+            @Override
+            public void onCompleted(List<User> result, int count, Exception exception, ServiceFilterResponse response) {
+                if(result == null){
+                    if(exception != null){
+                        exception.printStackTrace();
+                    }
+                }else {
+                    User user = result.get(0);
+                    AppContext.cacheService.userDBManager.insertUser(user);
+                    AppContext.commonLog.i("get User info success ----> " + user.toString());
+                    IntentUtil.startActivity(LoginActivity.this, HomeActivity.class);
                 }
             }
         });
@@ -103,7 +120,7 @@ public class LoginActivity extends ActionBarActivity {
         user.setAge(new java.sql.Date(calendar.getTimeInMillis()));
         user.setLastLoginDate(new java.sql.Date(calendar.getTimeInMillis()));
 
-        mUserService.insertUser(user, new TableOperationCallback<User>() {
+        mUserService.updateUser(user, new TableOperationCallback<User>() {
             @Override
             public void onCompleted(User entity, Exception exception, ServiceFilterResponse response) {
                 if (entity == null) {
@@ -111,13 +128,14 @@ public class LoginActivity extends ActionBarActivity {
                         exception.printStackTrace();
                     }
                 } else {
-                    AppContext.commonLog.i(entity.toString());
-                    AppContext.commonLog.i("register success");
-                    initConfig(entity);
+                    AppContext.commonLog.i("register user success ----> " + entity.toString());
+                    AppContext.cacheService.userDBManager.insertUser(entity);
                     IntentUtil.startActivity(LoginActivity.this, HomeActivity.class);
+                    LoginActivity.this.finish();
                 }
             }
         });
+
 
     }
 
@@ -131,10 +149,8 @@ public class LoginActivity extends ActionBarActivity {
                 userAPI.show(Long.parseLong(accessToken.getUid()),new RequestListener() {
                     @Override
                     public void onComplete(String s) {
-                        AppContext.commonLog.i("get user info success ----> " + s);
                         SinaWeiboUser sinaUser = JsonUtil.fromJson(s, SinaWeiboUser.class);
                         AppContext.commonLog.i(sinaUser);
-                        String userId = "sina:" + accessToken.getUid();
                         login(sinaUser);
                     }
 

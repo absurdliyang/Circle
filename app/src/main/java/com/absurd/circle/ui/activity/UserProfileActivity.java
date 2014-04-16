@@ -146,7 +146,7 @@ public class UserProfileActivity extends BaseActivity {
         mSendMessageBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                IntentUtil.startActivity(UserProfileActivity.this, ChatActivity.class, "touser", mUser);
             }
         });
     }

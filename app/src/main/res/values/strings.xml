@@ -154,5 +154,6 @@
     <string name="title_activity_my_profile">MyProfileActivity</string>
     <string name="title_activity_edit_comment">EditCommentActivity</string>
     <string name="title_activity_edit_item">EditItemActivity</string>
+    <string name="title_activity_chat">ChatActivity</string>
 
 </resources>

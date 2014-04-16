@@ -25,6 +25,7 @@ import com.absurd.circle.ui.fragment.CategoryFragment;
 import com.absurd.circle.ui.fragment.HomeFragment;
 import com.absurd.circle.ui.fragment.SlidingMenuFragment;
 import com.absurd.circle.util.CommonLog;
+import com.absurd.circle.util.IntentUtil;
 import com.absurd.circle.util.LogFactory;
 import com.absurd.circle.util.StringUtil;
 import com.amap.api.location.AMapLocation;
@@ -77,6 +78,11 @@ public class HomeActivity extends SlidingFragmentActivity implements Refreshable
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if(!getAuth()) {
+            IntentUtil.startActivity(this,LoginActivity.class);
+            this.finish();
+        }
+
         mAttacher = PullToRefreshAttacher.get(this);
         // set the Above View
         if (savedInstanceState != null)
@@ -87,7 +93,6 @@ public class HomeActivity extends SlidingFragmentActivity implements Refreshable
         // Init Data component
         mUserService = new UserService();
         init();
-        getAuth();
         getFollowers();
         // Configur some UI control
         configureSlidingMenu();
@@ -142,12 +147,10 @@ public class HomeActivity extends SlidingFragmentActivity implements Refreshable
         }
     }
 
-    private void initClientCache(){
 
-    }
     // It shoeld be called when the uer firstly login
     private void getFollowers(){
-        AppContext.cacheService.followDBManager.deleteAllFollow();
+        AppContext.cacheService.followDBManager.deleteAll();
         if(AppContext.auth != null) {
             mUserService.getUserFollowers(AppContext.auth.getUserId(), new TableQueryCallback<Follow>() {
                 @Override
@@ -166,8 +169,22 @@ public class HomeActivity extends SlidingFragmentActivity implements Refreshable
         }
     }
 
-    private void getAuth(){
-        User u = AppContext.cacheService.userDBManager.getUser();
+    private boolean getAuth(){
+        AppContext.userId = AppContext.sharedPreferenceUtil.getUserId();
+        AppContext.commonLog.i(AppContext.userId);
+        if(StringUtil.isEmpty(AppContext.userId))
+            return false;
+        User u = AppContext.cacheService.userDBManager.getUser(AppContext.userId);
+        if(u != null) {
+            AppContext.auth = u;
+            AppContext.userId = u.getUserId();
+            AppContext.token = AppContext.sharedPreferenceUtil.getAuthToken();
+            AzureClient.initClient(AppContext.getContext());
+            AzureClient.setToken(AppContext.token);
+            return true;
+        }
+        return false;
+        /**
         if(u != null) {
             AppContext.auth = u;
             AppContext.userId = u.getUserId();
@@ -221,6 +238,7 @@ public class HomeActivity extends SlidingFragmentActivity implements Refreshable
                 });
             }
         }
+         **/
     }
 
 
