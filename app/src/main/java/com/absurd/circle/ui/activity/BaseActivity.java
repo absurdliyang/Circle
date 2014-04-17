@@ -18,6 +18,7 @@ import com.absurd.circle.app.AppContext;
 import com.absurd.circle.app.R;
 import com.absurd.circle.data.client.volley.RequestManager;
 import com.absurd.circle.ui.view.ItemDialog;
+import com.absurd.circle.ui.widget.AppMsg;
 
 import me.imid.swipebacklayout.lib.app.SwipeBackActivity;
 
@@ -136,7 +137,8 @@ public abstract class BaseActivity extends SwipeBackActivity {
     }
 
     protected void warning(String content){
-        Toast.makeText(this, content, Toast.LENGTH_SHORT).show();
+        AppMsg.makeText(this,content,AppMsg.STYLE_ALERT).show();
+        //Toast.makeText(this, content, Toast.LENGTH_SHORT).show();
     }
 
     protected void warning(int resId){

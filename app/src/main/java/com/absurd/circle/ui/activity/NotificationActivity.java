@@ -15,11 +15,7 @@ import com.absurd.circle.app.AppContext;
 import com.absurd.circle.app.R;
 import com.absurd.circle.data.model.UserMessage;
 import com.absurd.circle.data.service.NotificationService;
-import com.absurd.circle.data.service.UserService;
-import com.absurd.circle.ui.adapter.CommentAdapter;
 import com.absurd.circle.ui.adapter.UserMessageAdapter;
-import com.absurd.circle.ui.fragment.NotificationListFragment;
-import com.absurd.circle.ui.view.LoadingFooter;
 import com.absurd.circle.util.ImageUtil;
 import com.absurd.circle.util.IntentUtil;
 import com.microsoft.windowsazure.mobileservices.ServiceFilterResponse;
@@ -27,7 +23,6 @@ import com.microsoft.windowsazure.mobileservices.TableQueryCallback;
 
 import java.util.List;
 
-import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshAttacher;
 
 public class NotificationActivity extends BaseActivity{
     private ListView mContentLv;

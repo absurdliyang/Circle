@@ -13,7 +13,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.absurd.circle.app.AppConstant;
 import com.absurd.circle.app.AppContext;
 import com.absurd.circle.app.R;
 import com.absurd.circle.data.client.AzureClient;
@@ -40,17 +39,13 @@ import com.amap.api.maps2d.UiSettings;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.jeremyfeinstein.slidingmenu.lib.app.SlidingFragmentActivity;
 import com.microsoft.windowsazure.mobileservices.ServiceFilterResponse;
-import com.microsoft.windowsazure.mobileservices.TableOperationCallback;
 import com.microsoft.windowsazure.mobileservices.TableQueryCallback;
 
 import java.util.List;
 
-import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshAttacher;
 
-public class HomeActivity extends SlidingFragmentActivity implements RefreshableActivity
-                                ,AMapLocationListener, LocationSource {
+public class HomeActivity extends SlidingFragmentActivity implements AMapLocationListener, LocationSource {
     private CommonLog mLog = LogFactory.createLog();
-    private PullToRefreshAttacher mAttacher;
     private HomeFragment mContent;
     /**
      * false MessageListFragment
@@ -70,10 +65,6 @@ public class HomeActivity extends SlidingFragmentActivity implements Refreshable
 
 
 
-    public PullToRefreshAttacher getAttacher(){
-        return mAttacher;
-    }
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -83,7 +74,6 @@ public class HomeActivity extends SlidingFragmentActivity implements Refreshable
             this.finish();
         }
 
-        mAttacher = PullToRefreshAttacher.get(this);
         // set the Above View
         if (savedInstanceState != null)
             mContent = (HomeFragment)getSupportFragmentManager().getFragment(savedInstanceState, "mContent");

@@ -123,13 +123,13 @@ public class EditMessageActivity extends BaseActivity implements AMapLocationLis
         mContent = mContentEt.getText().toString();
         if(StringUtil.isEmpty(mContent)){
             AppContext.commonLog.i("Message content can not be null!");
-            Toast.makeText(this,R.string.warning_message_null,Toast.LENGTH_SHORT).show();
+            warning(R.string.warning_message_null);
             return false;
         }
         mContent = mContent.trim();
         if(mContentType == MessageType.SHOW && StringUtil.isEmpty(mImageUrl)){
             AppContext.commonLog.i("Image can not be null");
-            Toast.makeText(this,R.string.warinig_image_null,Toast.LENGTH_SHORT).show();
+            warning(R.string.warinig_image_null);
             return false;
         }
         return true;

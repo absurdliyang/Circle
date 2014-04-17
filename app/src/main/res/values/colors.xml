@@ -7,4 +7,12 @@
     <!-- Message card -->
     <color name="card_color1">#ffdedede</color>
     <color name="card_color2">#ffffffff</color>
+
+
+
+    <!-- AppMsg widget -->
+    <color name="alert">#CC0000</color>
+    <color name="confirm">#FF8800</color>
+    <color name="info">#669900</color>
+
 </resources>

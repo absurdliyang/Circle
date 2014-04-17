@@ -19,7 +19,6 @@ import com.absurd.circle.data.client.volley.RequestManager;
 import com.absurd.circle.data.model.Message;
 import com.absurd.circle.data.service.MessageService;
 import com.absurd.circle.ui.activity.MessageDetailActivity;
-import com.absurd.circle.ui.activity.RefreshableActivity;
 import com.absurd.circle.ui.adapter.MessageAdapter;
 import com.absurd.circle.ui.view.LoadingFooter;
 import com.absurd.circle.util.CommonLog;
@@ -30,7 +29,6 @@ import com.microsoft.windowsazure.mobileservices.TableQueryCallback;
 
 import java.util.List;
 
-import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshAttacher;
 
 /**
  * Created by absurd on 14-3-12.
@@ -40,7 +38,6 @@ public class MessageListFragment extends Fragment{
     protected ListView mContentLv;
     private TextView mEmptyTv;
 
-    private PullToRefreshAttacher mAttacher;
     private LoadingFooter mLoadingFooter;
 
     protected MessageService mMessageService;
@@ -91,6 +88,7 @@ public class MessageListFragment extends Fragment{
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        /**
         mAttacher = ((RefreshableActivity)getActivity()).getAttacher();
         mAttacher.addRefreshableView(mContentLv,new PullToRefreshAttacher.OnRefreshListener() {
             @Override
@@ -98,15 +96,18 @@ public class MessageListFragment extends Fragment{
                 refreshTranscation();
             }
         });
+         **/
 
     }
 
     private TableQueryCallback<Message> refreshCallBack = new TableQueryCallback<Message>() {
         @Override
         public void onCompleted(List<Message> result, int count, Exception exception, ServiceFilterResponse response) {
+            /**
             if(mAttacher.isRefreshing()){
                 mAttacher.setRefreshComplete();
             }
+             **/
             if (result == null) {
                 if (exception != null) {
                     exception.printStackTrace();

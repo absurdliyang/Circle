@@ -81,7 +81,6 @@
     <orderEntry type="library" exported="" name="volley" level="project" />
     <orderEntry type="library" exported="" name="pushservice-3.0.0" level="project" />
     <orderEntry type="library" exported="" name="Android_Map_V2.2.0" level="project" />
-    <orderEntry type="module" module-name="PullToRefresh" exported="" />
   </component>
 </module>
 
