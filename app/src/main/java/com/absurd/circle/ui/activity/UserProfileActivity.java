@@ -12,9 +12,12 @@ import com.absurd.circle.app.AppContext;
 import com.absurd.circle.app.R;
 import com.absurd.circle.data.client.volley.BitmapFilter;
 import com.absurd.circle.data.client.volley.RequestManager;
+import com.absurd.circle.data.model.BlackList;
 import com.absurd.circle.data.model.Follow;
 import com.absurd.circle.data.model.FunsCount;
+import com.absurd.circle.data.model.ReportMessage;
 import com.absurd.circle.data.model.User;
+import com.absurd.circle.data.service.NotificationService;
 import com.absurd.circle.data.service.UserService;
 import com.absurd.circle.ui.view.ItemDialog;
 import com.absurd.circle.util.ImageUtil;
@@ -37,6 +40,7 @@ public class UserProfileActivity extends BaseActivity {
 
     private User mUser;
     private Follow mFollow;
+    private BlackList mBlackList;
 
     private ImageView mUserBackGroundIv;
     private ImageView mAvatarIv;
@@ -56,14 +60,18 @@ public class UserProfileActivity extends BaseActivity {
     private TextView mAddFollowTextTv;
     private View mSendMessageBtn;
 
+    public UserProfileActivity() {
+        // Set custom actionbar
+        setRightBtnStatus(RIGHT_MORE_BTN);
+    }
+
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_profile);
         mUser = (User)getIntent().getExtras().get("user");
 
-        // Set custom actionbar
-        setRightBtnStatus(RIGHT_MORE_BTN);
 
         mUserBackGroundIv = (ImageView)findViewById(R.id.iv_user_profile_background);
         mAvatarIv = (ImageView)findViewById(R.id.iv_user_profile_avatar);
@@ -136,6 +144,8 @@ public class UserProfileActivity extends BaseActivity {
             mAddFollowTextTv.setText("取消关注");
         }
 
+        mBlackList = AppContext.cacheService.blackListDBManager.findBlackList(mUser.getUserId());
+
         mAddFollowBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -201,17 +211,111 @@ public class UserProfileActivity extends BaseActivity {
     @Override
     public void onMoreClicked(View view){
         List<String> items = new ArrayList<String>();
-        items.add("加入黑名单");
+        if(mBlackList == null) {
+            items.add("加入黑名单");
+        }else{
+            items.add("取消黑名单");
+        }
         items.add("举报此人");
         items.add("屏蔽此人说说");
         final ItemDialog dialog = new ItemDialog(this, items);
         dialog.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                switch (i){
+                    case 0:
+                        if(mBlackList == null) {
+                            addBlackList();
+                        }else{
+                            deleteBlackList();
+                        }
+                        break;
+                    case 1:
+                        reportUser();
+                        break;
+                    case 2:
+                        break;
+                }
                 dialog.cancel();
             }
         });
         dialog.show();
+    }
+
+
+    private void addBlackList(){
+        final BlackList black = new BlackList();
+        black.setUserId(AppContext.userId);
+        black.setFollowUserId(mUser.getUserId());
+        UserService service = new UserService();
+        service.insertBlackList(black, new TableOperationCallback<BlackList>() {
+            @Override
+            public void onCompleted(BlackList entity, Exception exception, ServiceFilterResponse response) {
+                if(entity == null){
+                    if(exception != null){
+                        exception.printStackTrace();
+                    }
+                    warning(R.string.add_black_list_failed);
+                }else{
+                    AppContext.cacheService.blackListDBManager.insertBlackList(black);
+                    mBlackList = entity;
+                    warning(R.string.add_black_list_success);
+                }
+            }
+        });
+    }
+
+    private void deleteBlackList(){
+        UserService userService = new UserService();
+        userService.deleteBlackList(mBlackList,new TableDeleteCallback() {
+            @Override
+            public void onCompleted(Exception exception, ServiceFilterResponse response) {
+                if(exception != null){
+                    exception.printStackTrace();
+                    warning(R.string.delete_black_list_failed);
+                }else{
+                    warning(R.string.delete_black_list_success);
+                    AppContext.cacheService.blackListDBManager.deleteBlackList(mBlackList.getId());
+                    mBlackList = null;
+                }
+            }
+        });
+    }
+
+    private void reportUser(){
+        NotificationService service = new NotificationService();
+        final ReportMessage report = new ReportMessage();
+        final List<String> items = new ArrayList<String>();
+        items.add("骚扰信息");
+        items.add("垃圾广告");
+        items.add("色请相关");
+        items.add("盗用他人资料");
+        final ItemDialog dialog = new ItemDialog(this, items);
+        dialog.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                report.setContent(i + "");
+                dialog.cancel();
+            }
+        });
+        dialog.show();
+        report.setFromUserId(AppContext.userId);
+        report.setFromUserName(AppContext.auth.getName());
+        report.setMessageId(0);
+        report.setToUserId(mUser.getUserId());
+        report.setDeviceId(mUser.getQq());
+        service.insertReportMessage(report,new TableOperationCallback<ReportMessage>() {
+            @Override
+            public void onCompleted(ReportMessage entity, Exception exception, ServiceFilterResponse response) {
+                if(entity == null){
+                    if(exception != null){
+                        exception.printStackTrace();
+                    }
+                }else{
+                    warning(R.string.report_user_success);
+                }
+            }
+        });
 
     }
 

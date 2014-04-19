@@ -37,7 +37,8 @@ import com.sina.weibo.sdk.widget.LoginoutButton;
 public class LoginActivity extends ActionBarActivity {
 
     private Button mCurrentBtn;
-    private LoginoutButton mLoginBtn;
+    private LoginoutButton mSinaLoginBtn;
+    private Button mQQLoginBtn;
     private CheckBox mIsSharedCb;
 
 
@@ -55,16 +56,18 @@ public class LoginActivity extends ActionBarActivity {
 
         AuthInfo authInfo = new AuthInfo(this, AppConstant.SINA_CLIENT_ID, AppConstant.SINA_CALL_BACK_URL, AppConstant.SINA_SCOPE);
 
-        mLoginBtn = (LoginoutButton) findViewById(R.id.lbtn_weibo_login);
-        mLoginBtn.setWeiboAuthInfo(authInfo, mLoginListener);
-        mLoginBtn.setExternalOnClickListener(new View.OnClickListener() {
+        mSinaLoginBtn = (LoginoutButton) findViewById(R.id.lbtn_weibo_login);
+        mSinaLoginBtn.setWeiboAuthInfo(authInfo, mLoginListener);
+        mSinaLoginBtn.setExternalOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(view instanceof  Button){
-                    mCurrentBtn = (Button)view;
+                if (view instanceof Button) {
+                    mCurrentBtn = (Button) view;
                 }
             }
         });
+        mQQLoginBtn = (Button)findViewById(R.id.btn_qq_login);
+
         mIsSharedCb = (CheckBox)findViewById(R.id.cb_is_share);
     }
 

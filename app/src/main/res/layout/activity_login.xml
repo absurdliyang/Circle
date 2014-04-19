@@ -12,7 +12,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="100dp"
         android:layout_centerHorizontal="true"
         android:text="@string/start_text"
         android:textColor="#ffffffff"
@@ -22,10 +22,18 @@
         android:id="@+id/lbtn_weibo_login"
         android:background="@drawable/weibo_auth_bg"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="70dp"
+        android:layout_marginBottom="135dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
-
+    <Button
+        android:id="@+id/btn_qq_login"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/qq_login_bg"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="70dp"
+        />
     <CheckBox
         android:id="@+id/cb_is_share"
         android:layout_width="wrap_content"

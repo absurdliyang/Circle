@@ -22,7 +22,7 @@ public class BeanAdapter<E> extends BaseAdapter {
 
 
     protected Context mContext;
-    private List<E> mItems = Collections.emptyList();
+    protected List<E> mItems = Collections.emptyList();
 
 
     public BeanAdapter(Context context,List<E> items){

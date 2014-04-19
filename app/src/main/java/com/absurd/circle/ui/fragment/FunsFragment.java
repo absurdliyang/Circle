@@ -1,10 +1,17 @@
 package com.absurd.circle.ui.fragment;
 
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ListView;
+
 import com.absurd.circle.app.AppContext;
 import com.absurd.circle.data.model.Follow;
 import com.absurd.circle.data.model.User;
 import com.absurd.circle.ui.activity.BaseActivity;
 import com.absurd.circle.ui.fragment.base.UserListFragment;
+import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.microsoft.windowsazure.mobileservices.TableQueryCallback;
 
 import java.util.ArrayList;
@@ -14,6 +21,14 @@ import java.util.List;
  * Created by absurd on 14-3-28.
  */
 public class FunsFragment extends UserListFragment<Follow> {
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        setMode(UserListFragment.MODE_NET);
+        ((BaseActivity) getActivity()).setActionBarTitle("粉丝");
+        return super.onCreateView(inflater, container, savedInstanceState);
+    }
+
     @Override
     protected List<User> handleResult(List<Follow> result) {
         List<User> resList = new ArrayList<User>();
@@ -22,14 +37,26 @@ public class FunsFragment extends UserListFragment<Follow> {
                 resList.add(follow.getUser());
             }
         }int count = resList.size();
-        ((BaseActivity)getActivity()).setActionBarTitle("粉丝 (" + count + ")");
+        if(getActivity() != null) {
+            ((BaseActivity) getActivity()).setActionBarTitle("粉丝 (" + count + ")");
+        }
         return resList;
     }
 
     @Override
-    protected void loadData(int pageIndex, TableQueryCallback<Follow> callback) {
+    protected void loadDataFromNet(int pageIndex, TableQueryCallback<Follow> callback) {
         if(AppContext.auth != null) {
-            mUserService.getUserFuns(AppContext.auth.getUserId(),callback);
+            mUserService.getUserFuns(AppContext.auth.getUserId(),pageIndex, 10, callback);
         }
+    }
+
+    @Override
+    protected List<Follow> loadDataFromLocal(int pageIndex) {
+        return null;
+    }
+
+    @Override
+    protected void beforePullEvent(PullToRefreshBase<ListView> refreshView, PullToRefreshBase.State state, PullToRefreshBase.Mode direction) {
+
     }
 }

@@ -45,15 +45,25 @@ public class UserService extends BaseService {
     }
 
 
-    public void getUserFuns(String userId, TableQueryCallback<Follow> callback){
-        getFollowTable().where().field("followuserid").eq(userId).execute(callback);
+    public void getUserFuns(String userId, int pageIndex, int pageSize,  TableQueryCallback<Follow> callback){
+        getFollowTable().where().field("followuserid").eq(userId)
+                .skip(pageIndex * pageSize)
+                .execute(callback);
     }
 
-    public void getBlackList(String userId, TableQueryCallback<BlackList> callback){
-        getBlackListTable().where().field("userid").eq(userId).execute(callback);
+    public void getAllBlackList(String userId,TableQueryCallback<BlackList> callback){
+        getBlackListTable().where().field("userid").eq(userId)
+                .execute(callback);
     }
-    public void getUserFollowers(String userId, TableQueryCallback<Follow> callback){
-        getFollowTable().where().field("userId").eq(userId).execute(callback);
+    public void getUserFollowers(String userId, int pageIndex, int pageSize, TableQueryCallback<Follow> callback){
+        getFollowTable().where().field("userId").eq(userId)
+                .skip(pageIndex * pageSize)
+                .execute(callback);
+    }
+
+    public void getAllUserFollowers(String userId, TableQueryCallback<Follow> callback){
+        getFollowTable().where().field("userId").eq(userId)
+                .execute(callback);
     }
 
     public void insertFollower(Follow follow, TableOperationCallback<Follow> callback){
@@ -76,5 +86,15 @@ public class UserService extends BaseService {
         });
         RequestManager.addRequest(gsonReqeust,"getFunsCount");
     }
+
+    public void insertBlackList(BlackList black, TableOperationCallback<BlackList> callback){
+        getBlackListTable().insert(black, callback);
+    }
+
+    public void deleteBlackList(BlackList black, TableDeleteCallback callback){
+        getBlackListTable().delete(black, callback);
+    }
+
+
 
 }

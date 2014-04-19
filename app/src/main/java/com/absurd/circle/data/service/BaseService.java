@@ -32,7 +32,7 @@ public class BaseService{
     public static final String TABLE_FOLLOW = "Follow";
     public static final String TABLE_BLACK_LIST = "BlackList";
     public static final String TABLE_PRAISE = "Praise";
-    public static final String TABLE_REPORT_MESSAGE = "ReportMessage";
+    public static final String TABLE_REPORT_MESSAGE = "Report";
     public static final String TABLE_SCORE = "Score";
     public static final String TABLE_USER_LOCATION = "UserLocation";
 

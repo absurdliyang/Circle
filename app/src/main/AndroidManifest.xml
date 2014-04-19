@@ -58,6 +58,12 @@
         <activity
             android:name="com.absurd.circle.ui.activity.LoginActivity"
             android:label="@string/title_activity_login">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="tencent100487816" />
+            </intent-filter>
         </activity>
         <activity
             android:name="com.absurd.circle.ui.activity.ImageDetailActivity"

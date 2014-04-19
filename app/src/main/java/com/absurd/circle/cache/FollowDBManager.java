@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 
+import com.absurd.circle.app.AppContext;
 import com.absurd.circle.cache.util.Column;
 import com.absurd.circle.cache.util.SQLiteTable;
 import com.absurd.circle.data.model.Follow;
@@ -46,21 +47,30 @@ public class FollowDBManager extends BaseDBManager{
         Cursor cursor = mDatabase.query(FollowDBInfo.TABLE_NAME,null,null,null,null,null,null);
         if(cursor.moveToFirst()){
             do{
-                int id = cursor.getInt(1);
-                String userId = cursor.getString(2);
-                String followUserId = cursor.getString(3);
-                String strUser = cursor.getString(4);
-                User user = JsonUtil.fromJson(strUser, User.class);
-                Follow follow = new  Follow();
-                follow.setId(id);
-                follow.setFollowUserId(followUserId);
-                follow.setStrUser(strUser);
-                follow.setUserId(userId);
-                follow.setUser(user);
-                resList.add(follow);
+                resList.add(parseFollow(cursor));
             }while(cursor.moveToNext());
         }
         return resList;
+    }
+
+    public List<Follow> getPage(int pageIndex, int pageSize){
+        List<Follow> resList = new ArrayList<Follow>();
+        String sql= "select * from " + FollowDBInfo.TABLE_NAME +
+                " Limit "+String.valueOf(pageSize)+ " Offset " +String.valueOf(pageIndex * pageSize);
+        AppContext.commonLog.i(sql);
+        Cursor cursor = mDatabase.rawQuery(sql, null);
+        if(cursor.moveToFirst()){
+            do{
+                AppContext.commonLog.i(parseFollow(cursor).toString());
+                resList.add(parseFollow(cursor));
+            }while(cursor.moveToNext());
+        }
+        return resList;
+    }
+
+    public int getCount(){
+        Cursor cursor = mDatabase.query(FollowDBInfo.TABLE_NAME,null,null,null,null,null,null);
+        return cursor.getCount();
     }
 
     public Follow findFollow(String followUserId){
@@ -69,21 +79,27 @@ public class FollowDBManager extends BaseDBManager{
         Cursor cursor = mDatabase.rawQuery(sql,null);
         if(cursor != null){
             if(cursor.moveToFirst()){
-                int id = cursor.getInt(1);
-                String userId = cursor.getString(2);
-                String followId = cursor.getString(3);
-                String strUser = cursor.getString(4);
-                User user = JsonUtil.fromJson(strUser, User.class);
-                Follow follow = new  Follow();
-                follow.setId(id);
-                follow.setFollowUserId(followId);
-                follow.setStrUser(strUser);
-                follow.setUserId(userId);
-                follow.setUser(user);
-                return follow;
+                return parseFollow(cursor);
             }
         }
         return null;
+    }
+
+
+
+    private Follow parseFollow(Cursor cursor){
+        int id = cursor.getInt(1);
+        String userId = cursor.getString(2);
+        String followId = cursor.getString(3);
+        String strUser = cursor.getString(4);
+        User user = JsonUtil.fromJson(strUser, User.class);
+        Follow follow = new  Follow();
+        follow.setId(id);
+        follow.setFollowUserId(followId);
+        follow.setStrUser(strUser);
+        follow.setUserId(userId);
+        follow.setUser(user);
+        return follow;
     }
 
     public static class FollowDBInfo {

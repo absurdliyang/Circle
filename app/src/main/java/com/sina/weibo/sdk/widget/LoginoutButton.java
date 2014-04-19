@@ -219,7 +219,7 @@ public class LoginoutButton extends Button implements OnClickListener {
 	 */
 	private void loadDefaultStyle(AttributeSet attrs) {
 		if (attrs != null && 0 == attrs.getStyleAttribute()) {
-			this.setBackgroundResource(R.drawable.weibo_auth_bg);
+			//this.setBackgroundResource(R.drawable.weibo_auth_bg);
 		}
 	}
 	

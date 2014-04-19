@@ -142,7 +142,7 @@ public class HomeActivity extends SlidingFragmentActivity implements AMapLocatio
     private void getFollowers(){
         AppContext.cacheService.followDBManager.deleteAll();
         if(AppContext.auth != null) {
-            mUserService.getUserFollowers(AppContext.auth.getUserId(), new TableQueryCallback<Follow>() {
+            mUserService.getAllUserFollowers(AppContext.auth.getUserId(), new TableQueryCallback<Follow>() {
                 @Override
                 public void onCompleted(List<Follow> result, int count, Exception exception, ServiceFilterResponse response) {
                     if(result == null){

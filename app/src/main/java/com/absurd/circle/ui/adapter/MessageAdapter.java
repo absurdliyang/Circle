@@ -19,6 +19,7 @@ import com.absurd.circle.ui.activity.UserDynamicActivity;
 import com.absurd.circle.ui.activity.UserProfileActivity;
 import com.absurd.circle.ui.adapter.base.BeanAdapter;
 import com.absurd.circle.util.DistanceUtil;
+import com.absurd.circle.util.FacesUtil;
 import com.absurd.circle.util.ImageUtil;
 import com.absurd.circle.util.IntentUtil;
 import com.absurd.circle.util.TimeUtil;
@@ -100,7 +101,7 @@ public class MessageAdapter extends BeanAdapter<Message> {
             holder.usernameTv.setText(message.getUser().getName());
         }
 
-        holder.contentTv.setText(message.getContent());
+        holder.contentTv.setText(FacesUtil.parseFaceByText(mContext,message.getContent()));
         holder.createdTv.setText(TimeUtil.formatShowTime(message.getDate()));
         if(AppContext.lastPosition != null) {
             holder.locationTv.setText(StringUtil.parseDistance(DistanceUtil.caculate(AppContext.lastPosition.getLatitude(),AppContext.lastPosition.getLongitude()

@@ -12,7 +12,7 @@ import java.io.Serializable;
 public class BlackList implements Serializable{
     @Expose
     @SerializedName("id")
-    private int mId;
+    private String mId;
 
     @Expose
     @SerializedName("userid")
@@ -44,11 +44,11 @@ public class BlackList implements Serializable{
     }
 
 
-    public int getId() {
+    public String getId() {
         return mId;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         mId = id;
     }
 

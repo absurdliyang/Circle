@@ -32,6 +32,8 @@ public abstract class BaseActivity extends SwipeBackActivity {
     private TextView mActionBarTitleTv;
     private TextView mActionBarRightBtn;
 
+    private View mActionBarView;
+
     private ImageView mActionBarBackIv;
     private ImageView mActionBarMoreIv;
 
@@ -40,20 +42,13 @@ public abstract class BaseActivity extends SwipeBackActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-    }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch(item.getItemId()){
-            case android.R.id.home:
-                finish();
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
+        mActionBarView = LayoutInflater.from(this).inflate(R.layout.layout_custom_actionbar,null);
+        mActionBarTitleTv = (TextView)mActionBarView.findViewById(R.id.tv_custom_actionbar_title);
+        mActionBarRightBtn = (TextView)mActionBarView.findViewById(R.id.tv_custom_actionbar_right_btn);
+        mActionBarBackIv = (ImageView)mActionBarView.findViewById(R.id.iv_custom_actionbar_back);
+        mActionBarMoreIv = (ImageView)mActionBarView.findViewById(R.id.iv_custom_actionbar_more);
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
         configureActionBar();
         mTitle = actionBarTitle();
         mActionBarTitleTv.setText(mTitle);
@@ -76,6 +71,21 @@ public abstract class BaseActivity extends SwipeBackActivity {
                 onMoreClicked(view);
             }
         });
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()){
+            case android.R.id.home:
+                finish();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+
         return true;
     }
 
@@ -85,12 +95,8 @@ public abstract class BaseActivity extends SwipeBackActivity {
         actionBar.setDisplayHomeAsUpEnabled(false);
         actionBar.setDisplayShowTitleEnabled(false);
         actionBar.setDisplayShowHomeEnabled(false);
-        ActionBar.LayoutParams params = new ActionBar.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.MATCH_PARENT);
-        View actionBarView = LayoutInflater.from(this).inflate(R.layout.layout_custom_actionbar,null);
-        mActionBarTitleTv = (TextView)actionBarView.findViewById(R.id.tv_custom_actionbar_title);
-        mActionBarRightBtn = (TextView)actionBarView.findViewById(R.id.tv_custom_actionbar_right_btn);
-        mActionBarBackIv = (ImageView)actionBarView.findViewById(R.id.iv_custom_actionbar_back);
-        mActionBarMoreIv = (ImageView)actionBarView.findViewById(R.id.iv_custom_actionbar_more);
+
+
         if(mRightBtnStatus == RIGHT_MORE_BTN){
             mActionBarRightBtn.setVisibility(View.GONE);
         }else if(mRightBtnStatus == RIGHT_TEXT){
@@ -99,8 +105,10 @@ public abstract class BaseActivity extends SwipeBackActivity {
             mActionBarMoreIv.setVisibility(View.GONE);
             mActionBarRightBtn.setVisibility(View.GONE);
         }
-        actionBar.setCustomView(actionBarView,params);
+        ActionBar.LayoutParams params = new ActionBar.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.MATCH_PARENT);
+        actionBar.setCustomView(mActionBarView,params);
     }
+
 
     @Override
     protected void onStop() {
@@ -138,7 +146,6 @@ public abstract class BaseActivity extends SwipeBackActivity {
 
     protected void warning(String content){
         AppMsg.makeText(this,content,AppMsg.STYLE_ALERT).show();
-        //Toast.makeText(this, content, Toast.LENGTH_SHORT).show();
     }
 
     protected void warning(int resId){

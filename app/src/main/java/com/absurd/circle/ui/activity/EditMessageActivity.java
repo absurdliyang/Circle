@@ -5,15 +5,21 @@ import android.content.ContentResolver;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.ImageSpan;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,8 +32,10 @@ import com.absurd.circle.data.model.MessageType;
 import com.absurd.circle.data.model.Position;
 import com.absurd.circle.data.service.BCSService;
 import com.absurd.circle.data.service.MessageService;
+import com.absurd.circle.ui.adapter.FacesAdapter;
 import com.absurd.circle.ui.view.IUploadImage;
 import com.absurd.circle.ui.view.PhotoFragment;
+import com.absurd.circle.util.FacesUtil;
 import com.absurd.circle.util.StringUtil;
 import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationListener;
@@ -50,11 +58,19 @@ public class EditMessageActivity extends BaseActivity implements AMapLocationLis
     private ImageView mMediaIv;
     private CheckBox mIsAnonyCb;
     private EditText mContentEt;
+    private GridView mFacesGv;
+
+    private FacesAdapter mFacesAdapter;
 
     private String mContent;
     private String mImageUrl;
 
     private int mContentType;
+
+    public EditMessageActivity(){
+        // Set custom actionbar
+        setRightBtnStatus(RIGHT_TEXT);
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -62,17 +78,19 @@ public class EditMessageActivity extends BaseActivity implements AMapLocationLis
         mContentType = (Integer)getIntent().getExtras().get("contentType");
 
         setContentView(R.layout.activity_edit_message);
-        // Set custom actionbar
-        setRightBtnStatus(RIGHT_TEXT);
 
         mLocationTv = (TextView)findViewById(R.id.tv_edit_msg_location);
         mMediaIv = (ImageView)findViewById(R.id.iv_edit_msg_photo);
         mIsAnonyCb = (CheckBox)findViewById(R.id.cb_edit_msg_is_anony);
         mContentEt = (EditText)findViewById(R.id.et_edit_msg_content);
+        mFacesGv = (GridView)findViewById(R.id.gv_faces);
+        initFacesView();
+
         initView();
         // Get user's current location
         mLocationManagerProxy = LocationManagerProxy.getInstance(this);
         mLocationManagerProxy.requestLocationUpdates(LocationProviderProxy.AMapNetwork,5000,10,this);
+
     }
 
     @Override
@@ -90,6 +108,22 @@ public class EditMessageActivity extends BaseActivity implements AMapLocationLis
         if(invalidateContent()){
             sendMessage();
         }
+    }
+
+    private void initFacesView(){
+        mFacesAdapter = new FacesAdapter(this);
+        mFacesGv.setAdapter(mFacesAdapter);
+        mFacesGv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                SpannableString ss = new SpannableString(view.getTag().toString());
+                Drawable drawable = getResources().getDrawable((int)mFacesAdapter.getItemId(i));
+                drawable.setBounds(0,0,35,35);
+                ImageSpan span = new ImageSpan(drawable, ImageSpan.ALIGN_BOTTOM);
+                ss.setSpan(span, 0, view.getTag().toString().length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                mContentEt.getText().insert(mContentEt.getSelectionStart(), ss);
+            }
+        });
     }
 
     private void initView(){
@@ -183,6 +217,11 @@ public class EditMessageActivity extends BaseActivity implements AMapLocationLis
                 onGallary();
                 break;
             case R.id.iv_edit_msg_btn_emotion:
+                if(mFacesGv.getVisibility() == View.VISIBLE){
+                    mFacesGv.setVisibility(View.GONE);
+                }else{
+                    mFacesGv.setVisibility(View.VISIBLE);
+                }
                 break;
             default:
                 break;

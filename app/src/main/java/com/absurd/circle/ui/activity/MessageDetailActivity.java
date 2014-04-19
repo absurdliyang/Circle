@@ -20,12 +20,15 @@ public class MessageDetailActivity extends BaseActivity {
 
     private MessageDetailFragment mMessageDetailFragment;
 
+    public MessageDetailActivity(){
+        setRightBtnStatus(RIGHT_MORE_BTN);
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_message_detail);
         // Set custom actionbar
-        setRightBtnStatus(RIGHT_MORE_BTN);
         int indexId = (Integer)getIntent().getSerializableExtra("messageIndexId");
         message = MessageListFragment.messages.get(indexId);
 
