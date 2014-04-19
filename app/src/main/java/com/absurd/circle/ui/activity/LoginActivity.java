@@ -2,10 +2,13 @@ package com.absurd.circle.ui.activity;
 
 import java.util.List;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.Toast;
 
@@ -33,8 +36,10 @@ import com.sina.weibo.sdk.widget.LoginoutButton;
 
 public class LoginActivity extends ActionBarActivity {
 
+    private Button mCurrentBtn;
     private LoginoutButton mLoginBtn;
     private CheckBox mIsSharedCb;
+
 
     private UserService mUserService = new UserService();
 
@@ -52,6 +57,14 @@ public class LoginActivity extends ActionBarActivity {
 
         mLoginBtn = (LoginoutButton) findViewById(R.id.lbtn_weibo_login);
         mLoginBtn.setWeiboAuthInfo(authInfo, mLoginListener);
+        mLoginBtn.setExternalOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(view instanceof  Button){
+                    mCurrentBtn = (Button)view;
+                }
+            }
+        });
         mIsSharedCb = (CheckBox)findViewById(R.id.cb_is_share);
     }
 
@@ -137,6 +150,18 @@ public class LoginActivity extends ActionBarActivity {
         });
 
 
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(mCurrentBtn != null){
+            if(mCurrentBtn instanceof LoginoutButton){
+                ((LoginoutButton)mCurrentBtn).onActivityResult(requestCode, resultCode, data);
+            }
+        }
     }
 
     private class AuthListener implements WeiboAuthListener {

@@ -10,23 +10,17 @@
         android:background="@android:color/transparent"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-        <ListView
+        <com.handmark.pulltorefresh.library.PullToRefreshListView
+            xmlns:ptr="http://schemas.android.com/apk/res-auto"
             android:id="@+id/lv_content"
             android:background="@android:color/transparent"
             android:divider="@android:color/transparent"
             android:dividerHeight="6dp"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-        <RelativeLayout
-            android:id="@+id/rlyt_empty"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-            <TextView
-                android:id="@+id/tv_empty"
-                android:layout_centerInParent="true"
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"/>
-        </RelativeLayout>
+            android:layout_height="match_parent"
+            ptr:ptrAnimationStyle="flip"
+            ptr:ptrMode="both"
+            />
     </FrameLayout>
 
 </RelativeLayout>

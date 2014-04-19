@@ -2,14 +2,12 @@ package com.absurd.circle.ui.fragment.base;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.HeaderViewListAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.absurd.circle.app.AppConstant;
@@ -24,6 +22,8 @@ import com.absurd.circle.ui.view.LoadingFooter;
 import com.absurd.circle.util.CommonLog;
 import com.absurd.circle.util.IntentUtil;
 import com.absurd.circle.util.LogFactory;
+import com.handmark.pulltorefresh.library.PullToRefreshBase;
+import com.handmark.pulltorefresh.library.PullToRefreshListView;
 import com.microsoft.windowsazure.mobileservices.ServiceFilterResponse;
 import com.microsoft.windowsazure.mobileservices.TableQueryCallback;
 
@@ -35,8 +35,8 @@ import java.util.List;
  */
 public class MessageListFragment extends Fragment{
     private CommonLog mLog = LogFactory.createLog(AppConstant.TAG);
-    protected ListView mContentLv;
-    private TextView mEmptyTv;
+    protected PullToRefreshListView mContentLv;
+    protected MessageAdapter mAdapter;
 
     private LoadingFooter mLoadingFooter;
 
@@ -52,11 +52,34 @@ public class MessageListFragment extends Fragment{
         mMessageService = new MessageService();
         View rootView = inflater.inflate(R.layout.item_list, null);
         // Init UI
-        mContentLv = (ListView)rootView.findViewById(R.id.lv_content);
-        MessageAdapter adapter = new MessageAdapter(getActivity());
+        mContentLv = (PullToRefreshListView)rootView.findViewById(R.id.lv_content);
+        mAdapter = new MessageAdapter(getActivity());
         mLoadingFooter = new LoadingFooter(getActivity());
-        mContentLv.addFooterView(mLoadingFooter.getView());
-        mContentLv.setAdapter(adapter);
+        //mContentLv.addFooterView(mLoadingFooter.getView());
+        mContentLv.setAdapter(mAdapter);
+        mContentLv.setOnPullEventListener(new PullToRefreshBase.OnPullEventListener<ListView>() {
+            @Override
+            public void onPullEvent(PullToRefreshBase<ListView> refreshView, PullToRefreshBase.State state, PullToRefreshBase.Mode direction) {
+                if(direction.equals(PullToRefreshBase.Mode.PULL_FROM_START)) {
+                    if (state.equals(PullToRefreshBase.State.PULL_TO_REFRESH)) {
+                        mContentLv.getLoadingLayoutProxy().setPullLabel("下拉刷新");
+                        mContentLv.getLoadingLayoutProxy().setRefreshingLabel("正在载入");
+                        String label = DateUtils.formatDateTime(MessageListFragment.this.getActivity(),
+                                System.currentTimeMillis(),
+                                DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_ABBREV_ALL);
+                        mContentLv.getLoadingLayoutProxy().setLastUpdatedLabel(label);
+                        refreshTranscation();
+                    }
+                }else if(direction.equals(PullToRefreshBase.Mode.PULL_FROM_END)){
+                    if (state.equals(PullToRefreshBase.State.PULL_TO_REFRESH)) {
+                        nextPageTransaction();
+                    }
+                }
+            }
+        });
+
+
+        /**
         mContentLv.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(AbsListView absListView, int i) {
@@ -68,6 +91,7 @@ public class MessageListFragment extends Fragment{
             public void onScroll(AbsListView absListView, int i, int i2, int i3) {
             }
         });
+         **/
         mContentLv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -75,7 +99,6 @@ public class MessageListFragment extends Fragment{
 
             }
         });
-        mEmptyTv = (TextView)rootView.findViewById(R.id.tv_empty);
         // Get Data
         if(AppContext.lastPosition != null) {
             refreshTranscation();
@@ -85,20 +108,7 @@ public class MessageListFragment extends Fragment{
         return rootView;
     }
 
-    @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        /**
-        mAttacher = ((RefreshableActivity)getActivity()).getAttacher();
-        mAttacher.addRefreshableView(mContentLv,new PullToRefreshAttacher.OnRefreshListener() {
-            @Override
-            public void onRefreshStarted(View view) {
-                refreshTranscation();
-            }
-        });
-         **/
 
-    }
 
     private TableQueryCallback<Message> refreshCallBack = new TableQueryCallback<Message>() {
         @Override
@@ -141,17 +151,21 @@ public class MessageListFragment extends Fragment{
     };
 
 
-    private MessageAdapter getAdapter(){
+    protected MessageAdapter getAdapter(){
+        /**
         HeaderViewListAdapter headerAdapter = (HeaderViewListAdapter)mContentLv.getAdapter();
         if(headerAdapter != null){
             return (MessageAdapter) headerAdapter.getWrappedAdapter();
         }
+
         return null;
+         **/
+        return mAdapter;
     }
 
 
     public void refreshTranscation(){
-        mContentLv.smoothScrollToPosition(0);
+        //mContentLv.smoothScrollToPosition(0);
         mCurrentPageIndex = 0;
         loadData(mCurrentPageIndex, refreshCallBack);
     }

@@ -33,8 +33,7 @@ public class HomeFragment extends MessageListFragment {
         super.onViewCreated(view, savedInstanceState);
         List<Message> messages = AppContext.cacheService.messageDBManager.getAllMessages();
         if(messages != null && !messages.isEmpty()){
-            HeaderViewListAdapter headerAdapter = (HeaderViewListAdapter)mContentLv.getAdapter();
-            ((MessageAdapter) headerAdapter.getWrappedAdapter()).setItems(messages);
+            getAdapter().setItems(messages);
             MessageListFragment.messages = messages;
         }
     }

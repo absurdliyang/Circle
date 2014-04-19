@@ -50,7 +50,6 @@ public class MessageDetailFragment extends Fragment{
 
 
     private ListView mContentLv;
-    private TextView mEmptyTv;
 
     private TextView mPraiseDescTv;
     private TextView mPraiseCountTv;
@@ -147,7 +146,6 @@ public class MessageDetailFragment extends Fragment{
 
             }
         });
-        mEmptyTv = (TextView)rootView.findViewById(R.id.tv_empty);
 
         //Init comment list on start
         refresh();

@@ -31,7 +31,6 @@ import java.util.List;
 public abstract class UserListFragment<V> extends Fragment {
 
     private ListView mContentLv;
-    private TextView mEmptyTv;
 
     private LoadingFooter mLoadingFooter;
 
@@ -80,7 +79,6 @@ public abstract class UserListFragment<V> extends Fragment {
                 IntentUtil.startActivity(UserListFragment.this.getActivity(), UserProfileActivity.class, "user", (User)mContentLv.getAdapter().getItem(i));
             }
         });
-        mEmptyTv = (TextView)rootView.findViewById(R.id.tv_empty);
         // Init loading footer status as end
         mLoadingFooter.setState(LoadingFooter.State.TheEnd);
         refreshTranscation();
