@@ -15,7 +15,6 @@ import com.absurd.circle.util.LogFactory;
  * Created by absurd on 14-3-15.
  */
 public class GPSUtil {
-    private CommonLog mLog = LogFactory.createLog(AppConstant.TAG);
     private Context mContext;
 
     private LocationManager mLocationManager;
@@ -62,10 +61,8 @@ public class GPSUtil {
 
     public boolean checkGPSOpened(){
         if (mLocationManager.isProviderEnabled(android.location.LocationManager.GPS_PROVIDER)) {
-            mLog.i("gps opened");
             return true;
         }
-        mLog.i("gps closed");
         return false;
     }
 

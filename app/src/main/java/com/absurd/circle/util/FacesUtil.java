@@ -8,7 +8,6 @@ import android.text.style.ImageSpan;
 
 import com.absurd.circle.app.AppContext;
 import com.absurd.circle.ui.adapter.FacesAdapter;
-import com.baidu.inf.iis.bcs.utils.StringUtils;
 
 import org.dom4j.Document;
 import org.dom4j.DocumentException;

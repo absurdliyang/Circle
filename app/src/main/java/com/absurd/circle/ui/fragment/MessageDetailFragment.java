@@ -1,5 +1,7 @@
 package com.absurd.circle.ui.fragment;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
@@ -21,14 +23,18 @@ import com.absurd.circle.data.client.volley.BitmapFilter;
 import com.absurd.circle.data.client.volley.RequestManager;
 import com.absurd.circle.data.model.Comment;
 import com.absurd.circle.data.model.Praise;
+import com.absurd.circle.data.model.ReportMessage;
 import com.absurd.circle.data.service.CommentService;
 import com.absurd.circle.data.service.MessageService;
+import com.absurd.circle.data.service.NotificationService;
+import com.absurd.circle.ui.activity.BaseActivity;
 import com.absurd.circle.ui.activity.EditCommentActivity;
 import com.absurd.circle.ui.activity.ImageDetailActivity;
 import com.absurd.circle.ui.activity.MessageDetailActivity;
 import com.absurd.circle.ui.activity.UserProfileActivity;
 import com.absurd.circle.ui.adapter.CommentAdapter;
 import com.absurd.circle.ui.view.ItemDialog;
+import com.absurd.circle.util.FacesUtil;
 import com.absurd.circle.util.ImageUtil;
 import com.absurd.circle.util.IntentUtil;
 import com.absurd.circle.util.StringUtil;
@@ -54,6 +60,7 @@ public class MessageDetailFragment extends Fragment{
     private TextView mPraiseDescTv;
     private TextView mPraiseCountTv;
     private TextView mCommentCountTv;
+
 
     private MessageDetailActivity mMessageDetailActivity;
 
@@ -81,7 +88,7 @@ public class MessageDetailFragment extends Fragment{
 
     private void initCommentList(LayoutInflater inflater, View rootView){
         View headerView = inflater.inflate(R.layout.header_message_detail,null);
-        ((TextView)headerView.findViewById(R.id.tv_header_content)).setText(MessageDetailActivity.message.getContent());
+        ((TextView)headerView.findViewById(R.id.tv_header_content)).setText(FacesUtil.parseFaceByText(mMessageDetailActivity,MessageDetailActivity.message.getContent()));
         ((TextView)headerView.findViewById(R.id.tv_header_title_created)).setText(TimeUtil.formatShowTime(MessageDetailActivity.message.getDate()));
         ImageView headerAvaterView = (ImageView)headerView.findViewById(R.id.iv_header_title_avatar);
         ImageView headerMediaView = (ImageView)headerView.findViewById(R.id.iv_header_media);
@@ -304,10 +311,10 @@ public class MessageDetailFragment extends Fragment{
                         refresh();
                         break;
                     case 1:
-
+                        reportMessage();
                         break;
                     case 2:
-
+                        copyClipboard();
                         break;
                 }
                 dialog.cancel();
@@ -317,6 +324,37 @@ public class MessageDetailFragment extends Fragment{
     }
 
 
+    private void copyClipboard(){
+        ClipboardManager copy = (ClipboardManager) AppContext.getContext()
+                .getSystemService(AppContext.getContext().CLIPBOARD_SERVICE);
+        ClipData clip = ClipData.newPlainText("content", mMessageDetailActivity.message.getContent());
+        copy.setPrimaryClip(clip);
+        ((BaseActivity)this.getActivity()).warning(R.string.copy_clip_board_success);
+    }
+
+
+    private void reportMessage(){
+        NotificationService service = new NotificationService();
+        ReportMessage rm = new ReportMessage();
+        rm.setFromUserId(AppContext.userId);
+        rm.setFromUserName(AppContext.auth.getName());
+        rm.setContent(mMessageDetailActivity.message.getContent());
+        rm.setMessageId(mMessageDetailActivity.message.getId());
+        rm.setToUserId(mMessageDetailActivity.message.getUserId());
+        rm.setDeviceId(mMessageDetailActivity.message.getUser().getQq());
+        service.insertReportMessage(rm, new TableOperationCallback<ReportMessage>() {
+            @Override
+            public void onCompleted(ReportMessage entity, Exception exception, ServiceFilterResponse response) {
+                if(entity == null){
+                    if(exception != null){
+                        exception.printStackTrace();
+                    }
+                }else{
+                    mMessageDetailActivity.warning(R.string.report_message_success);;
+                }
+            }
+        });
+    }
 
     @Override
     public void onResume() {

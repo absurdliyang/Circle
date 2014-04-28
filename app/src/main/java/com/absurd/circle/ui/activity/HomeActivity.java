@@ -1,8 +1,10 @@
 package com.absurd.circle.ui.activity;
 
 
+import android.content.Intent;
 import android.graphics.Rect;
 import android.location.Location;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -20,12 +22,16 @@ import com.absurd.circle.data.model.Follow;
 import com.absurd.circle.data.model.Position;
 import com.absurd.circle.data.model.User;
 import com.absurd.circle.data.service.UserService;
+import com.absurd.circle.im.manager.XmppConnectionManager;
+import com.absurd.circle.im.service.ChatService;
 import com.absurd.circle.ui.fragment.CategoryFragment;
 import com.absurd.circle.ui.fragment.HomeFragment;
 import com.absurd.circle.ui.fragment.SlidingMenuFragment;
+import com.absurd.circle.ui.widget.AppMsg;
 import com.absurd.circle.util.CommonLog;
 import com.absurd.circle.util.IntentUtil;
 import com.absurd.circle.util.LogFactory;
+import com.absurd.circle.util.NetworkUtil;
 import com.absurd.circle.util.StringUtil;
 import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationListener;
@@ -40,6 +46,10 @@ import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.jeremyfeinstein.slidingmenu.lib.app.SlidingFragmentActivity;
 import com.microsoft.windowsazure.mobileservices.ServiceFilterResponse;
 import com.microsoft.windowsazure.mobileservices.TableQueryCallback;
+
+import org.jivesoftware.smack.XMPPConnection;
+import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.packet.Presence;
 
 import java.util.List;
 
@@ -73,6 +83,9 @@ public class HomeActivity extends SlidingFragmentActivity implements AMapLocatio
             IntentUtil.startActivity(this,LoginActivity.class);
             this.finish();
         }
+        if(!NetworkUtil.isNetConnected()){
+            warning(R.string.network_disconnected);
+        }
 
         // set the Above View
         if (savedInstanceState != null)
@@ -97,7 +110,7 @@ public class HomeActivity extends SlidingFragmentActivity implements AMapLocatio
         // Map background
         mMapView = (MapView)findViewById(R.id.map_view);
         mMapView.onCreate(savedInstanceState);
-        initAMap();
+        //new Thread(new InitMapThread()).start();
 
         // set the Behind View
         setBehindContentView(R.layout.menu_frame);
@@ -110,10 +123,22 @@ public class HomeActivity extends SlidingFragmentActivity implements AMapLocatio
         // customize the SlidingMenu
         getSlidingMenu().setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
 
+        initAMap();
+
+        new ChatLoginTask().execute();
+        Intent chatServiceIntent = new Intent(this, ChatService.class);
+        this.startService(chatServiceIntent);
 
     }
 
 
+    public class InitMapThread implements Runnable{
+
+        @Override
+        public void run() {
+            initAMap();
+        }
+    }
 
     private void initAMap(){
         if(mAMap == null) {
@@ -124,7 +149,7 @@ public class HomeActivity extends SlidingFragmentActivity implements AMapLocatio
         mAMap.setLocationSource(this);
         mAMap.setMyLocationEnabled(true);
         // Setting zoom
-        mAMap.moveCamera(CameraUpdateFactory.zoomTo(16));
+        mAMap.moveCamera(CameraUpdateFactory.zoomTo(18));
     }
 
 
@@ -346,6 +371,21 @@ public class HomeActivity extends SlidingFragmentActivity implements AMapLocatio
     }
 
 
+    public class ChatLoginTask extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            AppContext.xmppConnectionManager.init();
+            AppContext.xmppConnectionManager.login(AppContext.auth.getId() + "", AppContext.auth.getId() + "");
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+        }
+    }
+
 
     @Override
     public void onResume() {
@@ -370,9 +410,12 @@ public class HomeActivity extends SlidingFragmentActivity implements AMapLocatio
     public void onLocationChanged(AMapLocation aMapLocation) {
         AppContext.commonLog.i("Location changed");
         if(aMapLocation == null){
-            Toast.makeText(this,"Get location failed!",Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this,"Get location failed!",Toast.LENGTH_SHORT).show();
+            warning(R.string.location_success);
         }
         if(mOnLocationChangedListener != null) {
+            AppContext.commonLog.i("Get location success!");
+            warning(R.string.location_failed);
             mOnLocationChangedListener.onLocationChanged(aMapLocation);
             AppContext.lastPosition = new Position();
             AppContext.lastPosition.setLatitude(aMapLocation.getLatitude());
@@ -399,7 +442,6 @@ public class HomeActivity extends SlidingFragmentActivity implements AMapLocatio
 
     @Override
     public void onProviderDisabled(String s) {
-
     }
 
     @Override
@@ -420,6 +462,16 @@ public class HomeActivity extends SlidingFragmentActivity implements AMapLocatio
             mLocationManagerProxy.destory();
         }
         mLocationManagerProxy = null;
+    }
+
+
+    public void warning(String content){
+        AppMsg.makeText(this, content, AppMsg.STYLE_ALERT).show();
+    }
+
+    public void warning(int resId){
+        String content = AppContext.getContext().getString(resId);
+        warning(content);
     }
 
 }

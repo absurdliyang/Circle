@@ -5,6 +5,7 @@ package com.absurd.circle.app;
  */
 public interface AppConstant {
     public static final String TAG = "Circle";
+    public static final String SETTING_INFOS = "circle_setting";
     public static final String OS_NAME = "android";
     public static final String AZURE_MOBILE_TAG = "AzureMobileService";
 
@@ -41,6 +42,16 @@ public interface AppConstant {
                     + "friendships_groups_read,friendships_groups_write,statuses_to_me_read,"
                     + "follow_app_official_microblog," + "invitation_write";
 
+    /**
+     * QQ Oauth
+     */
+    public static final String QQ_ID = "100487816";
+    //public static final String QQ_SCOPE = "get_user_info,get_simple_userinfo,get_user_profile,get_app_friends,upload_photo,"
+    //            + "add_share,add_topic,list_album,upload_pic,add_album,set_user_face,get_vip_info,get_vip_rich_info,get_intimate_friends_weibo,match_nick_tips_weibo";
+    public static final String QQ_SCOPE = "all";
+    public static final String QQ_SHARE_URL = "https://graph.qq.com/share/add_share?oauth_consumer_key=%s&access_token=%s&openid=%s&format=json&title=圈圈&url=http://quanquanshequ.com/&site=http://quanquanshequ.com/&fromurl=http://quanquanshequ.com/&comment=%s&summary=你身边的生活社区&images=http://quanquanshequ.com/imgs/appicon_132px.png";
+    public static final String QQ_SHARE_CONTENT = "圈圈是一个很有趣又实用的附近生活社区APP，推荐给大家。下载地址：http://url.cn/N3iPeV @圈圈官博";
+
 
     /**
      * Baidu locatio service
@@ -57,13 +68,6 @@ public interface AppConstant {
 
     public static final String TAKE_PHOTO_PATH = "/circle/Camera/";
 
-    /**
-     * setting
-     * Campus
-     */
-    public static final String SETTING_INFOS = "campus_setting";
-    public static final String TOKEN = "token";
-    public static final String USERNAME = "username";
 
 
 

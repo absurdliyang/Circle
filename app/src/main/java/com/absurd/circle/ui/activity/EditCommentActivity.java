@@ -1,6 +1,5 @@
 package com.absurd.circle.ui.activity;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
@@ -10,9 +9,7 @@ import android.widget.Toast;
 import com.absurd.circle.app.AppContext;
 import com.absurd.circle.app.R;
 import com.absurd.circle.data.model.Comment;
-import com.absurd.circle.data.model.Message;
 import com.absurd.circle.data.service.CommentService;
-import com.absurd.circle.ui.fragment.base.MessageListFragment;
 import com.absurd.circle.util.StringUtil;
 import com.microsoft.windowsazure.mobileservices.ServiceFilterResponse;
 import com.microsoft.windowsazure.mobileservices.TableOperationCallback;
@@ -24,6 +21,10 @@ public class EditCommentActivity extends BaseActivity{
 
     //private Message mMessage;
     private Comment mParentComment;
+
+    public EditCommentActivity(){
+        setRightBtnStatus(RIGHT_TEXT);
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -88,6 +89,8 @@ public class EditCommentActivity extends BaseActivity{
                     if(exception != null){
                         exception.printStackTrace();
                     }
+                    EditCommentActivity.this.finish();
+                    warning(R.string.send_comment_failed);
                     return;
                 }
                 AppContext.commonLog.i(entity.toString());

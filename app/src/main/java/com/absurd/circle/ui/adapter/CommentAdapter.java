@@ -15,6 +15,7 @@ import com.absurd.circle.data.model.Comment;
 import com.absurd.circle.ui.activity.EditCommentActivity;
 import com.absurd.circle.ui.activity.UserProfileActivity;
 import com.absurd.circle.ui.adapter.base.BeanAdapter;
+import com.absurd.circle.util.FacesUtil;
 import com.absurd.circle.util.ImageUtil;
 import com.absurd.circle.util.IntentUtil;
 import com.absurd.circle.util.StringUtil;
@@ -102,7 +103,7 @@ public class CommentAdapter extends BeanAdapter<Comment> {
             content = "回复 " + name + ": ";
         }
         content += comment.getContent();
-        holder.commentContentTv.setText(content);
+        holder.commentContentTv.setText(FacesUtil.parseFaceByText(mContext,content));
         holder.replyIconIv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

@@ -29,7 +29,7 @@ public abstract class BaseActivity extends SwipeBackActivity {
     public static final int RIGHT_BLANK = 3;
 
     private String mTitle;
-    private TextView mActionBarTitleTv;
+    protected TextView mActionBarTitleTv;
     private TextView mActionBarRightBtn;
 
     private View mActionBarView;
@@ -144,11 +144,11 @@ public abstract class BaseActivity extends SwipeBackActivity {
         this.mRightBtnStatus = status;
     }
 
-    protected void warning(String content){
+    public void warning(String content){
         AppMsg.makeText(this,content,AppMsg.STYLE_ALERT).show();
     }
 
-    protected void warning(int resId){
+    public void warning(int resId){
         String content = AppContext.getContext().getString(resId);
         warning(content);
     }

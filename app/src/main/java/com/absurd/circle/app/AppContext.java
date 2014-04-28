@@ -6,6 +6,7 @@ import android.content.Context;
 import com.absurd.circle.cache.CacheService;
 import com.absurd.circle.data.model.Position;
 import com.absurd.circle.data.model.User;
+import com.absurd.circle.im.manager.XmppConnectionManager;
 import com.absurd.circle.util.CommonLog;
 import com.absurd.circle.util.LogFactory;
 import com.absurd.circle.util.SharedPreferenceUtil;
@@ -21,6 +22,7 @@ public class AppContext extends Application{
 
     public static SharedPreferenceUtil sharedPreferenceUtil;
     public static CacheService cacheService;
+    public static XmppConnectionManager xmppConnectionManager;
 
     public static User auth = new User();
     public static String token;
@@ -35,6 +37,7 @@ public class AppContext extends Application{
         mContext = getApplicationContext();
         sharedPreferenceUtil = SharedPreferenceUtil.getInstance();
         cacheService = CacheService.getInstance(this);
+        xmppConnectionManager = XmppConnectionManager.getInstance();
     }
 
     public static Context getContext(){

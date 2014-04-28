@@ -15,6 +15,10 @@ public class EditItemActivity extends BaseActivity {
     private EditText mContentEt;
     private String mTag;
 
+    public EditItemActivity(){
+        setRightBtnStatus(RIGHT_TEXT);
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
