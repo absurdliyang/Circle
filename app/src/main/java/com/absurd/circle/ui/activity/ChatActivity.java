@@ -4,7 +4,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -28,7 +27,9 @@ import org.jivesoftware.smack.MessageListener;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Message;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Calendar;
 
 
 /**
@@ -39,6 +40,7 @@ public class ChatActivity extends BaseActivity {
     private EditText mChatContentEt;
     private Button mChatSendBtn;
     private ListView mChatLv;
+    private List<UserMessage> mUserMessages = new ArrayList<UserMessage>();
 
     private User mToUser;
 
@@ -66,21 +68,7 @@ public class ChatActivity extends BaseActivity {
 
         registerReceiver(mChatMessageReceiver,new IntentFilter());
         initUI();
-
-        mChat = AppContext.xmppConnectionManager.getConnection().getChatManager()
-                .createChat("778692@incircle/Smack", null);
-        AppContext.xmppConnectionManager.getConnection().getChatManager()
-                .addChatListener(new ChatManagerListener() {
-                    @Override
-                    public void chatCreated(Chat chat, boolean b) {
-                        chat.addMessageListener(new MessageListener() {
-                            @Override
-                            public void processMessage(Chat chat, Message message) {
-                                AppContext.commonLog.i(message.getBody());
-                            }
-                        });
-                    }
-                });
+        initChat();
 
     }
 
@@ -112,10 +100,51 @@ public class ChatActivity extends BaseActivity {
                         exception.printStackTrace();
                     }
                 }else{
-                    ((BeanAdapter)mChatLv.getAdapter()).setItems(result);
+                    mUserMessages = result;
+                    ((BeanAdapter)mChatLv.getAdapter()).setItems(mUserMessages);
                 }
             }
         });
+    }
+
+    private void initChat(){
+        mChat = AppContext.xmppConnectionManager.getConnection().getChatManager()
+                .createChat("778692@incircle/Smack", new MessageListener() {
+                    @Override
+                    public void processMessage(Chat chat, Message message) {
+                        AppContext.commonLog.i("Send a message  --> " + message.getBody().toString());
+                    }
+                });
+        AppContext.xmppConnectionManager.getConnection().getChatManager()
+                .addChatListener(new ChatManagerListener() {
+                    @Override
+                    public void chatCreated(Chat chat, boolean b) {
+                        chat.addMessageListener(new MessageListener() {
+                            @Override
+                            public void processMessage(Chat chat, Message message) {
+                                AppContext.commonLog.i(message.getBody());
+                                UserMessage userMessage = new UserMessage();
+                                userMessage.setToUserId(mToUser.getUserId());
+                                userMessage.setToUserName(mToUser.getName());
+                                userMessage.setDate(Calendar.getInstance().getTime());
+                                if(AppContext.auth != null) {
+                                    userMessage.setFromUserId(AppContext.auth.getUserId());
+                                    userMessage.setFromUserName(AppContext.auth.getName());
+                                }
+                                userMessage.setContent(message.getBody().toString());
+
+                                AppContext.cacheService.userMessageDBManager.insertUserMessage(userMessage);
+                                mUserMessages.add(userMessage);
+                                refreshList();
+                            }
+                        });
+                    }
+                });
+
+    }
+
+    private void refreshList(){
+        mChatLv.invalidate();
     }
 
 
@@ -129,6 +158,5 @@ public class ChatActivity extends BaseActivity {
         super.onPause();
         unregisterReceiver(mChatMessageReceiver);
     }
-
 
 }

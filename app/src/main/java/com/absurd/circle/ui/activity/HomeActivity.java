@@ -415,7 +415,6 @@ public class HomeActivity extends SlidingFragmentActivity implements AMapLocatio
         }
         if(mOnLocationChangedListener != null) {
             AppContext.commonLog.i("Get location success!");
-            warning(R.string.location_failed);
             mOnLocationChangedListener.onLocationChanged(aMapLocation);
             AppContext.lastPosition = new Position();
             AppContext.lastPosition.setLatitude(aMapLocation.getLatitude());
