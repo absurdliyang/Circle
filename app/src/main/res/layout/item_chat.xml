@@ -9,8 +9,8 @@
         android:layout_height="match_parent">
         <ImageView
             android:id="@+id/iv_from_user_avatar"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
             android:layout_centerVertical="true"
             android:layout_alignParentRight="true"
             android:layout_marginRight="10dp"/>
@@ -31,6 +31,8 @@
                 android:id="@+id/tv_from_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:textColor="#ffffffff"
                 android:layout_marginTop="4dp"
                 android:textSize="10dp"/>
             </LinearLayout>
@@ -43,8 +45,8 @@
         android:layout_height="match_parent">
         <ImageView
             android:id="@+id/iv_to_user_avatar"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
             android:layout_centerVertical="true"
             android:layout_alignParentLeft="true"
             android:layout_marginLeft="10dp"/>
@@ -65,6 +67,7 @@
                 android:id="@+id/tv_to_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="left"
                 android:layout_marginTop="4dp"
                 android:textSize="10dp"
                 android:textColor="#36A2EF"/>

@@ -123,22 +123,13 @@ public class HomeActivity extends SlidingFragmentActivity implements AMapLocatio
         // customize the SlidingMenu
         getSlidingMenu().setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
 
+        new ChatLoginTask().execute();
+
         initAMap();
 
-        new ChatLoginTask().execute();
-        Intent chatServiceIntent = new Intent(this, ChatService.class);
-        this.startService(chatServiceIntent);
 
     }
 
-
-    public class InitMapThread implements Runnable{
-
-        @Override
-        public void run() {
-            initAMap();
-        }
-    }
 
     private void initAMap(){
         if(mAMap == null) {
@@ -376,13 +367,19 @@ public class HomeActivity extends SlidingFragmentActivity implements AMapLocatio
         @Override
         protected Void doInBackground(Void... voids) {
             AppContext.xmppConnectionManager.init();
-            AppContext.xmppConnectionManager.login(AppContext.auth.getId() + "", AppContext.auth.getId() + "");
+            if(!AppContext.xmppConnectionManager.getConnection().isAuthenticated()) {
+                AppContext.xmppConnectionManager.login(AppContext.auth.getId() + "", AppContext.auth.getId() + "");
+            }
             return null;
         }
 
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
+            AppContext.commonLog.i("Chat login success");
+
+            Intent chatServiceIntent = new Intent(HomeActivity.this, ChatService.class);
+            HomeActivity.this.startService(chatServiceIntent);
         }
     }
 

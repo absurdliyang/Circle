@@ -18,16 +18,12 @@ import com.absurd.circle.data.service.UserMessageService;
 import com.absurd.circle.im.service.ChatService;
 import com.absurd.circle.ui.adapter.ChatAdapter;
 import com.absurd.circle.ui.adapter.base.BeanAdapter;
-import com.microsoft.windowsazure.mobileservices.ServiceFilterResponse;
-import com.microsoft.windowsazure.mobileservices.TableQueryCallback;
+import com.absurd.circle.util.StringUtil;
 
 import org.jivesoftware.smack.Chat;
-import org.jivesoftware.smack.ChatManagerListener;
-import org.jivesoftware.smack.MessageListener;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Message;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Calendar;
 
@@ -40,7 +36,6 @@ public class ChatActivity extends BaseActivity {
     private EditText mChatContentEt;
     private Button mChatSendBtn;
     private ListView mChatLv;
-    private List<UserMessage> mUserMessages = new ArrayList<UserMessage>();
 
     private User mToUser;
 
@@ -51,11 +46,21 @@ public class ChatActivity extends BaseActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
+            AppContext.commonLog.i("Recieve a chat message");
             if(ChatService.NEW_MESSAGE_ACTION.equals(action)){
                 AppContext.commonLog.i("Receive a chat message");
+                UserMessage userMessage = (UserMessage)intent.getExtras().get("message");
+                AppContext.commonLog.i(userMessage.toString());
+                if(userMessage != null && userMessage.getToUserId().equals(AppContext.auth.getId() + "")){
+                    recieveMessage(userMessage);
+                }
             }
         }
     };
+
+    public ChatActivity(){
+        setRightBtnStatus(RIGHT_TEXT);
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -65,11 +70,17 @@ public class ChatActivity extends BaseActivity {
         mToUser = (User)getIntent().getExtras().get("touser");
         mActionBarTitleTv.setText(mToUser.getName());
 
-
-        registerReceiver(mChatMessageReceiver,new IntentFilter());
         initUI();
         initChat();
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(ChatService.NEW_MESSAGE_ACTION);
+        registerReceiver(mChatMessageReceiver, intentFilter);
     }
 
     private void initUI(){
@@ -79,42 +90,32 @@ public class ChatActivity extends BaseActivity {
         mChatSendBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Message message = new Message();
-                message.setBody("chat content");
-                try {
-                    mChat.sendMessage(message);
-                } catch (XMPPException e) {
-                    e.printStackTrace();
-                    return;
-                }
-                AppContext.commonLog.i("Send message success");
+                sendMessage();
             }
         });
         mChatLv = (ListView)findViewById(R.id.lv_chat);
         mChatLv.setAdapter(new ChatAdapter(ChatActivity.this,mToUser));
+        List<UserMessage> historyMessages = AppContext.cacheService.userMessageDBManager.getUserHistoryMessages(mToUser.getId() + "");
+        getAdapter().setItems(historyMessages);
+        smoothToBottom();
+
+        /**
         mUserMessageService.getUserMessages(AppContext.userId,mToUser.getUserId(),new TableQueryCallback<UserMessage>() {
             @Override
-            public void onCompleted(List<UserMessage> result, int count, Exception exception, ServiceFilterResponse response) {
-                if(result == null){
-                    if(exception != null){
                         exception.printStackTrace();
                     }
                 }else{
-                    mUserMessages = result;
-                    ((BeanAdapter)mChatLv.getAdapter()).setItems(mUserMessages);
+                    ((BeanAdapter)mChatLv.getAdapter()).setItems(result);
                 }
             }
         });
+         **/
     }
 
     private void initChat(){
         mChat = AppContext.xmppConnectionManager.getConnection().getChatManager()
-                .createChat("778692@incircle/Smack", new MessageListener() {
-                    @Override
-                    public void processMessage(Chat chat, Message message) {
-                        AppContext.commonLog.i("Send a message  --> " + message.getBody().toString());
-                    }
-                });
+                .createChat(mToUser.getId() + "@incircle/Smack", null);
+        /**
         AppContext.xmppConnectionManager.getConnection().getChatManager()
                 .addChatListener(new ChatManagerListener() {
                     @Override
@@ -122,35 +123,98 @@ public class ChatActivity extends BaseActivity {
                         chat.addMessageListener(new MessageListener() {
                             @Override
                             public void processMessage(Chat chat, Message message) {
-                                AppContext.commonLog.i(message.getBody());
-                                UserMessage userMessage = new UserMessage();
-                                userMessage.setToUserId(mToUser.getUserId());
-                                userMessage.setToUserName(mToUser.getName());
-                                userMessage.setDate(Calendar.getInstance().getTime());
-                                if(AppContext.auth != null) {
-                                    userMessage.setFromUserId(AppContext.auth.getUserId());
-                                    userMessage.setFromUserName(AppContext.auth.getName());
-                                }
-                                userMessage.setContent(message.getBody().toString());
+                                AppContext.commonLog.i(message.getBody() + " " +  message.getFrom() + " " + message.getTo());
 
-                                AppContext.cacheService.userMessageDBManager.insertUserMessage(userMessage);
-                                mUserMessages.add(userMessage);
-                                refreshList();
                             }
                         });
                     }
                 });
+         **/
 
     }
 
-    private void refreshList(){
-        mChatLv.invalidate();
+
+
+    private void sendMessage(){
+        String chatContent = mChatContentEt.getText().toString();
+        if(StringUtil.isEmpty(chatContent)){
+            warning(R.string.chat_content_null);
+            return;
+        }
+        mChatContentEt.setText("");
+        Message message = new Message();
+        message.setType(Message.Type.chat);
+        message.setBody(chatContent);
+        try {
+            if(AppContext.xmppConnectionManager.getConnection().isConnected()){
+                AppContext.commonLog.i("Xmpp connection connected");
+            }else{
+                AppContext.commonLog.i("Xmpp connection unconnected");
+            }
+            AppContext.commonLog.i("mChat Thread id --> " + mChat.getThreadID());
+            mChat.sendMessage(message);
+        } catch (XMPPException e) {
+            e.printStackTrace();
+            return;
+        }
+        AppContext.commonLog.i("Send a message --> " + message.getBody().toString() + " To --> " + message.getTo());
+        UserMessage userMessage = new UserMessage();
+        String strTo = message.getTo().toString();
+        userMessage.setToUserId(strTo.substring(0,strTo.indexOf('@')));
+        userMessage.setDate(Calendar.getInstance().getTime());
+        String strFrom = message.getFrom().toString();
+        userMessage.setFromUserId(strFrom.substring(0,strFrom.indexOf('@')));
+        userMessage.setContent(chatContent);
+        userMessage.setState(1);
+        AppContext.cacheService.userMessageDBManager.insertUserMessage(userMessage);
+
+        getAdapter().addItem(userMessage);
+        // ListView scroll to bottom
+        smoothToBottom();
+    }
+
+    private void recieveMessage(UserMessage userMessage){
+        getAdapter().addItem(userMessage);
+        // ListView scroll to bottom
+        smoothToBottom();
+        mChatLv.invalidateViews();
+    }
+
+    /**
+    private class CircleMessageListener implements MessageListener{
+
+        @Override
+        public void processMessage(Chat chat, Message message) {
+            recieveMessage(message);
+        }
+    }
+**/
+
+    private void smoothToBottom(){
+        mChatLv.setSelection(getAdapter().getItems().size() - 1);
+    }
+
+
+    private BeanAdapter getAdapter(){
+        return (BeanAdapter)mChatLv.getAdapter();
     }
 
 
     @Override
     protected String actionBarTitle() {
         return "";
+    }
+
+    @Override
+    protected String setRightBtnTxt() {
+        return "清除记录";
+    }
+
+    @Override
+    public void onRightBtnClicked(View view) {
+        super.onRightBtnClicked(view);
+        AppContext.cacheService.userMessageDBManager.deleteUserHistory(mToUser.getId() + "");
+        getAdapter().deleteAllItems();
     }
 
     @Override

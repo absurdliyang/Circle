@@ -52,6 +52,8 @@
 
     <string name="network_disconnected">亲~ 没有连接网络</string>
 
+    <string name="chat_content_null">消息能容不能为空</string>
+
 
 
 

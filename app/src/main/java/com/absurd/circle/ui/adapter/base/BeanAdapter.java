@@ -44,6 +44,16 @@ public class BeanAdapter<E> extends BaseAdapter {
         notifyDataSetChanged();
     }
 
+    public void addItem(final E item){
+        this.mItems.add(item);
+        notifyDataSetChanged();
+    }
+
+    public void deleteAllItems(){
+        this.mItems.clear();
+        notifyDataSetChanged();
+    }
+
     public List<E> getItems(){
         return mItems;
     }

@@ -63,11 +63,32 @@ public class UserMessageDBManager extends BaseDBManager {
         return resList;
     }
 
-    public void updateCommentState(int userMessageId) {
+    public List<UserMessage> getUserHistoryMessages(String userId){
+        List<UserMessage> resList = new ArrayList<UserMessage>();
+        String sql = "select * from " + UserMessageDBInfo.TABLE_NAME + " where " + UserMessageDBInfo.TO_USER_ID + " = '"
+                + userId + "' " + "or " + UserMessageDBInfo.FROM_USER_ID + " = '" + userId + "'";
+        Cursor cursor = mDatabase.rawQuery(sql,null);
+        if(cursor.moveToFirst()){
+            do{
+                resList.add(parseUserMessage(cursor));
+            }while(cursor.moveToNext());
+        }
+        return resList;
+    }
+
+    public void deleteUserHistory(String userId){
+        String sql = "delete  from " + UserMessageDBInfo.TABLE_NAME  + " where " + UserMessageDBInfo.TO_USER_ID + " = '"
+                + userId + "' " + "or " + UserMessageDBInfo.FROM_USER_ID + " = '" + userId + "'";
+        mDatabase.execSQL(sql);
+    }
+
+    public void updateUserMessageState(int userMessageId) {
         String sql = "update " + UserMessageDBInfo.TABLE_NAME + " set state = "
                 + "1 " + "where id = " + userMessageId;
         mDatabase.execSQL(sql);
     }
+
+
 
     public void deleteAll(){
         deleteAll(UserMessageDBInfo.TABLE_NAME);

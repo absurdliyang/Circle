@@ -54,7 +54,7 @@ public class XmppConnectionManager{
             ProviderManager pm = ProviderManager.getInstance();
             configure(pm);
 
-            mConnectionConfig = new ConnectionConfiguration("168.63.140.70");
+            mConnectionConfig = new ConnectionConfiguration("168.63.140.70",5222, "incircle");
             mConnectionConfig.setSASLAuthenticationEnabled(false);// 不使用SASL验证，设置为false
             mConnectionConfig.setCompressionEnabled(false);
             mConnectionConfig

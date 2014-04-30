@@ -15,8 +15,10 @@ import com.absurd.circle.data.client.volley.RequestManager;
 import com.absurd.circle.data.model.User;
 import com.absurd.circle.data.model.UserMessage;
 import com.absurd.circle.ui.adapter.base.BeanAdapter;
+import com.absurd.circle.util.FacesUtil;
 import com.absurd.circle.util.ImageUtil;
 import com.absurd.circle.util.StringUtil;
+import com.absurd.circle.util.TimeUtil;
 import com.android.volley.toolbox.ImageLoader;
 
 import java.util.List;
@@ -75,10 +77,11 @@ public class ChatAdapter extends BeanAdapter<UserMessage> {
         if(holder.avatarLoader != null){
             holder.avatarLoader.cancelRequest();
         }
-        if(userMessage.getFromUserId().equals(AppContext.userId)){
+        if(userMessage.getFromUserId().equals(AppContext.auth.getId() + "")){
             holder.fromUserView.setVisibility(View.VISIBLE);
             holder.toUserView.setVisibility(View.GONE);
-            holder.fromUserContent.setText(userMessage.getContent());
+            holder.fromUserContent.setText(FacesUtil.parseFaceByText(mContext,userMessage.getContent()));
+            holder.fromUserDate.setText(TimeUtil.formatShowTime(userMessage.getDate()));
             if(!StringUtil.isEmpty(AppContext.auth.getAvatar()) && StringUtil.isUrl(AppContext.auth.getAvatar())){
                 holder.avatarLoader = RequestManager.loadImage(AppContext.auth.getAvatar(), RequestManager.getImageListener(holder.fromUserAvatar,
                         mAvatarDefaultBitmap, mAvatarDefaultBitmap, new BitmapFilter() {
@@ -92,7 +95,8 @@ public class ChatAdapter extends BeanAdapter<UserMessage> {
         }else{
             holder.fromUserView.setVisibility(View.GONE);
             holder.toUserView.setVisibility(View.VISIBLE);
-            holder.toUserContent.setText(userMessage.getContent());
+            holder.toUserContent.setText(FacesUtil.parseFaceByText(mContext, userMessage.getContent()));
+            holder.toUserDate.setText(TimeUtil.formatShowTime(userMessage.getDate()));
             if(!StringUtil.isEmpty(mToUser.getAvatar()) && StringUtil.isUrl(mToUser.getAvatar())){
                 holder.avatarLoader = RequestManager.loadImage(mToUser.getAvatar(),RequestManager.getImageListener(holder.toUserAvatar,
                         mAvatarDefaultBitmap,mAvatarDefaultBitmap,new BitmapFilter() {

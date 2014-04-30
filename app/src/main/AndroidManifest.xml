@@ -25,6 +25,7 @@
 
         <service android:name="com.absurd.circle.im.service.ChatService"/>
 
+
         <activity
             android:name="com.absurd.circle.ui.activity.HomeActivity"
             android:label="@string/title_activity_home" >
