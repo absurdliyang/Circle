@@ -72,7 +72,7 @@ public class CategoryFragment extends Fragment {
         mCategoryGv = (GridView)rootView.findViewById(R.id.gv_category);
         Map<Integer,String> itemsMap = new HashMap<Integer, String>();
         itemsMap.put(1,"新鲜事");
-        itemsMap.put(6,"美食");
+        //itemsMap.put(6,"美食");
         itemsMap.put(10,"心情");
         itemsMap.put(9,"随手拍");
         itemsMap.put(7,"活动");

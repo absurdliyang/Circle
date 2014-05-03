@@ -16,6 +16,7 @@ import com.absurd.circle.data.model.User;
 import com.absurd.circle.data.model.UserMessage;
 import com.absurd.circle.data.service.UserMessageService;
 import com.absurd.circle.im.service.ChatService;
+import com.absurd.circle.ui.activity.base.BaseActivity;
 import com.absurd.circle.ui.adapter.ChatAdapter;
 import com.absurd.circle.ui.adapter.base.BeanAdapter;
 import com.absurd.circle.util.StringUtil;

@@ -1,5 +1,6 @@
 package com.absurd.circle.ui.view;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 
@@ -10,7 +11,7 @@ import android.widget.TextView;
 import com.absurd.circle.app.R;
 
 
-public class PhotoDialog extends Dialog {
+public class PhotoDialog extends AlertDialog {
 
     private TextView mGallaryTv;
     private TextView mTakePhotoTv;

@@ -1,8 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="transparent">#00000000</color>
+
+
     <color name="card_pressed">#7E0099CC</color>
 
     <color name="theme_color">#21ABEA</color>
+
+    <!-- category fragment -->
+    <color name="category_gray">#ffa3a1a3</color>
 
     <!-- Message card -->
     <color name="card_color1">#ffdedede</color>
@@ -11,7 +17,7 @@
 
 
     <!-- AppMsg widget -->
-    <color name="alert">#CC0000</color>
+    <color name="alert">#55CC0000</color>
     <color name="confirm">#FF8800</color>
     <color name="info">#669900</color>
 

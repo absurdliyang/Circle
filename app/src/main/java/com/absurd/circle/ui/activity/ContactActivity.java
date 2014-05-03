@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.AdapterView;
 
 import com.absurd.circle.app.R;
+import com.absurd.circle.ui.activity.base.BaseActivity;
 import com.absurd.circle.ui.fragment.BlackListFragment;
 import com.absurd.circle.ui.fragment.FollowersFragment;
 import com.absurd.circle.ui.fragment.FunsFragment;

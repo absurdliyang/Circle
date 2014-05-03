@@ -16,26 +16,43 @@
         android:src="@drawable/actionbar_icon_home"/>
 
     <LinearLayout
-        android:id="@+id/llyt_actionbar_title"
-        android:layout_centerInParent="true"
-        android:orientation="horizontal"
+        android:id="@+id/llyt_cutom_actionbar_title"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
-        <TextView
-            android:id="@+id/tv_actionbar_title"
+
+        <ProgressBar
+            android:id="@+id/pb_action_bar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="附近"
-            android:clickable="true"
-            android:textColor="#ffffffff"
-            android:textSize="20sp" />
-        <ImageView
-            android:id="@+id/iv_actionbar_title"
-            android:layout_marginLeft="3dp"
-            android:layout_marginTop="8dp"
-            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginRight="5dp"
+            style="?android:attr/progressBarStyleSmall"
+            />
+
+        <LinearLayout
+            android:id="@+id/llyt_actionbar_title"
+            android:layout_centerInParent="true"
+            android:orientation="horizontal"
             android:layout_width="wrap_content"
-            android:src="@drawable/actionbar_icon_category"/>
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/tv_actionbar_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="附近"
+                android:clickable="true"
+                android:textColor="#ffffffff"
+                android:textSize="20sp" />
+            <ImageView
+                android:id="@+id/iv_actionbar_title"
+                android:layout_marginLeft="3dp"
+                android:layout_marginTop="8dp"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:src="@drawable/actionbar_icon_category"/>
+        </LinearLayout>
     </LinearLayout>
 
     <ImageView

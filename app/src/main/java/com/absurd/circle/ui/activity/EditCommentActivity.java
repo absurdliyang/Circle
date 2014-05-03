@@ -3,6 +3,8 @@ package com.absurd.circle.ui.activity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 
@@ -10,17 +12,25 @@ import com.absurd.circle.app.AppContext;
 import com.absurd.circle.app.R;
 import com.absurd.circle.data.model.Comment;
 import com.absurd.circle.data.service.CommentService;
+import com.absurd.circle.ui.activity.base.BaseActivity;
+import com.absurd.circle.ui.widget.smileypicker.SmileyPicker;
+import com.absurd.circle.ui.widget.smileypicker.SmileyPickerUtility;
 import com.absurd.circle.util.StringUtil;
 import com.microsoft.windowsazure.mobileservices.ServiceFilterResponse;
 import com.microsoft.windowsazure.mobileservices.TableOperationCallback;
 
-public class EditCommentActivity extends BaseActivity{
+public class EditCommentActivity extends BaseActivity {
 
     private EditText mContentEt;
     private String mContent;
 
+    private SmileyPicker mSmiley;
+    private RelativeLayout mContainer;
+
     //private Message mMessage;
     private Comment mParentComment;
+
+    private boolean mIsbusy = false;
 
     public EditCommentActivity(){
         setRightBtnStatus(RIGHT_TEXT);
@@ -30,12 +40,79 @@ public class EditCommentActivity extends BaseActivity{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_comment);
-        //mMessage = (Message)getIntent().getExtras().get("message");
         if(getIntent().getExtras() != null)
             mParentComment = (Comment)getIntent().getExtras().get("parentComment");
+
         // Set custom actionbar
         setRightBtnStatus(RIGHT_TEXT);
         mContentEt = (EditText)findViewById(R.id.et_edit_comment_content);
+        mContentEt.requestFocus();
+
+        mContainer = (RelativeLayout)findViewById(R.id.edit_comment_container);
+
+        mSmiley = (SmileyPicker)findViewById(R.id.edit_comment_smileypicker);
+        mSmiley.setEditText(this, ((LinearLayout) findViewById(R.id.edit_comment_root_layout)), mContentEt);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (mSmiley.isShown()) {
+            hideSmileyPicker(false);
+        }
+        /**
+         else if (!TextUtils.isEmpty(content.getText().toString()) && canShowSaveDraftDialog()) {
+         SaveDraftDialog dialog = new SaveDraftDialog();
+         dialog.show(getFragmentManager(), "");
+         }
+         */
+        else {
+            super.onBackPressed();
+        }
+    }
+
+
+    private void showSmileyPicker(boolean showAnimation) {
+        this.mSmiley.show(this, showAnimation);
+        lockContainerHeight(SmileyPickerUtility.getAppContentHeight(this));
+
+    }
+
+    public void hideSmileyPicker(boolean showKeyBoard) {
+        if (this.mSmiley.isShown()) {
+            if (showKeyBoard) {
+                //this time softkeyboard is hidden
+                LinearLayout.LayoutParams localLayoutParams = (LinearLayout.LayoutParams) this
+                        .mContainer.getLayoutParams();
+                localLayoutParams.height = mSmiley.getTop();
+                localLayoutParams.weight = 0.0F;
+                this.mSmiley.hide(this);
+
+                SmileyPickerUtility.showKeyBoard(mContentEt);
+                mContentEt.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        unlockContainerHeightDelayed();
+                    }
+                }, 200L);
+            } else {
+                this.mSmiley.hide(this);
+                unlockContainerHeightDelayed();
+            }
+        }
+
+    }
+
+    private void lockContainerHeight(int paramInt) {
+        LinearLayout.LayoutParams localLayoutParams = (LinearLayout.LayoutParams) this.mContainer
+                .getLayoutParams();
+        localLayoutParams.height = paramInt;
+        localLayoutParams.weight = 0.0F;
+    }
+
+    public void unlockContainerHeightDelayed() {
+        ((LinearLayout.LayoutParams) this.mContainer.getLayoutParams()).weight
+                = 1.0F;
+
     }
 
 
@@ -52,7 +129,9 @@ public class EditCommentActivity extends BaseActivity{
 
     @Override
     public void onRightBtnClicked(View view) {
-        if(invalidateContent()){
+        if(invalidateContent() && !mIsbusy){
+            setBusy(true);
+            mIsbusy = true;
             sendComment();
         }
     }
@@ -62,7 +141,7 @@ public class EditCommentActivity extends BaseActivity{
         if(AppContext.lastPosition != null){
             comment.setLatitude(AppContext.lastPosition.getLatitude());
             comment.setLongitude(AppContext.lastPosition.getLongitude());
-            comment.setLocationDec("");
+            //comment.setLocationDec("");
         }
         if(MessageDetailActivity.message != null){
             comment.setMessageId(MessageDetailActivity.message.getId());
@@ -82,6 +161,7 @@ public class EditCommentActivity extends BaseActivity{
          **/
 
         CommentService service = new CommentService();
+        setBusy(true);
         service.insertComment(comment, new TableOperationCallback<Comment>() {
             @Override
             public void onCompleted(Comment entity, Exception exception, ServiceFilterResponse response) {
@@ -96,6 +176,8 @@ public class EditCommentActivity extends BaseActivity{
                 AppContext.commonLog.i(entity.toString());
                 AppContext.commonLog.i("Add comment success!");
                 MessageDetailActivity.message.incCommentCount();
+                setBusy(false);
+                warning(R.string.send_comment_success);
                 EditCommentActivity.this.finish();
             }
         });
@@ -111,6 +193,11 @@ public class EditCommentActivity extends BaseActivity{
     }
 
     public void onBtnClick(View view){
-
+        if (mSmiley.isShown()) {
+            hideSmileyPicker(true);
+        } else {
+            showSmileyPicker(
+                    SmileyPickerUtility.isKeyBoardShow(this));
+        }
     }
 }

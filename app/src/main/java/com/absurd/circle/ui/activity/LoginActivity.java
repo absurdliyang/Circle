@@ -2,6 +2,7 @@ package com.absurd.circle.ui.activity;
 
 import java.util.List;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
@@ -19,11 +20,13 @@ import com.absurd.circle.app.R;
 import com.absurd.circle.data.client.AzureClient;
 import com.absurd.circle.data.client.volley.GsonRequest;
 import com.absurd.circle.data.client.volley.RequestManager;
+import com.absurd.circle.data.model.Follow;
 import com.absurd.circle.data.model.QQUser;
 import com.absurd.circle.data.model.SinaWeiboUser;
 import com.absurd.circle.data.model.User;
 import com.absurd.circle.data.service.UserService;
 import com.absurd.circle.data.util.JsonUtil;
+import com.absurd.circle.ui.view.LoadingDialog;
 import com.absurd.circle.util.IntentUtil;
 import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
@@ -55,8 +58,9 @@ public class LoginActivity extends ActionBarActivity {
     private Button mQQLoginBtn;
     private CheckBox mIsSharedCb;
 
-    private Tencent mTencent;
+    private ProgressDialog mLoginProgressDialog;
 
+    private Tencent mTencent;
 
     private UserService mUserService = new UserService();
 
@@ -70,6 +74,12 @@ public class LoginActivity extends ActionBarActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_login);
 
+        initUI();
+
+
+    }
+
+    private void initUI(){
         mTencent = Tencent.createInstance(AppConstant.QQ_ID, AppContext.getContext());
 
         AuthInfo authInfo = new AuthInfo(this, AppConstant.SINA_CLIENT_ID, AppConstant.SINA_CALL_BACK_URL, AppConstant.SINA_SCOPE);
@@ -94,6 +104,11 @@ public class LoginActivity extends ActionBarActivity {
 
         mIsSharedCb = (CheckBox)findViewById(R.id.cb_is_share);
         mIsSharedCb.setChecked(true);
+
+        mLoginProgressDialog = new ProgressDialog(this);
+        mLoginProgressDialog.setMessage("正在登陆......");
+        mLoginProgressDialog.setCancelable(false);
+        mLoginProgressDialog.setCanceledOnTouchOutside(false);
     }
 
 
@@ -112,9 +127,11 @@ public class LoginActivity extends ActionBarActivity {
                         exception.printStackTrace();
                     }
                 }else {
+                    AppContext.commonLog.i(result.get(0).toString());
                     User user = result.get(0);
                     AppContext.cacheService.userDBManager.insertUser(user);
                     AppContext.commonLog.i("get User info success ----> " + user.toString());
+                    getFollowers(user.getUserId());
                     IntentUtil.startActivity(LoginActivity.this, HomeActivity.class);
                     LoginActivity.this.finish();
                 }
@@ -123,7 +140,7 @@ public class LoginActivity extends ActionBarActivity {
     }
 
     private void registerSinaUser(SinaWeiboUser sinaUser){
-        User user = new User();
+        final User user = new User();
         user.setLoginType(1);
         user.setName(sinaUser.getName());
         user.setSex(sinaUser.getGender());
@@ -148,6 +165,7 @@ public class LoginActivity extends ActionBarActivity {
                     AppContext.commonLog.i("register user success ----> " + entity.toString());
                     AppContext.cacheService.userDBManager.insertUser(entity);
                     IntentUtil.startActivity(LoginActivity.this, HomeActivity.class);
+                    getFollowers(user.getUserId());
                     LoginActivity.this.finish();
                 }
             }
@@ -175,6 +193,7 @@ public class LoginActivity extends ActionBarActivity {
                     }else{
                         getUserInfo(entity.getUserId());
                     }
+                    mSinaLoginBtn.logout();
                 }
             }
         });
@@ -197,16 +216,17 @@ public class LoginActivity extends ActionBarActivity {
                     if(entity.getId() != 0){
                         registerQQUser(qqUser);
                     }else{
-                        mTencent.logout(AppContext.getContext());
+                        // mTencent.logout(AppContext.getContext());
                         getUserInfo(entity.getUserId());
                     }
+                    mTencent.logout(AppContext.getContext());
                 }
             }
         });
     }
 
     private void registerQQUser(QQUser qqUser){
-        User user = new User();
+        final User user = new User();
         user.setLoginType(1);
         user.setName(qqUser.getNickname());
         if(qqUser.getGender().equals("男")){
@@ -221,8 +241,6 @@ public class LoginActivity extends ActionBarActivity {
         user.setDate(new java.sql.Date(calendar.getTimeInMillis()));
         user.setAge(new java.sql.Date(calendar.getTimeInMillis()));
         user.setLastLoginDate(new java.sql.Date(calendar.getTimeInMillis()));
-        mTencent.logout(AppContext.getContext());
-
 
         mUserService.updateUser(user, new TableOperationCallback<User>() {
             @Override
@@ -235,6 +253,7 @@ public class LoginActivity extends ActionBarActivity {
                     AppContext.commonLog.i("register user success ----> " + entity.toString());
                     AppContext.cacheService.userDBManager.insertUser(entity);
                     IntentUtil.startActivity(LoginActivity.this, HomeActivity.class);
+                    getFollowers(user.getUserId());
                     LoginActivity.this.finish();
                 }
             }
@@ -267,6 +286,7 @@ public class LoginActivity extends ActionBarActivity {
                 @Override
                 public void onComplete(Object o) {
                     AppContext.commonLog.i("QQ login success");
+                    mLoginProgressDialog.show();
                     final UserInfo userInfo = new UserInfo(LoginActivity.this, mTencent.getQQToken());
                     userInfo.getUserInfo(new IUiListener() {
                         @Override
@@ -319,6 +339,7 @@ public class LoginActivity extends ActionBarActivity {
     private class AuthListener implements WeiboAuthListener {
         @Override
         public void onComplete(Bundle values) {
+            mLoginProgressDialog.show();
             final Oauth2AccessToken accessToken = Oauth2AccessToken.parseAccessToken(values);
             if (accessToken != null && accessToken.isSessionValid()) {
                 AppContext.commonLog.i(accessToken);
@@ -377,6 +398,27 @@ public class LoginActivity extends ActionBarActivity {
         }
     }
 
+
+    // It shoeld be called when the uer firstly login
+    private void getFollowers(String userId){
+        AppContext.cacheService.followDBManager.deleteAll();
+        if(AppContext.auth != null) {
+            mUserService.getAllUserFollowers(userId, new TableQueryCallback<Follow>() {
+                @Override
+                public void onCompleted(List<Follow> result, int count, Exception exception, ServiceFilterResponse response) {
+                    if(result == null){
+                        if(exception != null){
+                            exception.printStackTrace();
+                        }
+                    }else{
+                        for(Follow follow : result ){
+                            AppContext.cacheService.followDBManager.insertFollow(follow);
+                        }
+                    }
+                }
+            });
+        }
+    }
 
     public class SharedQQ{
         @Expose

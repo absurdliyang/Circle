@@ -1,30 +1,23 @@
 package com.absurd.circle.ui.activity;
 
 import android.app.Activity;
-import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
-import android.text.Spannable;
-import android.text.SpannableString;
-import android.text.style.ImageSpan;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.CheckBox;
-import android.widget.EditText;
-import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.absurd.circle.app.AppConstant;
 import com.absurd.circle.app.AppContext;
 import com.absurd.circle.app.R;
 import com.absurd.circle.data.model.Message;
@@ -32,10 +25,14 @@ import com.absurd.circle.data.model.MessageType;
 import com.absurd.circle.data.model.Position;
 import com.absurd.circle.data.service.BCSService;
 import com.absurd.circle.data.service.MessageService;
-import com.absurd.circle.ui.adapter.FacesAdapter;
+import com.absurd.circle.ui.activity.base.BaseActivity;
 import com.absurd.circle.ui.view.IUploadImage;
-import com.absurd.circle.ui.view.PhotoFragment;
-import com.absurd.circle.util.FacesUtil;
+import com.absurd.circle.ui.view.KeyboardControlEditText;
+import com.absurd.circle.ui.widget.smileypicker.SmileyPicker;
+import com.absurd.circle.ui.widget.smileypicker.SmileyPickerUtility;
+import com.absurd.circle.util.ImageUtil;
+import com.absurd.circle.util.IntentUtil;
+import com.absurd.circle.util.NetworkUtil;
 import com.absurd.circle.util.StringUtil;
 import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationListener;
@@ -44,28 +41,34 @@ import com.amap.api.location.LocationProviderProxy;
 import com.microsoft.windowsazure.mobileservices.ServiceFilterResponse;
 import com.microsoft.windowsazure.mobileservices.TableOperationCallback;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 public class EditMessageActivity extends BaseActivity implements AMapLocationListener{
+
+    private static final int  BROWSE_PIC = 200;
 
     private LocationManagerProxy mLocationManagerProxy;
 
     private TextView mLocationTv;
     private ImageView mMediaIv;
     private CheckBox mIsAnonyCb;
-    private EditText mContentEt;
-    private GridView mFacesGv;
+    private KeyboardControlEditText mContentEt;
+    private SmileyPicker mSmiley;
+    private RelativeLayout mContainer;
 
-    private FacesAdapter mFacesAdapter;
 
     private String mContent;
     private String mImageUrl;
 
     private int mContentType;
+
+    private Uri mImageFileUri;
+    private String mPicPath;
+
+
+    private Message mMessage = new Message();
+
+    private boolean mIsbusy = false;
 
     public EditMessageActivity(){
         // Set custom actionbar
@@ -81,17 +84,81 @@ public class EditMessageActivity extends BaseActivity implements AMapLocationLis
 
         mLocationTv = (TextView)findViewById(R.id.tv_edit_msg_location);
         mMediaIv = (ImageView)findViewById(R.id.iv_edit_msg_photo);
+        mMediaIv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(!StringUtil.isEmpty(mPicPath)){
+                    Intent intent = new Intent(EditMessageActivity.this, BrowseImageActivity.class);
+                    intent.putExtra("path",mPicPath);
+                    startActivityForResult(intent,BROWSE_PIC);
+                }
+            }
+        });
         mIsAnonyCb = (CheckBox)findViewById(R.id.cb_edit_msg_is_anony);
-        mContentEt = (EditText)findViewById(R.id.et_edit_msg_content);
-        mFacesGv = (GridView)findViewById(R.id.gv_faces);
-        initFacesView();
+        mContentEt = (KeyboardControlEditText)findViewById(R.id.et_edit_msg_content);
+        mContentEt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                hideSmileyPicker(true);
+            }
+        });
+        mContentEt.requestFocus();
+
+        mContainer = (RelativeLayout)findViewById(R.id.edit_msg_container);
+
+        mSmiley = (SmileyPicker)findViewById(R.id.edit_msg_smileypicker);
+        mSmiley.setEditText(this, ((LinearLayout) findViewById(R.id.root_layout)), mContentEt);
+
 
         initView();
         // Get user's current location
-        mLocationManagerProxy = LocationManagerProxy.getInstance(this);
-        mLocationManagerProxy.requestLocationUpdates(LocationProviderProxy.AMapNetwork,5000,10,this);
+        mLocationManagerProxy = LocationManagerProxy.getInstance(EditMessageActivity.this);
+        updateLocation();
 
     }
+
+
+    @Override
+    public void onBackPressed() {
+        if (mSmiley.isShown()) {
+            hideSmileyPicker(false);
+        }
+        /**
+        else if (!TextUtils.isEmpty(content.getText().toString()) && canShowSaveDraftDialog()) {
+            SaveDraftDialog dialog = new SaveDraftDialog();
+            dialog.show(getFragmentManager(), "");
+        }
+         */
+        else {
+            super.onBackPressed();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    private void updateLocation(){
+        if(NetworkUtil.isNetConnected()) {
+            setBusy(true);
+        }else{
+            warning(R.string.network_disconnected);
+        }
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    // 防止在界面初始化时阻塞UI线程
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                mLocationManagerProxy.requestLocationUpdates(LocationProviderProxy.AMapNetwork, 5000, 10, EditMessageActivity.this);
+            }
+        }).start();
+    }
+
 
     @Override
     protected String actionBarTitle() {
@@ -105,13 +172,16 @@ public class EditMessageActivity extends BaseActivity implements AMapLocationLis
 
     @Override
     public void onRightBtnClicked(View view) {
-        if(invalidateContent()){
+        if(invalidateContent() && !mIsbusy){
+            setBusy(true);
+            mIsbusy = true;
             sendMessage();
         }
     }
 
     private void initFacesView(){
-        mFacesAdapter = new FacesAdapter(this);
+        //mFacesAdapter = new FacesAdapter(this);
+        /*
         mFacesGv.setAdapter(mFacesAdapter);
         mFacesGv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -124,6 +194,7 @@ public class EditMessageActivity extends BaseActivity implements AMapLocationLis
                 mContentEt.getText().insert(mContentEt.getSelectionStart(), ss);
             }
         });
+        **/
     }
 
     private void initView(){
@@ -171,41 +242,47 @@ public class EditMessageActivity extends BaseActivity implements AMapLocationLis
 
 
     private void sendMessage(){
-        Message message = new Message();
-        message.setMessagetType(0);
+        mMessage.setMessagetType(0);
         if(mIsAnonyCb.isChecked()) {
-            message.setMessagetType(1);
+            mMessage.setMessagetType(1);
+        }
+        mMessage.setContentType(mContentType);
+        mMessage.setContent(mContent);
+        if(AppContext.lastPosition != null){
+            mMessage.setLatitude(AppContext.lastPosition.getLatitude());
+            mMessage.setLongitude(AppContext.lastPosition.getLongitude());
+            mMessage.setLocationDec("");
         }
 
-        message.setContentType(mContentType);
-        message.setContent(mContent);
-        if(!StringUtil.isEmpty(mImageUrl)){
-            message.setMediaUrl(mImageUrl);
+        if(!StringUtil.isEmpty(mPicPath)){
+            postImageMessage();
+        }else {
+            postTextMessage();
         }
-        if(AppContext.lastPosition != null){
-            message.setLatitude(AppContext.lastPosition.getLatitude());
-            message.setLongitude(AppContext.lastPosition.getLongitude());
-            message.setLocationDec("");
-        }
+    }
+
+    private void postTextMessage(){
         MessageService messageService = new MessageService();
-        messageService.addMessage(message,new TableOperationCallback<Message>() {
+        messageService.addMessage(mMessage, new TableOperationCallback<Message>() {
             @Override
             public void onCompleted(Message entity, Exception exception, ServiceFilterResponse response) {
-                if(entity == null){
-                    if(exception != null){
+                EditMessageActivity.this.finish();
+                setBusy(false);
+                if (entity == null) {
+                    if (exception != null) {
                         exception.printStackTrace();
-                        Toast.makeText(EditMessageActivity.this,R.string.error_send_message,Toast.LENGTH_SHORT).show();
+                        warning(R.string.send_message_failed);
                     }
-                }else{
+                } else {
                     AppContext.commonLog.i(entity.getContent());
+                    warning(R.string.send_message_success);
                 }
             }
         });
-        this.finish();
     }
 
-    private void uploadImage(Uri imageUri){
-        new UploadImageTask().execute(imageUri);
+    private void postImageMessage(){
+        new UploadImageTask().execute();
     }
 
     public void onBtnClick(View view){
@@ -217,10 +294,11 @@ public class EditMessageActivity extends BaseActivity implements AMapLocationLis
                 onGallary();
                 break;
             case R.id.iv_edit_msg_btn_emotion:
-                if(mFacesGv.getVisibility() == View.VISIBLE){
-                    mFacesGv.setVisibility(View.GONE);
-                }else{
-                    mFacesGv.setVisibility(View.VISIBLE);
+                if (mSmiley.isShown()) {
+                    hideSmileyPicker(true);
+                } else {
+                    showSmileyPicker(
+                            SmileyPickerUtility.isKeyBoardShow(EditMessageActivity.this));
                 }
                 break;
             default:
@@ -229,48 +307,98 @@ public class EditMessageActivity extends BaseActivity implements AMapLocationLis
     }
 
 
+    private void showSmileyPicker(boolean showAnimation) {
+        this.mSmiley.show(this, showAnimation);
+        lockContainerHeight(SmileyPickerUtility.getAppContentHeight(this));
+
+    }
+
+    public void hideSmileyPicker(boolean showKeyBoard) {
+        if (this.mSmiley.isShown()) {
+            if (showKeyBoard) {
+                //this time softkeyboard is hidden
+                LinearLayout.LayoutParams localLayoutParams = (LinearLayout.LayoutParams) this
+                        .mContainer.getLayoutParams();
+                localLayoutParams.height = mSmiley.getTop();
+                localLayoutParams.weight = 0.0F;
+                this.mSmiley.hide(this);
+
+                SmileyPickerUtility.showKeyBoard(mContentEt);
+                mContentEt.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        unlockContainerHeightDelayed();
+                    }
+                }, 200L);
+            } else {
+                this.mSmiley.hide(this);
+                unlockContainerHeightDelayed();
+            }
+        }
+
+    }
+
+    private void lockContainerHeight(int paramInt) {
+        LinearLayout.LayoutParams localLayoutParams = (LinearLayout.LayoutParams) this.mContainer
+                .getLayoutParams();
+        localLayoutParams.height = paramInt;
+        localLayoutParams.weight = 0.0F;
+    }
+
+    public void unlockContainerHeightDelayed() {
+
+        ((LinearLayout.LayoutParams) EditMessageActivity.this.mContainer.getLayoutParams()).weight
+                = 1.0F;
+
+    }
+
+
     /**
      * On taking a photo
      */
     private void onTakePhoto(){
-        String savePath = "";
-        String storageState = Environment.getExternalStorageState();
-        if(storageState.equals(Environment.MEDIA_MOUNTED)){
-            savePath = Environment.getExternalStorageDirectory().getAbsolutePath() + AppConstant.TAKE_PHOTO_PATH;
-            File savedir = new File(savePath);
-            if (!savedir.exists()) {
-                savedir.mkdirs();
+        mImageFileUri = getContentResolver()
+                .insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                        new ContentValues());
+        if (mImageFileUri != null) {
+            Intent i = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+            i.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, mImageFileUri);
+            if (IntentUtil.isIntentSafe(EditMessageActivity.this, i)) {
+                startActivityForResult(i, IUploadImage.SELECT_BY_TAKE_PHOTO);
+            } else {
+                Toast.makeText(EditMessageActivity.this,
+                        getString(R.string.dont_have_camera_app), Toast.LENGTH_SHORT)
+                        .show();
             }
-        }
-        if(StringUtil.isEmpty(savePath)){
-            Toast.makeText(this, "Create save photo path error!", Toast.LENGTH_SHORT).show();
-            return;
+        } else {
+            Toast.makeText(EditMessageActivity.this, getString(R.string.cant_insert_album),
+                    Toast.LENGTH_SHORT).show();
         }
 
-        String timeStamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
-        String fileName = "circle_" + timeStamp + ".jpg";
-        File out = new File(savePath, fileName);
-        Uri uri = Uri.fromFile(out);
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (PhotoFragment.hasImageCaptureBug()) {
-            intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File("/sdcard/tmp")));
-        } else {
-            intent.putExtra(MediaStore.EXTRA_OUTPUT, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        }
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
-        PhotoFragment.uri = uri;
-        PhotoFragment.data = intent;
-        startActivityForResult(intent, IUploadImage.SELECT_BY_TAKE_PHOTO);
     }
 
     /**
      * On select album
      */
     private void onGallary(){
-        Intent intent = new Intent();
-        intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(intent, IUploadImage.SELECT_BY_ALBUM);
+        // support for android kitkat 4.4
+        /**
+        if (SystemUtil.isKK()) {
+            //
+            Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+            intent.addCategory(Intent.CATEGORY_OPENABLE);
+            intent.setType("image/*");
+            startActivityForResult(intent, );
+        } else {
+            Intent choosePictureIntent = new Intent(Intent.ACTION_PICK,
+                    android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            startActivityForResult(choosePictureIntent, IUploadImage.SELECT_BY_ALBUM);
+        }
+         **/
+
+        Intent choosePictureIntent = new Intent(Intent.ACTION_PICK,
+                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(choosePictureIntent, IUploadImage.SELECT_BY_ALBUM);
     }
 
     @Override
@@ -282,68 +410,78 @@ public class EditMessageActivity extends BaseActivity implements AMapLocationLis
                 onResultByGallary(data);
             }else if(requestCode == IUploadImage.SELECT_BY_TAKE_PHOTO){
                 onResultByTake(data);
+            }else if(requestCode == BROWSE_PIC){
+                boolean deleted = data.getBooleanExtra("deleted", false);
+                if (deleted) {
+                    mPicPath = "";
+                    mMediaIv.setImageBitmap(null);
+                }
             }
         }else{
             AppContext.commonLog.i("resultCode is " + resultCode);
         }
     }
 
-    public void onResultByGallary(Intent data) {
+    public void onResultByGallary(Intent intent) {
         // TODO Auto-generated method stub
-        if(data == null){
-            Toast.makeText(this, "data is null", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        // Get photo by uri
-        ContentResolver resolver = getContentResolver();
-        Uri uri = data.getData();
-        try {
-            Bitmap bitmap = MediaStore.Images.Media.getBitmap(resolver,uri);
-            if(bitmap != null){
-                ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-                mMediaIv.setImageBitmap(bitmap);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        mImageUrl = uri.toString();
-        uploadImage(uri);
+        String picPath = getPicPathFromUri(intent.getData(), this);
+        enablePicture(picPath);
     }
 
-    public class UploadImageTask extends AsyncTask<Uri,Void,Void>{
+
+
+    public void onResultByTake(Intent data) {
+        // TODO Auto-generated method stub
+        mPicPath = getPicPathFromUri(mImageFileUri, this);
+        enablePicture(mPicPath);
+    }
+
+    public  String getPicPathFromUri(Uri uri, Activity activity) {
+        String value = uri.getPath();
+
+        if (value.startsWith("/external")) {
+            String[] proj = {MediaStore.Images.Media.DATA};
+            Cursor cursor = activity.managedQuery(uri, proj, null, null, null);
+            int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+            cursor.moveToFirst();
+            return cursor.getString(column_index);
+        } else {
+            return value;
+        }
+    }
+
+    private void enablePicture(String picPath) {
+        Bitmap bitmap = ImageUtil.getWriteWeiboPictureThumblr(picPath);
+        if (bitmap != null) {
+            mMediaIv.setImageBitmap(bitmap);
+            mPicPath = picPath;
+        }
+    }
+
+    public class UploadImageTask extends AsyncTask<Void,Void,Void>{
 
         @Override
-        protected Void doInBackground(Uri... voids) {
-            Uri imageUri = voids[0];
-            if(imageUri != null){
-                Cursor cursor = getContentResolver().query(imageUri, null, null, null, null);
-                cursor.moveToFirst();
-                int index = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
-                String absoluteFilePath = cursor.getString(index);
-                File f = new File(absoluteFilePath);
+        protected Void doInBackground(Void... voids) {
+            if(mPicPath != null){
+                String loadPicPath = ImageUtil.compressPic(EditMessageActivity.this, mPicPath, 3);
+                File f = new File(loadPicPath);
                 mImageUrl = BCSService.uploadImageByFile(f);
             }
             return null;
         }
-    }
 
-    public void onResultByTake(Intent data) {
-        // TODO Auto-generated method stub
-        Bundle extras = data.getExtras();
-        if(extras != null){
-            Bitmap photo = extras.getParcelable("data");
-            if(photo != null){
-                ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                photo.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-                mMediaIv.setImageBitmap(photo);
-            }
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            mMessage.setMediaUrl(mImageUrl);
+            postTextMessage();
         }
     }
 
     @Override
     public void onLocationChanged(AMapLocation aMapLocation) {
         AppContext.commonLog.i("Location changed");
+        setBusy(false);
         if(aMapLocation == null){
             AppContext.commonLog.i("Get user's location error");
             return;
@@ -351,7 +489,8 @@ public class EditMessageActivity extends BaseActivity implements AMapLocationLis
         String locationDesc = aMapLocation.getProvince() + " " + aMapLocation.getCity() + aMapLocation.getDistrict();
         AppContext.commonLog.i(locationDesc + " " + aMapLocation.getLongitude() + " " + aMapLocation.getLatitude());
         mLocationTv.setText(locationDesc);
-        AppContext.sharedPreferenceUtil.setLastPosition(new Position(aMapLocation.getLatitude(),aMapLocation.getLongitude()));
+        AppContext.lastPosition = new Position(aMapLocation.getLatitude(),aMapLocation.getLongitude());
+        AppContext.sharedPreferenceUtil.setLastPosition(AppContext.lastPosition);
         // Cancel refresh location
         mLocationManagerProxy.destory();
     }

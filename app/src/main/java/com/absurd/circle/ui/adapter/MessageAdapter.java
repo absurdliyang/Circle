@@ -14,7 +14,9 @@ import com.absurd.circle.app.R;
 import com.absurd.circle.data.client.volley.BitmapFilter;
 import com.absurd.circle.data.client.volley.RequestManager;
 import com.absurd.circle.data.model.Message;
+import com.absurd.circle.ui.activity.HomeActivity;
 import com.absurd.circle.ui.activity.ImageDetailActivity;
+import com.absurd.circle.ui.activity.MyProfileActivity;
 import com.absurd.circle.ui.activity.UserDynamicActivity;
 import com.absurd.circle.ui.activity.UserProfileActivity;
 import com.absurd.circle.ui.adapter.base.BeanAdapter;
@@ -26,6 +28,7 @@ import com.absurd.circle.util.TimeUtil;
 import com.absurd.circle.util.StringUtil;
 import com.android.volley.toolbox.ImageLoader;
 
+import java.io.File;
 import java.util.List;
 
 /**
@@ -94,7 +97,11 @@ public class MessageAdapter extends BeanAdapter<Message> {
                 holder.avatarIv.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        IntentUtil.startActivity(mContext, UserProfileActivity.class,"user",message.getUser());
+                        if(message.getUserId().equals(AppContext.userId)){
+                            IntentUtil.startActivity(mContext, MyProfileActivity.class);
+                        }else {
+                            IntentUtil.startActivity(mContext, UserProfileActivity.class, "user", message.getUser());
+                        }
                     }
                 });
             }
@@ -102,13 +109,19 @@ public class MessageAdapter extends BeanAdapter<Message> {
         }
 
         holder.contentTv.setText(FacesUtil.parseFaceByText(mContext,message.getContent()));
-        holder.createdTv.setText(TimeUtil.formatShowTime(message.getDate()));
+        if(mContext instanceof HomeActivity){
+            holder.createdTv.setText(TimeUtil.formatShowTime(message.getCommentDate()));
+        }else {
+            holder.createdTv.setText(TimeUtil.formatShowTime(message.getDate()));
+        }
+
         if(AppContext.lastPosition != null) {
             holder.locationTv.setText(StringUtil.parseDistance(DistanceUtil.caculate(AppContext.lastPosition.getLatitude(),AppContext.lastPosition.getLongitude()
                                               ,message.getLatitude(),message.getLongitude())));
         }
         holder.praiseCommentTv.setText("赞 " + message.getPraiseCount() + " 评论 " + message.getCommentCount());
         if(message.getMediaUrl() != null){
+            holder.mediaIv.setVisibility(View.VISIBLE);
             holder.mediaRequest = RequestManager.loadImage(message.getMediaUrl(),
                     RequestManager.getImageListener(holder.mediaIv, mMediaDefaultBitmap, mMediaDefaultBitmap,null));
             holder.mediaIv.setOnClickListener(new View.OnClickListener() {

@@ -26,8 +26,7 @@ public class Comment extends Message implements Serializable {
     @SerializedName("state")
     private int mState;
 
-    @Expose
-    @SerializedName("ParentText")
+
     private String mParentText;
 
     @Expose

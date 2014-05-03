@@ -1,7 +1,6 @@
 package com.absurd.circle.ui.fragment;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,7 +9,7 @@ import android.widget.ListView;
 import com.absurd.circle.app.AppContext;
 import com.absurd.circle.data.model.Follow;
 import com.absurd.circle.data.model.User;
-import com.absurd.circle.ui.activity.BaseActivity;
+import com.absurd.circle.ui.activity.base.BaseActivity;
 import com.absurd.circle.ui.fragment.base.UserListFragment;
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.microsoft.windowsazure.mobileservices.TableQueryCallback;

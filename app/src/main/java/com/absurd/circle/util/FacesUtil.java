@@ -117,8 +117,8 @@ public class FacesUtil {
             try {
                 resId = FacesAdapter.getImageIds()[FacesUtil.tags.indexOf(tag)];
                 Drawable d = context.getResources().getDrawable(resId);
-                d.setBounds(0, 0, 35, 35);// 设置表情图片的显示大小
-                ImageSpan span = new ImageSpan(d, ImageSpan.ALIGN_BOTTOM);
+                d.setBounds(0, 0, SystemUtil.dip2px(18), SystemUtil.dip2px(18));// 设置表情图片的显示大小
+                ImageSpan span = new ImageSpan(d, ImageSpan.ALIGN_BASELINE);
                 builder.setSpan(span, matcher.start(), matcher.end(),
                         Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             } catch (Exception e) {

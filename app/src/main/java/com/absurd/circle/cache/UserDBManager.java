@@ -50,6 +50,7 @@ public class UserDBManager extends BaseDBManager{
         value.put(UserDBInfo.CORPSE,user.getCorpse());
         value.put(UserDBInfo.APP_VER,user.getAppVer());
         value.put(UserDBInfo.IS_ANNOYMITY, user.getIsAnnoymity());
+        value.put(UserDBInfo.LEVEL, user.getLevel());
         mDatabase.insert(UserDBInfo.TABLE_NAME,null,value);
     }
 
@@ -114,6 +115,7 @@ public class UserDBManager extends BaseDBManager{
         user.setCorpse(cursor.getInt(25));
         user.setAppVer(cursor.getString(26));
         user.setIsAnnoymity(cursor.getInt(27));
+        user.setLevel(cursor.getInt(28));
         return user;
     }
 
@@ -183,6 +185,8 @@ public class UserDBManager extends BaseDBManager{
 
         public static final String IS_ANNOYMITY = "isannoymity";
 
+        public static final String LEVEL = "level";
+
 
         public static final SQLiteTable TABLE = new SQLiteTable(TABLE_NAME)
                 .addColumn(ID, Column.DataType.INTEGER)
@@ -211,7 +215,8 @@ public class UserDBManager extends BaseDBManager{
                 .addColumn(LAST_LOGIN_DATE, Column.DataType.INTEGER)
                 .addColumn(CORPSE, Column.DataType.INTEGER)
                 .addColumn(APP_VER, Column.DataType.TEXT)
-                .addColumn(IS_ANNOYMITY, Column.DataType.INTEGER);
+                .addColumn(IS_ANNOYMITY, Column.DataType.INTEGER)
+                .addColumn(LEVEL, Column.DataType.INTEGER);
 
     }
 }

@@ -124,6 +124,10 @@ public class User implements Serializable, Cloneable{
     @SerializedName("isanonymity")
     private int mIsAnnoymity;
 
+    @Expose
+    @SerializedName("level")
+    private int mLevel;
+
 
 
     public int getId() {
@@ -341,6 +345,13 @@ public class User implements Serializable, Cloneable{
         mIsAnnoymity = isAnnoymity;
     }
 
+    public int getLevel() {
+        return mLevel;
+    }
+
+    public void setLevel(int level) {
+        mLevel = level;
+    }
 
     @Override
     public Object clone(){
@@ -383,6 +394,7 @@ public class User implements Serializable, Cloneable{
                 ", mCorpse=" + mCorpse +
                 ", mAppVer='" + mAppVer + '\'' +
                 ", mIsAnnoymity=" + mIsAnnoymity +
+                ", mLevel=" + mLevel +
                 '}';
     }
 }

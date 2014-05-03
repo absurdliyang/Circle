@@ -16,6 +16,7 @@ import com.absurd.circle.data.model.Follow;
 import com.absurd.circle.data.model.User;
 import com.absurd.circle.data.service.UserService;
 import com.absurd.circle.ui.activity.UserProfileActivity;
+import com.absurd.circle.ui.activity.base.IProgressBarActivity;
 import com.absurd.circle.ui.adapter.UserAdapter;
 import com.absurd.circle.util.IntentUtil;
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
@@ -42,9 +43,12 @@ public abstract class UserListFragment<V> extends Fragment {
 
     private int mCurrentPageIndex = 0;
 
+    private IProgressBarActivity mActivity;
+    protected boolean mIsbusy = false;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        //mHomeActivity = (HomeActivity)getActivity();
+        mActivity = (IProgressBarActivity)getActivity();
         mUserService = new UserService();
         View rootView = inflater.inflate(R.layout.item_list, null);
         // Init UI
@@ -90,6 +94,8 @@ public abstract class UserListFragment<V> extends Fragment {
     private TableQueryCallback<V> refreshCallBack = new TableQueryCallback<V>() {
         @Override
         public void onCompleted(List<V> result, int count, Exception exception, ServiceFilterResponse response) {
+            mActivity.setBusy(false);
+            mIsbusy = false;
             if (result == null) {
                 if (exception != null) {
                     exception.printStackTrace();
@@ -105,6 +111,8 @@ public abstract class UserListFragment<V> extends Fragment {
     private TableQueryCallback<V> nextPageCallBack = new TableQueryCallback<V>() {
         @Override
         public void onCompleted(List<V> result, int count, Exception exception, ServiceFilterResponse response) {
+            mActivity.setBusy(false);
+            mIsbusy = false;
             if (result == null) {
                 if (exception != null) {
                     exception.printStackTrace();
@@ -133,9 +141,13 @@ public abstract class UserListFragment<V> extends Fragment {
     public void refreshTranscation(){
         getListView().smoothScrollToPosition(0);
         mCurrentPageIndex = 0;
-        if(mMode == MODE_NET) {
-            loadDataFromNet(mCurrentPageIndex, refreshCallBack);
-        }else{
+        if (mMode == MODE_NET) {
+            if(!mIsbusy) {
+                mIsbusy = true;
+                mActivity.setBusy(true);
+                loadDataFromNet(mCurrentPageIndex, refreshCallBack);
+            }
+        } else {
             List<V> resList = loadDataFromLocal(mCurrentPageIndex);
             List<User> userResult = handleResult(resList);
             getAdapter().setItems(userResult);
@@ -143,15 +155,21 @@ public abstract class UserListFragment<V> extends Fragment {
     }
 
     public void nextPageTransaction(){
-        mCurrentPageIndex++;
-        if(mMode == MODE_NET) {
-            loadDataFromNet(mCurrentPageIndex, nextPageCallBack);
-        }else{
-            List<V> resList = loadDataFromLocal(mCurrentPageIndex);
-            List<User> userResult = handleResult(resList);
-            getAdapter().addItems(userResult);
+        if(!mIsbusy) {
+            mIsbusy  = true;
+            mCurrentPageIndex++;
+            if (mMode == MODE_NET) {
+                if(!mIsbusy) {
+                    mActivity.setBusy(true);
+                    mIsbusy = true;
+                    loadDataFromNet(mCurrentPageIndex, nextPageCallBack);
+                }
+            } else {
+                List<V> resList = loadDataFromLocal(mCurrentPageIndex);
+                List<User> userResult = handleResult(resList);
+                getAdapter().addItems(userResult);
+            }
         }
-
     }
 
     protected void setMode(int mode){

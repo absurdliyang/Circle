@@ -79,11 +79,11 @@ public class CategoryAdapter extends BaseAdapter{
         categoryTv.setText(mItemsMap.get(category));
         if(mSelectedItems != null) {
             if (mSelectedItems.contains(category)) {
-                categoryTv.setBackgroundResource(R.drawable.category_sel_bg);
-                categoryTv.setTextColor(AppContext.getContext().getResources().getColor(R.color.theme_color));
-            } else {
                 categoryTv.setBackgroundResource(R.drawable.sel_category_btn);
-                categoryTv.setTextColor(AppContext.getContext().getResources().getColor(android.R.color.white));
+                //categoryTv.setTextColor(AppContext.getContext().getResources().getColor(android.R.color.white));
+            } else {
+                categoryTv.setBackgroundResource(R.drawable.category_sel_bg);
+                //categoryTv.setTextColor(AppContext.getContext().getResources().getColor(R.color.category_gray));
             }
         }
         return view;

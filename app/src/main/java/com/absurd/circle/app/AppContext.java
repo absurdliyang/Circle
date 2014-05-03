@@ -15,6 +15,9 @@ import com.absurd.circle.util.SharedPreferenceUtil;
  * Created by absurd on 14-3-11.
  */
 public class AppContext extends Application{
+
+    public static final Boolean DEBUG = true;
+
     private static Context mContext;
 
     public static CommonLog azureLog = LogFactory.createLog(AppConstant.AZURE_MOBILE_TAG);
@@ -31,6 +34,7 @@ public class AppContext extends Application{
     public static Position lastPosition;
 
 
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -42,5 +46,12 @@ public class AppContext extends Application{
 
     public static Context getContext(){
         return mContext;
+    }
+
+    public static boolean isAuthed(){
+        if(auth == null || auth.getId() == 0){
+            return false;
+        }
+        return true;
     }
 }

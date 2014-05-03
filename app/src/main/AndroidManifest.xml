@@ -5,6 +5,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
@@ -37,7 +38,9 @@
         </activity>
         <activity
             android:name="com.absurd.circle.ui.activity.EditMessageActivity"
-            android:label="@string/title_activity_edit_tweet" >
+            android:label="@string/title_activity_edit_tweet"
+            android:launchMode="singleTop"
+            android:windowSoftInputMode="stateVisible|adjustResize">
         </activity>
         <activity
             android:name="com.absurd.circle.ui.activity.NotificationActivity"
@@ -106,7 +109,9 @@
         </activity>
         <activity
             android:name="com.absurd.circle.ui.activity.EditCommentActivity"
-            android:label="@string/title_activity_edit_comment" >
+            android:label="@string/title_activity_edit_comment"
+            android:launchMode="singleTop"
+            android:windowSoftInputMode="stateVisible|adjustResize" >
         </activity>
         <activity
             android:name="com.absurd.circle.ui.activity.EditItemActivity"
@@ -116,6 +121,8 @@
             android:name="com.absurd.circle.ui.activity.ChatActivity"
             android:label="@string/title_activity_chat" >
         </activity>
+        <activity android:name="com.absurd.circle.ui.activity.BrowseImageActivity"
+                  android:label="@string/title_activity_browse_image"/>
     </application>
 
 </manifest>

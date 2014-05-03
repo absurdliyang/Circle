@@ -20,6 +20,7 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.TransitionDrawable;
+import android.text.style.LineHeightSpan;
 import android.widget.ImageView;
 
 import java.io.File;
@@ -28,6 +29,10 @@ import java.io.File;
  * Created by absurd on 14-3-15.
  */
 public class RequestManager {
+
+    // 设置最大宽高来限制加载到内存中的图片的大小，减少OOM的发生，当加载一些大图片时，效果还是非常明显的
+    private static final int HEIGHT = 900, WIDTH = 900;
+
     private static CommonLog mLog = LogFactory.createLog();
 
     public static RequestQueue mRequestQueue = newRequestQueue();
@@ -73,7 +78,7 @@ public class RequestManager {
 
     public static ImageLoader.ImageContainer loadImage(String requestUrl,
                                                        ImageLoader.ImageListener imageListener) {
-        return loadImage(requestUrl, imageListener, 0, 0);
+        return loadImage(requestUrl, imageListener, WIDTH, HEIGHT);
     }
 
     public static ImageLoader.ImageContainer loadImage(String requestUrl,
@@ -97,8 +102,8 @@ public class RequestManager {
 
             @Override
             public void onResponse(ImageLoader.ImageContainer response, boolean isImmediate) {
+                AppContext.commonLog.i("isImmediate " + isImmediate + "response.getBitmap" + response.getBitmap());
                 if (response.getBitmap() != null) {
-                    //mLog.i("get iamge success");
                     if (!isImmediate && defaultImageBitmap != null) {
                         TransitionDrawable transitionDrawable;
                         if(bitmapFilter != null) {

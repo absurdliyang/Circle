@@ -1,6 +1,7 @@
 
 package com.absurd.circle.data.client.volley;
 
+import com.absurd.circle.app.AppContext;
 import com.absurd.circle.data.util.ImageUtil;
 import com.android.volley.toolbox.ImageLoader;
 
@@ -24,11 +25,13 @@ public class BitmapLruCache extends LruCache<String, Bitmap> implements ImageLoa
 
     @Override
     public Bitmap getBitmap(String url) {
+        AppContext.commonLog.i("get " + url + " cache");
         return get(url);
     }
 
     @Override
     public void putBitmap(String url, Bitmap bitmap) {
         put(url, bitmap);
+        AppContext.commonLog.i(url + " put to cache");
     }
 }

@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.absurd.circle.app.AppContext;
@@ -24,6 +25,7 @@ import com.absurd.circle.data.model.User;
 import com.absurd.circle.data.service.UserService;
 import com.absurd.circle.im.manager.XmppConnectionManager;
 import com.absurd.circle.im.service.ChatService;
+import com.absurd.circle.ui.activity.base.IProgressBarActivity;
 import com.absurd.circle.ui.fragment.CategoryFragment;
 import com.absurd.circle.ui.fragment.HomeFragment;
 import com.absurd.circle.ui.fragment.SlidingMenuFragment;
@@ -54,8 +56,8 @@ import org.jivesoftware.smack.packet.Presence;
 import java.util.List;
 
 
-public class HomeActivity extends SlidingFragmentActivity implements AMapLocationListener, LocationSource {
-    private CommonLog mLog = LogFactory.createLog();
+public class HomeActivity extends SlidingFragmentActivity
+        implements IProgressBarActivity, AMapLocationListener, LocationSource {
     private HomeFragment mContent;
     /**
      * false MessageListFragment
@@ -63,6 +65,7 @@ public class HomeActivity extends SlidingFragmentActivity implements AMapLocatio
      */
     private boolean mStatus = false;
     private SlidingMenuFragment mSlidingMenuFragment;
+    private ProgressBar mProgressBar;
 
     private UserService mUserService;
 
@@ -73,9 +76,6 @@ public class HomeActivity extends SlidingFragmentActivity implements AMapLocatio
     private OnLocationChangedListener mOnLocationChangedListener;
     private LocationManagerProxy mLocationManagerProxy;
 
-
-
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,9 +83,7 @@ public class HomeActivity extends SlidingFragmentActivity implements AMapLocatio
             IntentUtil.startActivity(this,LoginActivity.class);
             this.finish();
         }
-        if(!NetworkUtil.isNetConnected()){
-            warning(R.string.network_disconnected);
-        }
+
 
         // set the Above View
         if (savedInstanceState != null)
@@ -96,12 +94,28 @@ public class HomeActivity extends SlidingFragmentActivity implements AMapLocatio
         // Init Data component
         mUserService = new UserService();
         init();
-        getFollowers();
+        //getFollowers();
         // Configur some UI control
+        initUI(savedInstanceState);
+        if(!NetworkUtil.isNetConnected()){
+            warning(R.string.network_disconnected);
+            setBusy(false);
+        }
+
+        new ChatLoginTask().execute();
+
+
+        //initAMap();
+
+    }
+
+    private void initUI(Bundle savedInstanceState){
         configureSlidingMenu();
         configureActionBar();
+
         // set the Above View
         setContentView(R.layout.activity_home);
+        mProgressBar = (ProgressBar)findViewById(R.id.pb_action_bar);
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.container, mContent)
@@ -122,12 +136,6 @@ public class HomeActivity extends SlidingFragmentActivity implements AMapLocatio
 
         // customize the SlidingMenu
         getSlidingMenu().setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
-
-        new ChatLoginTask().execute();
-
-        initAMap();
-
-
     }
 
 
@@ -146,34 +154,10 @@ public class HomeActivity extends SlidingFragmentActivity implements AMapLocatio
 
     private void init(){
         AppContext.lastPosition = AppContext.sharedPreferenceUtil.getLastPosition();
-        if(AppContext.lastPosition == null){
-            ///////
-        }else{
-            ///////
-        }
     }
 
 
-    // It shoeld be called when the uer firstly login
-    private void getFollowers(){
-        AppContext.cacheService.followDBManager.deleteAll();
-        if(AppContext.auth != null) {
-            mUserService.getAllUserFollowers(AppContext.auth.getUserId(), new TableQueryCallback<Follow>() {
-                @Override
-                public void onCompleted(List<Follow> result, int count, Exception exception, ServiceFilterResponse response) {
-                    if(result == null){
-                        if(exception != null){
-                            exception.printStackTrace();
-                        }
-                    }else{
-                        for(Follow follow : result ){
-                            AppContext.cacheService.followDBManager.insertFollow(follow);
-                        }
-                    }
-                }
-            });
-        }
-    }
+
 
     private boolean getAuth(){
         AppContext.userId = AppContext.sharedPreferenceUtil.getUserId();
@@ -190,61 +174,6 @@ public class HomeActivity extends SlidingFragmentActivity implements AMapLocatio
             return true;
         }
         return false;
-        /**
-        if(u != null) {
-            AppContext.auth = u;
-            AppContext.userId = u.getUserId();
-            AppContext.token = AppContext.sharedPreferenceUtil.getAuthToken();
-            AzureClient.setToken(AppContext.token);
-            //mSlidingMenuFragment.invalidateView();
-            return;
-        }else {
-            AppContext.token = AppContext.sharedPreferenceUtil.getAuthToken();
-            AppContext.userId = AppContext.sharedPreferenceUtil.getUserId();
-            if (!StringUtil.isEmpty(AppContext.token) && !StringUtil.isEmpty(AppContext.userId)) {
-                AzureClient.setToken(AppContext.token);
-                mUserService.getUser(AppContext.userId, new TableQueryCallback<User>() {
-                    @Override
-                    public void onCompleted(List<User> result, int count, Exception exception, ServiceFilterResponse response) {
-                        if (result == null) {
-                            if (exception != null) {
-                                exception.printStackTrace();
-                                Toast.makeText(HomeActivity.this, "get auth info failed!", Toast.LENGTH_SHORT).show();
-                            }
-                        } else {
-                            AppContext.auth = result.get(0);
-                            AppContext.cacheService.userDBManager.deleteUser();
-                            AppContext.cacheService.userDBManager.insertUser(AppContext.auth);
-                            mSlidingMenuFragment.invalidateView();
-                        }
-                    }
-                });
-            } else {
-                User user = new User();
-                user.setLoginType(1);
-                user.setUserId(AppConstant.TEST_USER_ID);
-                mUserService.insertUser(user, new TableOperationCallback<User>() {
-                    @Override
-                    public void onCompleted(User entity, Exception exception, ServiceFilterResponse response) {
-                        if (entity == null) {
-                            if (exception != null) {
-                                exception.printStackTrace();
-                                Toast.makeText(HomeActivity.this, "get auth info failed!", Toast.LENGTH_SHORT).show();
-                            }
-                        } else {
-                            AppContext.auth = entity;
-                            AppContext.userId = entity.getUserId();
-                            AppContext.token = entity.getToken();
-                            AppContext.sharedPreferenceUtil.setAuthTokem(entity.getToken());
-                            AppContext.sharedPreferenceUtil.setUserId(entity.getUserId());
-                            mContent.refreshTranscation();
-                            getAuth();
-                        }
-                    }
-                });
-            }
-        }
-         **/
     }
 
 
@@ -362,24 +291,37 @@ public class HomeActivity extends SlidingFragmentActivity implements AMapLocatio
     }
 
 
-    public class ChatLoginTask extends AsyncTask<Void, Void, Void> {
+    public class ChatLoginTask extends AsyncTask<Void, Void, Boolean> {
 
         @Override
-        protected Void doInBackground(Void... voids) {
-            AppContext.xmppConnectionManager.init();
-            if(!AppContext.xmppConnectionManager.getConnection().isAuthenticated()) {
-                AppContext.xmppConnectionManager.login(AppContext.auth.getId() + "", AppContext.auth.getId() + "");
+        protected Boolean doInBackground(Void... voids) {
+            if(AppContext.isAuthed()) {
+                AppContext.xmppConnectionManager.init();
+                if (!AppContext.xmppConnectionManager.getConnection().isAuthenticated()) {
+                    AppContext.xmppConnectionManager.login(AppContext.auth.getId() + "", AppContext.auth.getId() + "");
+                }
+                return true;
             }
-            return null;
+            return false;
         }
 
         @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            AppContext.commonLog.i("Chat login success");
+        protected void onPostExecute(Boolean b) {
+            super.onPostExecute(b);
+            if(b){
+                AppContext.commonLog.i("Chat login success");
 
-            Intent chatServiceIntent = new Intent(HomeActivity.this, ChatService.class);
-            HomeActivity.this.startService(chatServiceIntent);
+                Intent chatServiceIntent = new Intent(HomeActivity.this, ChatService.class);
+                HomeActivity.this.startService(chatServiceIntent);
+            }
+        }
+    }
+
+    public void setBusy(boolean busy){
+        if(busy){
+            mProgressBar.setVisibility(View.VISIBLE);
+        }else{
+            mProgressBar.setVisibility(View.GONE);
         }
     }
 
@@ -417,6 +359,8 @@ public class HomeActivity extends SlidingFragmentActivity implements AMapLocatio
             AppContext.lastPosition.setLatitude(aMapLocation.getLatitude());
             AppContext.lastPosition.setLongitude(aMapLocation.getLongitude());
             AppContext.sharedPreferenceUtil.setLastPosition(AppContext.lastPosition);
+
+            //mContent.refreshTranscation();
             deactivate();
         }
     }
@@ -445,8 +389,20 @@ public class HomeActivity extends SlidingFragmentActivity implements AMapLocatio
         mOnLocationChangedListener = onLocationChangedListener;
         if(mLocationManagerProxy == null){
             mLocationManagerProxy = LocationManagerProxy.getInstance(this);
-            mLocationManagerProxy.requestLocationUpdates(LocationProviderProxy.AMapNetwork,5000,10,this);
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    mLocationManagerProxy.requestLocationUpdates(LocationProviderProxy.AMapNetwork,5000,10,HomeActivity.this);
+                }
+            }).start();
         }
+
+
 
     }
 

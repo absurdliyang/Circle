@@ -1,11 +1,11 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#ffffffff"
-    tools:context="com.absurd.circle.ui.activity.EditMessageActivity">
+    android:id="@+id/root_layout"
+    android:background="#ffffffff">
     <RelativeLayout
+        android:id="@+id/edit_msg_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
@@ -24,7 +24,7 @@
             android:background="@drawable/edit_message_content_bg"
             android:layout_marginTop="16dp">
 
-            <EditText
+            <com.absurd.circle.ui.view.KeyboardControlEditText
                 android:id="@+id/et_edit_msg_content"
                 android:layout_width="match_parent"
                 android:layout_height="180dp"
@@ -36,9 +36,9 @@
                 android:textColorHint="#ffa5a5a5"
                 android:hint="说点儿什么吧。。。"/>
             <RelativeLayout
-                android:layout_marginBottom="10dp"
                 android:layout_below="@id/et_edit_msg_content"
-                android:layout_width="match_parent"
+                android:layout_marginTop="30dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
                 <ImageView
                     android:id="@+id/iv_edit_msg_btn_emotion"
@@ -68,6 +68,17 @@
                     android:onClick="onBtnClick"
                     android:src="@drawable/ic_photo"/>
             </RelativeLayout>
+            <ImageView
+                android:id="@+id/iv_edit_msg_photo"
+                android:layout_height="50dp"
+                android:layout_width="50dp"
+                android:layout_below="@id/et_edit_msg_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="10dp"
+                android:clickable="true"
+                android:scaleType="centerCrop"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="10dp"/>
         </RelativeLayout>
         <RelativeLayout
             android:id="@+id/rlyt_edit_msg_location"
@@ -88,14 +99,7 @@
                 android:layout_toRightOf="@id/iv_edit_msg_location"
                 android:layout_marginLeft="10dp"/>
         </RelativeLayout>
-        <ImageView
-            android:id="@+id/iv_edit_msg_photo"
-            android:layout_height="80dp"
-            android:layout_width="80dp"
-            android:layout_below="@id/rlyt_edit_msg_location"
-            android:scaleType="centerCrop"
-            android:layout_marginTop="10dp"
-            android:layout_marginLeft="10dp"/>
+
 
         <CheckBox
             android:id="@+id/cb_edit_msg_is_anony"
@@ -106,16 +110,10 @@
             android:layout_height="wrap_content"/>
     </RelativeLayout>
 
-    <GridView
-        android:id="@+id/gv_faces"
-        android:layout_width="match_parent"
-        android:layout_height="220dip"
-        android:numColumns="auto_fit"
-        android:columnWidth="50dip"
-        android:stretchMode="columnWidth"
-        android:gravity="center"
-        android:fadingEdge="none"
-        android:scrollingCache="false"
+    <com.absurd.circle.ui.widget.smileypicker.SmileyPicker
+        android:id="@+id/edit_msg_smileypicker"
         android:visibility="gone"
-        android:background="#eef1f4"/>
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        />
 </LinearLayout>

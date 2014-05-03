@@ -20,11 +20,9 @@ import java.util.List;
  */
 public class HomeFragment extends MessageListFragment {
 
-    private HomeActivity mHomeActivity;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mHomeActivity = (HomeActivity)getActivity();
         return super.onCreateView(inflater, container, savedInstanceState);
     }
 

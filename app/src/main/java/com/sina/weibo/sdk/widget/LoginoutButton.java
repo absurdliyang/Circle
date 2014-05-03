@@ -271,7 +271,7 @@ public class LoginoutButton extends Button implements OnClickListener {
 	/**
 	 * 调用 {@link LogoutAPI#logout(RequestListener)} 来注销。
 	 */
-	private void logout() {
+	public void logout() {
 		if (mAccessToken != null && mAccessToken.isSessionValid()) {
 			LogUtil.i(TAG, "Click to logout");
 			

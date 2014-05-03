@@ -27,6 +27,8 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 
+import com.absurd.circle.app.R;
+
 import java.lang.ref.WeakReference;
 import java.util.Collection;
 import java.util.Comparator;
@@ -122,11 +124,11 @@ class MsgManager extends Handler implements Comparator<AppMsg> {
         msgQueue.add(appMsg);
         if (appMsg.mInAnimation == null) {
             appMsg.mInAnimation = AnimationUtils.loadAnimation(appMsg.getActivity(),
-                    android.R.anim.fade_in);
+                    R.anim.translate_enter);
         }
         if (appMsg.mOutAnimation == null) {
             appMsg.mOutAnimation = AnimationUtils.loadAnimation(appMsg.getActivity(),
-                    android.R.anim.fade_out);
+                    R.anim.translate_exit);
         }
         displayMsg();
     }

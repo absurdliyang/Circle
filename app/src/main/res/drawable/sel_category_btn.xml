@@ -6,7 +6,7 @@
             <solid android:color="@color/theme_color"/>
             <size android:width="100dp"
                 android:height="100dp"/>
-            <stroke android:color="#ffa3a1a3"
+            <stroke android:color="@color/category_gray"
                 android:width="1.0dp"/>
         </shape>
     </item>
@@ -15,7 +15,7 @@
             <solid android:color="@color/theme_color"/>
             <size android:width="100dp"
                 android:height="100dp"/>
-            <stroke android:color="#ffa3a1a3"
+            <stroke android:color="@color/category_gray"
                 android:width="1.0dp"/>
         </shape>
     </item>

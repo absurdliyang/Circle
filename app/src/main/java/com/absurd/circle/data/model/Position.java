@@ -22,7 +22,7 @@ public class Position implements Serializable{
 
     public Position(double lat, double lng){
         this.mLatitude = lat;
-        this.mLatitude = lng;
+        this.mLongitude = lng;
     }
 
     public double getLatitude() {
@@ -39,5 +39,13 @@ public class Position implements Serializable{
 
     public void setLongitude(double longitude) {
         mLongitude = longitude;
+    }
+
+    @Override
+    public String toString() {
+        return "Position{" +
+                "mLatitude=" + mLatitude +
+                ", mLongitude=" + mLongitude +
+                '}';
     }
 }

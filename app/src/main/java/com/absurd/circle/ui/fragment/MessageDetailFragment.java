@@ -27,7 +27,7 @@ import com.absurd.circle.data.model.ReportMessage;
 import com.absurd.circle.data.service.CommentService;
 import com.absurd.circle.data.service.MessageService;
 import com.absurd.circle.data.service.NotificationService;
-import com.absurd.circle.ui.activity.BaseActivity;
+import com.absurd.circle.ui.activity.base.BaseActivity;
 import com.absurd.circle.ui.activity.EditCommentActivity;
 import com.absurd.circle.ui.activity.ImageDetailActivity;
 import com.absurd.circle.ui.activity.MessageDetailActivity;
@@ -146,6 +146,7 @@ public class MessageDetailFragment extends Fragment{
             public void onScrollStateChanged(AbsListView absListView, int i) {
                 if(absListView.getLastVisiblePosition() == absListView.getCount() - 1 && i == AbsListView.OnScrollListener.SCROLL_STATE_IDLE){
                     nextPage();
+                    mMessageDetailActivity.setBusy(true);
                 }
             }
             @Override
@@ -258,10 +259,12 @@ public class MessageDetailFragment extends Fragment{
     }
 
     public void refresh(){
+        mMessageDetailActivity.setBusy(true);
         mCurrentPageIndex = 0;
         mCommentService.getComments(MessageDetailActivity.message.getId(), mCurrentPageIndex,10,mQueryOrder,new TableQueryCallback<Comment>() {
             @Override
             public void onCompleted(List<Comment> result, int count, Exception exception, ServiceFilterResponse response) {
+                mMessageDetailActivity.setBusy(false);
                 if(result == null){
                     if(exception != null){
                         exception.printStackTrace();
@@ -282,6 +285,7 @@ public class MessageDetailFragment extends Fragment{
 
             @Override
             public void onCompleted(List<Comment> result, int count, Exception exception, ServiceFilterResponse response) {
+                mMessageDetailActivity.setBusy(false);
                 if(result == null){
                     if(exception != null){
                         exception.printStackTrace();
@@ -309,9 +313,11 @@ public class MessageDetailFragment extends Fragment{
                     case 0:
                         mQueryOrder  = !mQueryOrder;
                         refresh();
+                        mMessageDetailActivity.setBusy(true);
                         break;
                     case 1:
                         reportMessage();
+                        mMessageDetailActivity.setBusy(true);
                         break;
                     case 2:
                         copyClipboard();
@@ -345,6 +351,7 @@ public class MessageDetailFragment extends Fragment{
         service.insertReportMessage(rm, new TableOperationCallback<ReportMessage>() {
             @Override
             public void onCompleted(ReportMessage entity, Exception exception, ServiceFilterResponse response) {
+                mMessageDetailActivity.setBusy(false);
                 if(entity == null){
                     if(exception != null){
                         exception.printStackTrace();

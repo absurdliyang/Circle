@@ -4,10 +4,11 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 
 import com.absurd.circle.app.R;
+import com.absurd.circle.ui.activity.base.BaseActivity;
 import com.absurd.circle.ui.fragment.NotificationFragment;
 
 
-public class NotificationActivity extends BaseActivity{
+public class NotificationActivity extends BaseActivity {
 
 
     @Override

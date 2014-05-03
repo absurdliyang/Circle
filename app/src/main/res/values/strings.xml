@@ -31,8 +31,14 @@
     <string name="start_text">Hi,欢迎来到圈圈</string>
     <string name="share_text">圈圈是一个很有趣又实用的附近生活社区APP，推荐给大家。下载地址：http://url.cn/N3iPeV @圈圈官博</string>
     <string name="edit_comment_hint">回复是一种鼓励！</string>
+
     <string name="warning_comment_content_null">回复内容不能为空！</string>
     <string name="send_comment_failed">发送评论失败</string>
+    <string name="send_comment_success">发送评论成功</string>
+
+    <string name="chat_content_null">消息能容不能为空</string>
+    <string name="send_message_success">发送消息成功</string>
+    <string name="send_message_failed">发送消息失败</string>
 
     <string name="update_user_profile_success">更新资料成功</string>
     <string name="update_user_profile_failed">更新资料失败</string>
@@ -52,8 +58,13 @@
 
     <string name="network_disconnected">亲~ 没有连接网络</string>
 
-    <string name="chat_content_null">消息能容不能为空</string>
 
+
+    <string name="add_follow_success">关注成功</string>
+    <string name="cancel_follow_success">取消关注成功</string>
+
+    <string name="dont_have_camera_app">该设备没有拍照应用</string>
+    <string name="cant_insert_album">发生意外，无法写入相册</string>
 
 
 
@@ -195,6 +206,7 @@
     <string name="title_activity_edit_comment">EditCommentActivity</string>
     <string name="title_activity_edit_item">EditItemActivity</string>
     <string name="title_activity_chat">ChatActivity</string>
+    <string name="title_activity_browse_image">BrowseImageActivity</string>
 
 
     <!-- PullToRefresh -->

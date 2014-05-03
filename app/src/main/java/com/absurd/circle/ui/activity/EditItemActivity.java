@@ -5,6 +5,7 @@ import android.view.View;
 import android.widget.EditText;
 
 import com.absurd.circle.app.R;
+import com.absurd.circle.ui.activity.base.BaseActivity;
 import com.absurd.circle.util.StringUtil;
 
 /**
@@ -22,6 +23,7 @@ public class EditItemActivity extends BaseActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setBusy(false);
         setRightBtnStatus(RIGHT_TEXT);
         mTag = (String)getIntent().getExtras().get("tag");
 

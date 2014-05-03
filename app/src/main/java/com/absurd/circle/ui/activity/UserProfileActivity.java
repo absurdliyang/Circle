@@ -19,6 +19,7 @@ import com.absurd.circle.data.model.ReportMessage;
 import com.absurd.circle.data.model.User;
 import com.absurd.circle.data.service.NotificationService;
 import com.absurd.circle.data.service.UserService;
+import com.absurd.circle.ui.activity.base.BaseActivity;
 import com.absurd.circle.ui.view.ItemDialog;
 import com.absurd.circle.util.ImageUtil;
 import com.absurd.circle.util.IntentUtil;
@@ -47,6 +48,7 @@ public class UserProfileActivity extends BaseActivity {
     private TextView mUsernameTv;
     private TextView mAgeTv;
     private ImageView mSexIv;
+    private TextView mLevelTv;
 
     private TextView mIdTv;
     private TextView mDescTv;
@@ -78,6 +80,8 @@ public class UserProfileActivity extends BaseActivity {
         mSexIv = (ImageView)findViewById(R.id.iv_user_profile_sex);
         mAgeTv = (TextView)findViewById(R.id.tv_user_profile_age);
         mUsernameTv = (TextView)findViewById(R.id.tv_user_profile_username);
+        mLevelTv = (TextView)findViewById(R.id.tv_user_profile_level);
+
 
         mIdTv = (TextView)findViewById(R.id.tv_user_profile_id);
         mDescTv = (TextView)findViewById(R.id.tv_user_profile_description);
@@ -92,6 +96,7 @@ public class UserProfileActivity extends BaseActivity {
         userService.getFunsCount(mUser.getUserId(), new Response.Listener<FunsCount>() {
             @Override
             public void onResponse(FunsCount funsCount) {
+                setBusy(false);
                 AppContext.commonLog.i(funsCount.toString());
                 mFunsCountTv.setText(String.format("关注 %d     粉丝 %d    动态 %d  ",
                         funsCount.getFollowCount(),
@@ -113,11 +118,12 @@ public class UserProfileActivity extends BaseActivity {
             mUserBackGroundIv.setImageBitmap(mBackgroundDefaultBitmap);
         }
         if(mUser.getSex() == "男"){
-            mSexIv.setImageBitmap(mMaleBitmap);
-        }else{
             mSexIv.setImageBitmap(mFemailBitmap);
+        }else{
+            mSexIv.setImageBitmap(mMaleBitmap);
         }
         mUsernameTv.setText(mUser.getName());
+        mLevelTv.setText("LV. " + mUser.getLevel());
         mAgeTv.setText(TimeUtil.toAge(mUser.getAge()));
         mIdTv.setText(mUser.getId() + "");
         mDescTv.setText(mUser.getDescription());
@@ -150,6 +156,7 @@ public class UserProfileActivity extends BaseActivity {
             @Override
             public void onClick(View view) {
                 addFollow();
+                setBusy(true);
             }
         });
 
@@ -180,6 +187,7 @@ public class UserProfileActivity extends BaseActivity {
             service.insertFollower(follow,new TableOperationCallback<Follow>() {
                 @Override
                 public void onCompleted(Follow entity, Exception exception, ServiceFilterResponse response) {
+                    setBusy(false);
                     if(entity == null){
                         if(exception != null){
                             exception.printStackTrace();
@@ -188,6 +196,7 @@ public class UserProfileActivity extends BaseActivity {
                         AppContext.cacheService.followDBManager.insertFollow(follow);
                         mAddFollowTextTv.setText("取消关注");
                         mFollow = entity;
+                        warning(R.string.add_follow_success);
                     }
                 }
             });
@@ -195,12 +204,14 @@ public class UserProfileActivity extends BaseActivity {
             service.deleteFollower(mFollow,new TableDeleteCallback() {
                 @Override
                 public void onCompleted(Exception exception, ServiceFilterResponse response) {
+                    setBusy(false);
                     if(exception != null){
                         exception.printStackTrace();
                     }else{
                         AppContext.cacheService.followDBManager.deleteFollow(mFollow.getFollowUserId());
                         mAddFollowTextTv.setText("添加关注");
                         mFollow = null;
+                        warning(R.string.cancel_follow_success);
                     }
                 }
             });

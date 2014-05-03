@@ -4,6 +4,7 @@ package com.absurd.circle.app;
  * Created by absurd on 14-3-12.
  */
 public interface AppConstant {
+
     public static final String TAG = "Circle";
     public static final String SETTING_INFOS = "circle_setting";
     public static final String OS_NAME = "android";

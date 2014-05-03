@@ -3,12 +3,15 @@ package com.absurd.circle.util;
 
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.os.Bundle;
 /**
  * Created by absurd on 14-3-14.
@@ -42,6 +45,12 @@ public class IntentUtil {
         intent.putExtras(bundle);
         context.startActivity(intent);
 
+    }
+
+    public static boolean isIntentSafe(Activity activity, Intent intent) {
+        PackageManager packageManager = activity.getPackageManager();
+        List<ResolveInfo> activities = packageManager.queryIntentActivities(intent, 0);
+        return activities.size() > 0;
     }
 
 

@@ -9,7 +9,7 @@ import android.widget.ListView;
 import com.absurd.circle.app.AppContext;
 import com.absurd.circle.data.model.BlackList;
 import com.absurd.circle.data.model.User;
-import com.absurd.circle.ui.activity.BaseActivity;
+import com.absurd.circle.ui.activity.base.BaseActivity;
 import com.absurd.circle.ui.fragment.base.UserListFragment;
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.microsoft.windowsazure.mobileservices.TableQueryCallback;

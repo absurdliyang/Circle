@@ -1,5 +1,6 @@
 package com.absurd.circle.util;
 
+import static android.media.ExifInterface.*;
 import static android.graphics.Bitmap.Config.ARGB_8888;
 import static android.graphics.Color.WHITE;
 import static android.graphics.PorterDuff.Mode.DST_IN;
@@ -10,12 +11,15 @@ import android.graphics.BitmapFactory;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory.Options;
 import android.graphics.Canvas;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.PorterDuff.Mode;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.media.ExifInterface;
+
 import android.util.Log;
 import android.widget.ImageView;
 
@@ -379,6 +383,251 @@ public class ImageUtil {
     }
 
 
+    public static Bitmap getWriteWeiboPictureThumblr(String filePath) {
+        try {
+            //actionbar button image width and height is 32 dip
+            int reqWidth = 32;
+            int reqHeight = 32;
+
+            if (!FileUtil.isExternalStorageMounted()) {
+                return null;
+            }
+
+            boolean fileExist = new File(filePath).exists();
+
+            if (!fileExist) {
+                return null;
+            }
+
+
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inJustDecodeBounds = true;
+            BitmapFactory.decodeFile(filePath, options);
+
+            options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+            options.inJustDecodeBounds = false;
+            options.inPurgeable = true;
+            options.inInputShareable = true;
+
+            Bitmap bitmap = BitmapFactory.decodeFile(filePath, options);
+
+            if (bitmap == null) {
+                //this picture is broken,so delete it
+                new File(filePath).delete();
+                return null;
+            }
+
+
+            int[] size = calcResize(bitmap.getWidth(), bitmap.getHeight(), reqWidth, reqHeight);
+            if (size[0] > 0 && size[1] > 0) {
+                Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap, size[0], size[1], true);
+                if (scaledBitmap != bitmap) {
+                    bitmap.recycle();
+                    bitmap = scaledBitmap;
+                }
+            }
+
+            /**
+
+            Bitmap roundedBitmap = ImageEditUtility.getRoundedCornerBitmap(bitmap);
+            if (roundedBitmap != bitmap) {
+                bitmap.recycle();
+                bitmap = roundedBitmap;
+            }
+
+            int exifRotation = ImageUtility.getFileExifRotation(filePath);
+            if (exifRotation != 0) {
+                Matrix mtx = new Matrix();
+                mtx.postRotate(exifRotation);
+                Bitmap adjustedBitmap = Bitmap.createBitmap(roundedBitmap, 0, 0,
+                        bitmap.getWidth(), bitmap.getHeight(), mtx, true);
+                if (adjustedBitmap != bitmap) {
+                    bitmap.recycle();
+                    bitmap = adjustedBitmap;
+                }
+            }
+             **/
+
+            return bitmap;
+        } catch (OutOfMemoryError ignored) {
+            ignored.printStackTrace();
+            return null;
+        }
+    }
+
+
+    private static int calculateInSampleSize(
+            BitmapFactory.Options options, int reqWidth, int reqHeight) {
+
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
+
+        if (height > reqHeight || width > reqWidth) {
+            if (height > reqHeight && reqHeight != 0) {
+                inSampleSize = (int) Math.floor((double) height / (double) reqHeight);
+            }
+
+            int tmp = 0;
+
+            if (width > reqWidth && reqWidth != 0) {
+                tmp = (int) Math.floor((double) width / (double) reqWidth);
+            }
+
+            inSampleSize = Math.max(inSampleSize, tmp);
+
+        }
+        int roundedSize;
+        if (inSampleSize <= 8) {
+            roundedSize = 1;
+            while (roundedSize < inSampleSize) {
+                roundedSize <<= 1;
+            }
+        } else {
+            roundedSize = (inSampleSize + 7) / 8 * 8;
+        }
+
+        return roundedSize;
+    }
+
+    private static int[] calcResize(int actualWidth, int actualHeight, int reqWidth, int reqHeight) {
+
+
+        int height = actualHeight;
+        int width = actualWidth;
+
+
+        float betweenWidth = ((float) reqWidth) / (float) actualWidth;
+        float betweenHeight = ((float) reqHeight) / (float) actualHeight;
+
+        float min = Math.min(betweenHeight, betweenWidth);
+
+        height = (int) (min * actualHeight);
+        width = (int) (min * actualWidth);
+
+        return new int[]{width, height};
+    }
+
+
+    public static boolean isThisBitmapCanRead(String path) {
+        File file = new File(path);
+
+        if (!file.exists()) {
+            return false;
+        }
+
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(path, options);
+        int width = options.outWidth;
+        int height = options.outHeight;
+        if (width == -1 || height == -1) {
+            return false;
+        }
+
+        return true;
+    }
+
+
+    public static int[] getBitmapSize(String path) {
+        int[] result = {-1, -1};
+        File file = new File(path);
+
+        if (!file.exists()) {
+            return result;
+        }
+
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(path, options);
+        int width = options.outWidth;
+        int height = options.outHeight;
+        if (width > 0 && height > 0) {
+            result[0] = width;
+            result[1] = height;
+        }
+
+        return result;
+    }
+
+    public static String compressPic(Context context, String picPath, int quality) {
+
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = false;
+        options.inSampleSize = 1;
+
+        switch (quality) {
+            case 1:
+                return picPath;
+            case 2:
+                options.inSampleSize = 2;
+                break;
+            case 3:
+                options.inSampleSize = 4;
+                break;
+            case 4:
+                options.inSampleSize = 2;
+
+                if (NetworkUtil.isWifiConnected()) {
+                    return picPath;
+                }
+                break;
+        }
+
+        Bitmap bitmap = BitmapFactory.decodeFile(picPath, options);
+        int exifRotation = ImageUtil.getFileExifRotation(picPath);
+        if (exifRotation != 0) {
+            //TODO write EXIF instead of rotating bitmap.
+            Matrix mtx = new Matrix();
+            mtx.postRotate(exifRotation);
+            Bitmap adjustedBitmap = Bitmap.createBitmap(bitmap, 0, 0,
+                    bitmap.getWidth(), bitmap.getHeight(), mtx, true);
+            if (adjustedBitmap != bitmap) {
+                bitmap.recycle();
+                bitmap = adjustedBitmap;
+            }
+        }
+        FileOutputStream stream = null;
+        String tmp = FileUtil.getUploadPicTempFile();
+        try {
+            new File(tmp).getParentFile().mkdirs();
+            new File(tmp).createNewFile();
+            stream = new FileOutputStream(new File(tmp));
+        } catch (IOException ignored) {
+
+        }
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+
+        if (stream != null) {
+            try {
+                stream.close();
+                bitmap.recycle();
+            } catch (IOException ignored) {
+
+            }
+        }
+        return tmp;
+    }
+
+    public static int getFileExifRotation(String filePath) {
+        try {
+            ExifInterface exifInterface = new ExifInterface(filePath);
+            int orientation = exifInterface.getAttributeInt(TAG_ORIENTATION,
+                    ORIENTATION_NORMAL);
+            switch (orientation) {
+                case ORIENTATION_ROTATE_90:
+                    return 90;
+                case ORIENTATION_ROTATE_180:
+                    return 180;
+                case ORIENTATION_ROTATE_270:
+                    return 270;
+                default:
+                    return 0;
+            }
+        } catch (IOException e) {
+            return 0;
+        }
+    }
 
 
 }

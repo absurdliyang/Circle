@@ -38,4 +38,8 @@
     <dimen name="header_footer_left_right_padding">24dp</dimen>
     <dimen name="header_footer_top_bottom_padding">12dp</dimen>
 
+    <!--emotion size-->
+    <dimen name="emotion_size">28dp</dimen>
+    <dimen name="emotion_bg_size">40dp</dimen>
+
 </resources>

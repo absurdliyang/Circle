@@ -15,15 +15,32 @@
         android:clickable="true"
         android:src="@drawable/ic_back"/>
 
-    <TextView
-        android:id="@+id/tv_custom_actionbar_title"
+    <LinearLayout
+        android:id="@+id/llyt_cutom_actionbar_title"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:clickable="true"
-        android:textColor="#ffffffff"
-        android:textSize="20sp" />
+        android:layout_height="wrap_content">
+
+        <ProgressBar
+            android:id="@+id/pb_custom_actionbar_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginRight="5dp"
+            style="?android:attr/progressBarStyleSmall"
+            />
+        <TextView
+            android:id="@+id/tv_custom_actionbar_title"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:textColor="#ffffffff"
+            android:textSize="20sp" />
+
+    </LinearLayout>
 
     <ImageView
         android:id="@+id/iv_custom_actionbar_more"

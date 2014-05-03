@@ -63,6 +63,15 @@ public class SharedPreferenceUtil {
         return null;
     }
 
+    public void setDefaultKeyboardHeight(int height){
+        mEditor.putInt("defaultKeyboardHeight",height)
+                .commit();
+    }
+
+    public int getDefaultKeyboardHeight(){
+        return mSharedPreferences.getInt("defaultKeyboardHeight",400);
+    }
+
     public void clearAll(){
         mEditor.clear()
                 .commit();

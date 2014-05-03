@@ -12,6 +12,7 @@ import android.widget.ListView;
 import com.absurd.circle.app.AppContext;
 import com.absurd.circle.app.R;
 import com.absurd.circle.data.client.volley.RequestManager;
+import com.absurd.circle.ui.activity.base.IProgressBarActivity;
 import com.absurd.circle.ui.adapter.base.BeanAdapter;
 
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
@@ -29,11 +30,15 @@ public abstract class RefreshableFragment<V> extends Fragment {
     protected BeanAdapter<V> mAdapter;
     private View mHeader;
 
+    private IProgressBarActivity mActivity;
+    protected boolean mIsBusy = false;
+
     private int mCurrentPageIndex = 0;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.item_list, null);
+        mActivity = (IProgressBarActivity)getActivity();
         mHeader = initHeader();
         mAdapter = setAdapter();
         configurePullToRefreshView(rootView);
@@ -125,25 +130,35 @@ public abstract class RefreshableFragment<V> extends Fragment {
     };
 
     public void refreshTranscation(){
-        //mContentLv.smoothScrollToPosition(0);
-        mCurrentPageIndex = 0;
-        loadData(mCurrentPageIndex, mRefreshCallBack);
+        if(!mIsBusy) {
+            //mContentLv.smoothScrollToPosition(0);
+            mCurrentPageIndex = 0;
+            mActivity.setBusy(true);
+            mIsBusy = true;
+            loadData(mCurrentPageIndex, mRefreshCallBack);
+        }
     }
 
     public void nextPageTransaction(){
-        mCurrentPageIndex++;
-        loadData(mCurrentPageIndex, mNextPageCallBack);
+        if(!mIsBusy) {
+            mCurrentPageIndex++;
+            mActivity.setBusy(true);
+            mIsBusy = true;
+            loadData(mCurrentPageIndex, mNextPageCallBack);
+        }
     }
 
     protected abstract void loadData(int pageIndex,TableQueryCallback<V> callback);
     protected abstract void handleResult(List<V> result);
 
     protected void onRefreshCallback(List<V> result){
-
+        mActivity.setBusy(false);
+        mIsBusy = false;
     }
 
     protected void onNextPageCallback(List<V> result){
-
+        mActivity.setBusy(false);
+        mIsBusy = false;
     }
 
     @Override

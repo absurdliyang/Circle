@@ -4,6 +4,8 @@ import android.content.Context;
 import android.os.Build;
 import android.os.Environment;
 
+import com.absurd.circle.app.AppContext;
+
 import java.io.File;
 
 /**

@@ -1,15 +1,21 @@
 package com.absurd.circle.ui.activity;
 
 import android.app.DatePickerDialog;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.DatePicker;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -23,7 +29,10 @@ import com.absurd.circle.data.client.volley.RequestManager;
 import com.absurd.circle.data.model.FunsCount;
 import com.absurd.circle.data.model.User;
 import com.absurd.circle.data.service.UserService;
+import com.absurd.circle.ui.activity.base.BaseActivity;
+import com.absurd.circle.ui.view.IUploadImage;
 import com.absurd.circle.ui.view.ItemDialog;
+import com.absurd.circle.ui.view.PhotoFragment;
 import com.absurd.circle.util.ImageUtil;
 import com.absurd.circle.util.IntentUtil;
 import com.absurd.circle.util.TimeUtil;
@@ -34,7 +43,7 @@ import com.microsoft.windowsazure.mobileservices.TableOperationCallback;
 /**
  * Created by absurd on 14-3-29.
  */
-public class MyProfileActivity extends BaseActivity{
+public class MyProfileActivity extends BaseActivity implements IUploadImage{
     private Bitmap mAvatarDefaultBitmap = ((BitmapDrawable) AppContext.getContext().getResources().getDrawable(R.drawable.default_avatar)).getBitmap();
     private Bitmap mBackgroundDefaultBitmap = ((BitmapDrawable) AppContext.getContext().getResources().getDrawable(R.drawable.default_user_background)).getBitmap();
     private Bitmap mFemailBitmap = ((BitmapDrawable)AppContext.getContext().getResources().getDrawable(R.drawable.user_profile_female)).getBitmap();
@@ -49,6 +58,7 @@ public class MyProfileActivity extends BaseActivity{
     private TextView mUsernameTv;
     private TextView mAgeTv;
     private ImageView mSexIv;
+    private TextView mLevelTv;
 
     private TextView mIdTv;
     private TextView mNicknameTv;
@@ -59,12 +69,19 @@ public class MyProfileActivity extends BaseActivity{
     private TextView mInterestTv;
     private TextView mJobTv;
 
+    private PhotoFragment mPhotoFragment;
+
+    public MyProfileActivity(){
+        setRightBtnStatus(RIGHT_TEXT);
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_profile);
 
         user = (User)AppContext.auth.clone();
+        AppContext.commonLog.i(user.toString());
         // Init custom actionbar
         setRightBtnStatus(RIGHT_TEXT);
 
@@ -81,6 +98,7 @@ public class MyProfileActivity extends BaseActivity{
         mAgeTv = (TextView)findViewById(R.id.tv_my_profile_age);
         mUsernameTv = (TextView)findViewById(R.id.tv_my_profile_username);
         mFunsCountTv = (TextView)findViewById(R.id.tv_my_profile_info);
+        mLevelTv = (TextView)findViewById(R.id.tv_my_profile_level);
 
         mIdTv = (TextView)findViewById(R.id.tv_my_profile_id);
         mNicknameTv = (TextView)findViewById(R.id.tv_my_profile_nickname);
@@ -97,6 +115,7 @@ public class MyProfileActivity extends BaseActivity{
             mUserService.getFunsCount(user.getUserId(), new Response.Listener<FunsCount>() {
                 @Override
                 public void onResponse(FunsCount funsCount) {
+                    setBusy(false);
                     AppContext.commonLog.i(funsCount.toString());
                     mFunsCountTv.setText(String.format("关注 %d     粉丝 %d    动态 %d  ",
                             funsCount.getFollowCount(),
@@ -119,13 +138,14 @@ public class MyProfileActivity extends BaseActivity{
                 mUserBackGroundIv.setImageBitmap(mBackgroundDefaultBitmap);
             }
             if (user.getSex() == "m") {
-                mSexIv.setImageBitmap(mMaleBitmap);
+                mSexIv.setImageBitmap(mFemailBitmap);
                 mSexTv.setText("女");
             } else {
-                mSexIv.setImageBitmap(mFemailBitmap);
+                mSexIv.setImageBitmap(mMaleBitmap);
                 mSexTv.setText("男");
             }
             mUsernameTv.setText(user.getName());
+            mLevelTv.setText("LV. " + user.getLevel());
             mAgeTv.setText(TimeUtil.toAge(user.getAge()));
 
             mIdTv.setText(user.getId() + "");
@@ -134,6 +154,16 @@ public class MyProfileActivity extends BaseActivity{
             mInterestTv.setText(user.getHobby());
             mJobTv.setText(user.getProfession());
             mBirthdayTv.setText(user.getAge().toString());
+
+            mAvatarIv.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mPhotoFragment = new PhotoFragment();
+                    mPhotoFragment.setIUploadImage(MyProfileActivity.this);
+                    mPhotoFragment.show(getSupportFragmentManager(),null);
+
+                }
+            });
 
         }
     }
@@ -223,9 +253,11 @@ public class MyProfileActivity extends BaseActivity{
     @Override
     public void onRightBtnClicked(View view) {
         super.onRightBtnClicked(view);
+        setBusy(true);
         mUserService.updateUser(user,new TableOperationCallback<User>() {
             @Override
             public void onCompleted(User entity, Exception exception, ServiceFilterResponse response) {
+                setBusy(false);
                 if(entity == null){
                     if(exception != null){
                         exception.printStackTrace();
@@ -246,5 +278,73 @@ public class MyProfileActivity extends BaseActivity{
     protected void onResume() {
         super.onResume();
         invalidateView();
+    }
+
+
+    @Override
+    public void onResultByAlbum(Intent data) {
+        // TODO Auto-generated method stub
+        if(data == null){
+            Toast.makeText(this, "选择图片出错", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        Uri photoUri = data.getData();
+        cropPhoto(photoUri);
+    }
+    @Override
+    public void onResultByTake(Intent data) {
+        // TODO Auto-generated method stub
+        Uri u = null;
+        if (PhotoFragment.hasImageCaptureBug()) {
+            File fi = new File("/sdcard/tmp");
+            try {
+                u = Uri.parse(android.provider.MediaStore.Images.Media.insertImage(this.getContentResolver(), fi.getAbsolutePath(), null, null));
+                if (!fi.delete()) {
+                    AppContext.commonLog.i("Failed to delete " + fi);
+                }
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+        } else {
+            u = PhotoFragment.uri;
+        }
+        cropPhoto(u);
+    }
+    @Override
+    public void onResultByCrop(Intent data) {
+        // TODO Auto-generated method stub
+        Bundle extras = data.getExtras();
+        if (extras != null)
+        {
+            Bitmap photo = extras.getParcelable("data");
+            if(photo != null){
+                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                photo.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+                mAvatarIv.setImageBitmap(ImageUtil.roundBitmap(photo));
+            }
+        }
+    }
+
+    /**
+     * picture zooming
+     *
+     */
+    private void cropPhoto(Uri uri){
+        Intent intent = new Intent("com.android.camera.action.CROP");
+        intent.setDataAndType(uri, "image/*");
+        intent.putExtra("crop", "true");
+        intent.putExtra("aspectX", 1);
+        intent.putExtra("aspectY", 1);
+        intent.putExtra("outputX", 80);
+        intent.putExtra("outputY", 80);
+        intent.putExtra("return-data", true);
+        this.startActivityForResult(intent, IUploadImage.IMAGE_CROP);
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        mPhotoFragment.onActivityResult(requestCode, resultCode, data);
     }
 }

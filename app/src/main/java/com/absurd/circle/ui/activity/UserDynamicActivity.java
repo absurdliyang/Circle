@@ -5,6 +5,7 @@ import android.os.Bundle;
 
 import com.absurd.circle.app.AppContext;
 import com.absurd.circle.app.R;
+import com.absurd.circle.ui.activity.base.BaseActivity;
 import com.absurd.circle.ui.fragment.UserMessageListFragment;
 
 

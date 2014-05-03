@@ -1,4 +1,4 @@
-package com.absurd.circle.ui.activity;
+package com.absurd.circle.ui.activity.base;
 
 
 
@@ -10,6 +10,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,10 +20,11 @@ import com.absurd.circle.app.R;
 import com.absurd.circle.data.client.volley.RequestManager;
 import com.absurd.circle.ui.view.ItemDialog;
 import com.absurd.circle.ui.widget.AppMsg;
+import com.absurd.circle.util.NetworkUtil;
 
 import me.imid.swipebacklayout.lib.app.SwipeBackActivity;
 
-public abstract class BaseActivity extends SwipeBackActivity {
+public abstract class BaseActivity extends SwipeBackActivity implements IProgressBarActivity{
 
     public static final int RIGHT_TEXT = 1;
     public static final int RIGHT_MORE_BTN = 2;
@@ -36,8 +38,10 @@ public abstract class BaseActivity extends SwipeBackActivity {
 
     private ImageView mActionBarBackIv;
     private ImageView mActionBarMoreIv;
+    private ProgressBar mProgressBar;
 
     protected int mRightBtnStatus = 3;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -48,6 +52,7 @@ public abstract class BaseActivity extends SwipeBackActivity {
         mActionBarRightBtn = (TextView)mActionBarView.findViewById(R.id.tv_custom_actionbar_right_btn);
         mActionBarBackIv = (ImageView)mActionBarView.findViewById(R.id.iv_custom_actionbar_back);
         mActionBarMoreIv = (ImageView)mActionBarView.findViewById(R.id.iv_custom_actionbar_more);
+        mProgressBar = (ProgressBar)mActionBarView.findViewById(R.id.pb_custom_actionbar_title);
 
         configureActionBar();
         mTitle = actionBarTitle();
@@ -71,6 +76,11 @@ public abstract class BaseActivity extends SwipeBackActivity {
                 onMoreClicked(view);
             }
         });
+
+        setBusy(false);
+        if(!NetworkUtil.isNetConnected()){
+            warning(R.string.network_disconnected);
+        }
     }
 
     @Override
@@ -111,6 +121,15 @@ public abstract class BaseActivity extends SwipeBackActivity {
 
 
     @Override
+    public void setBusy(boolean busy) {
+        if(busy){
+            mProgressBar.setVisibility(View.VISIBLE);
+        }else{
+            mProgressBar.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
     protected void onStop() {
         super.onStop();
         // When the activity's life is over, don't forget to cancel the requests
@@ -145,6 +164,7 @@ public abstract class BaseActivity extends SwipeBackActivity {
     }
 
     public void warning(String content){
+        
         AppMsg.makeText(this,content,AppMsg.STYLE_ALERT).show();
     }
 
