@@ -19,6 +19,8 @@ import com.absurd.circle.util.StringUtil;
 import com.microsoft.windowsazure.mobileservices.ServiceFilterResponse;
 import com.microsoft.windowsazure.mobileservices.TableOperationCallback;
 
+import org.jivesoftware.smack.Chat;
+
 public class EditCommentActivity extends BaseActivity {
 
     private EditText mContentEt;
@@ -31,6 +33,8 @@ public class EditCommentActivity extends BaseActivity {
     private Comment mParentComment;
 
     private boolean mIsbusy = false;
+
+    private Chat mChat;
 
     public EditCommentActivity(){
         setRightBtnStatus(RIGHT_TEXT);
@@ -52,6 +56,7 @@ public class EditCommentActivity extends BaseActivity {
 
         mSmiley = (SmileyPicker)findViewById(R.id.edit_comment_smileypicker);
         mSmiley.setEditText(this, ((LinearLayout) findViewById(R.id.edit_comment_root_layout)), mContentEt);
+        mChat = AppContext.xmppConnectionManager.initChat(mParentComment.getUserId());
     }
 
     @Override
@@ -159,9 +164,10 @@ public class EditCommentActivity extends BaseActivity {
         comment.setMediaType(0);
         comment.setMediaUrl("");
          **/
-
+        AppContext.xmppConnectionManager.send(mChat, comment, mParentComment.getUserId());
         CommentService service = new CommentService();
         setBusy(true);
+
         service.insertComment(comment, new TableOperationCallback<Comment>() {
             @Override
             public void onCompleted(Comment entity, Exception exception, ServiceFilterResponse response) {

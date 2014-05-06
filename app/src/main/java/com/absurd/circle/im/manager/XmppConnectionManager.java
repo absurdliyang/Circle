@@ -1,12 +1,19 @@
 package com.absurd.circle.im.manager;
 
 import com.absurd.circle.app.AppContext;
+import com.absurd.circle.data.model.ChatMessageType;
+import com.absurd.circle.data.model.Comment;
+import com.absurd.circle.data.model.Praise;
+import com.absurd.circle.data.model.UserMessage;
+import com.absurd.circle.data.util.JsonUtil;
 
+import org.jivesoftware.smack.Chat;
 import org.jivesoftware.smack.Connection;
 import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.provider.ProviderManager;
 import org.jivesoftware.smackx.GroupChatInvitation;
@@ -35,9 +42,12 @@ import org.jivesoftware.smackx.search.UserSearch;
  * Created by absurd on 14-4-25.
  */
 public class XmppConnectionManager{
+    public static final String SERVICE_NAME = "incircle";
+
     private XMPPConnection mConnection;
     private ConnectionConfiguration mConnectionConfig;
     private static XmppConnectionManager mXmppConnectionManager;
+
 
     public static XmppConnectionManager getInstance() {
         if (mXmppConnectionManager == null) {
@@ -54,7 +64,7 @@ public class XmppConnectionManager{
             ProviderManager pm = ProviderManager.getInstance();
             configure(pm);
 
-            mConnectionConfig = new ConnectionConfiguration("168.63.140.70",5222, "incircle");
+            mConnectionConfig = new ConnectionConfiguration("168.63.140.70",5222, SERVICE_NAME);
             mConnectionConfig.setSASLAuthenticationEnabled(false);// 不使用SASL验证，设置为false
             mConnectionConfig.setCompressionEnabled(false);
             mConnectionConfig
@@ -62,9 +72,9 @@ public class XmppConnectionManager{
             // 允许自动连接
             mConnectionConfig.setReconnectionAllowed(false);
             // 允许登陆成功后更新在线状态
-            mConnectionConfig.setSendPresence(true);
+            mConnectionConfig.setSendPresence(false);
             // 收到好友邀请后manual表示需要经过同意,accept_all表示不经同意自动为好友
-            Roster.setDefaultSubscriptionMode(Roster.SubscriptionMode.manual);
+            Roster.setDefaultSubscriptionMode(Roster.SubscriptionMode.accept_all);
             mConnection = new XMPPConnection(mConnectionConfig);
         }
         return mConnection;
@@ -107,8 +117,8 @@ public class XmppConnectionManager{
         try {
             mConnection.connect();
             mConnection.login(username, pass);
-            Presence presence = new Presence(Presence.Type.available);
-            mConnection.sendPacket(presence);
+            //Presence presence = new Presence(Presence.Type.available);
+            //mConnection.sendPacket(presence);
         } catch (XMPPException e) {
             e.printStackTrace();
             return;
@@ -117,6 +127,42 @@ public class XmppConnectionManager{
         AppContext.commonLog.i("Asmack getUser --> " + mConnection.getUser());
     }
 
+    public Chat initChat(String toUserId){
+        return AppContext.xmppConnectionManager.getConnection().getChatManager()
+                .createChat(toUserId + "@incircle/Smack", null);
+    }
+
+
+    public void send(Chat chat, UserMessage userMessage, String toUserId){
+        String jsonUserMessage = JsonUtil.toJson(userMessage);
+        send(chat, jsonUserMessage, toUserId, ChatMessageType.USERMESSAGE);
+    }
+
+    public void send(Chat chat, Comment comment, String toUserId){
+        String jsonComemnt = JsonUtil.toJson(comment);
+        send(chat, jsonComemnt, toUserId, ChatMessageType.COMMENT);
+    }
+
+    public void send(Chat chat, Praise praise, String toUserId){
+        String jsonPraise = JsonUtil.toJson(praise);
+        send(chat, jsonPraise, toUserId, ChatMessageType.PRAISE);
+    }
+
+    public void send(Chat chat, String content, String toUserId, String chatMessageType){
+        AppContext.commonLog.i(content);
+        Message message = new Message();
+        message.setBody(content);
+        message.setType(Message.Type.chat);
+        message.setSubject(chatMessageType);
+        message.setTo(toUserId + "@" + SERVICE_NAME);
+        message.setFrom(AppContext.auth.getId() + "@" + SERVICE_NAME);
+        AppContext.commonLog.i(message.toString());
+        try {
+            chat.sendMessage(message);
+        } catch (XMPPException e) {
+            e.printStackTrace();
+        }
+    }
 
     public void configure(ProviderManager pm) {
 

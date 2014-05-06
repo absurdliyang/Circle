@@ -4,8 +4,10 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 
+import com.absurd.circle.app.AppContext;
 import com.absurd.circle.cache.util.Column;
 import com.absurd.circle.cache.util.SQLiteTable;
+import com.absurd.circle.data.model.Follow;
 import com.absurd.circle.data.model.UserMessage;
 
 import java.util.ArrayList;
@@ -38,6 +40,38 @@ public class UserMessageDBManager extends BaseDBManager {
         mDatabase.insert(UserMessageDBInfo.TABLE_NAME, null, value);
     }
 
+    /**
+    public List<UserMessage> getPage(int pageIndex, int pageSize){
+        List<UserMessage> resList = new ArrayList<UserMessage>();
+        String sql= "select * from " + UserMessageDBInfo.TABLE_NAME + " where " + UserMessageDBInfo.FROM_USER_ID + " != '" +
+                " Limit "+String.valueOf(pageSize)+ " Offset " +String.valueOf(pageIndex * pageSize);
+        AppContext.commonLog.i(sql);
+        Cursor cursor = mDatabase.rawQuery(sql, null);
+        if(cursor.moveToFirst()){
+            do{
+                AppContext.commonLog.i(parseFollow(cursor).toString());
+                resList.add(parseFollow(cursor));
+            }while(cursor.moveToNext());
+        }
+        return resList;
+    }
+     **/
+
+    public List<UserMessage> getAllNotificationUserMessages(String notIncludeUserId){
+        List<UserMessage> resList = new ArrayList<UserMessage>();
+        String sql= "select * from " + UserMessageDBInfo.TABLE_NAME +
+                " where " + UserMessageDBInfo.FROM_USER_ID + " != '" + notIncludeUserId + "'";
+        AppContext.commonLog.i(sql);
+        Cursor cursor = mDatabase.rawQuery(sql, null);
+        if(cursor.moveToFirst()){
+            do{
+                resList.add(parseUserMessage(cursor));
+            }while(cursor.moveToNext());
+        }
+        cursor.close();
+        return resList;
+    }
+
 
     public List<UserMessage> getAllUserMessages(){
         List<UserMessage> resList = new ArrayList<UserMessage>();
@@ -47,6 +81,7 @@ public class UserMessageDBManager extends BaseDBManager {
                 resList.add(parseUserMessage(cursor));
             }while(cursor.moveToNext());
         }
+        cursor.close();
         return resList;
     }
 
@@ -60,19 +95,24 @@ public class UserMessageDBManager extends BaseDBManager {
                 resList.add(parseUserMessage(cursor));
             }while(cursor.moveToNext());
         }
+        cursor.close();
         return resList;
     }
 
     public List<UserMessage> getUserHistoryMessages(String userId){
+        userId.trim();
         List<UserMessage> resList = new ArrayList<UserMessage>();
         String sql = "select * from " + UserMessageDBInfo.TABLE_NAME + " where " + UserMessageDBInfo.TO_USER_ID + " = '"
                 + userId + "' " + "or " + UserMessageDBInfo.FROM_USER_ID + " = '" + userId + "'";
+        AppContext.commonLog.i(sql);
         Cursor cursor = mDatabase.rawQuery(sql,null);
         if(cursor.moveToFirst()){
             do{
-                resList.add(parseUserMessage(cursor));
+                UserMessage m = parseUserMessage(cursor);
+                resList.add(m);
             }while(cursor.moveToNext());
         }
+        cursor.close();
         return resList;
     }
 
@@ -88,6 +128,12 @@ public class UserMessageDBManager extends BaseDBManager {
         mDatabase.execSQL(sql);
     }
 
+
+    public void updateUserMessageStateByUser(String userId){
+        String sql = "update " + UserMessageDBInfo.TABLE_NAME + " set state = "
+                + "1 " + "where " + UserMessageDBInfo.TO_USER_ID +  " = '" +  userId + "'";
+        mDatabase.execSQL(sql);
+    }
 
 
     public void deleteAll(){

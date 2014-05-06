@@ -15,7 +15,7 @@ public class EditItemActivity extends BaseActivity {
 
     private EditText mContentEt;
     private String mTag;
-
+    private String mValue;
     public EditItemActivity(){
         setRightBtnStatus(RIGHT_TEXT);
     }
@@ -26,17 +26,13 @@ public class EditItemActivity extends BaseActivity {
         setBusy(false);
         setRightBtnStatus(RIGHT_TEXT);
         mTag = (String)getIntent().getExtras().get("tag");
+        mValue = (String)getIntent().getExtras().get("value");
 
         setContentView(R.layout.activity_edit_item);
         mContentEt = (EditText)findViewById(R.id.et_edit_item_content);
-        initContent();
+        mContentEt.setText(mValue);
+        mContentEt.requestFocus();
 
-    }
-
-    private void initContent(){
-        if(mTag == "nickname"){
-            mContentEt.setText(MyProfileActivity.user.getName());
-        }
     }
 
     @Override

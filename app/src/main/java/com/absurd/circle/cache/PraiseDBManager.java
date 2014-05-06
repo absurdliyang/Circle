@@ -4,8 +4,10 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 
+import com.absurd.circle.app.AppContext;
 import com.absurd.circle.cache.util.Column;
 import com.absurd.circle.cache.util.SQLiteTable;
+import com.absurd.circle.data.model.Comment;
 import com.absurd.circle.data.model.Praise;
 
 import java.util.ArrayList;
@@ -16,13 +18,13 @@ import java.util.List;
  */
 public class PraiseDBManager extends BaseDBManager {
 
-    public PraiseDBManager(Context context){
+    public PraiseDBManager(Context context) {
         super(context);
     }
 
-    public void insertPraise(Praise praise){
+    public void insertPraise(Praise praise) {
         ContentValues value = new ContentValues();
-        value.put(PraiseDBInfo.ID,praise.getUserId());
+        value.put(PraiseDBInfo.ID, praise.getUserId());
         value.put(PraiseDBInfo.MESSAGE_ID, praise.getMessageId());
         value.put(PraiseDBInfo.TO_USER_ID, praise.getToUserId());
         value.put(PraiseDBInfo.STATE, praise.isState());
@@ -33,27 +35,45 @@ public class PraiseDBManager extends BaseDBManager {
     }
 
 
-    public List<Praise> selectAll(){
+    public List<Praise> getPage(int pageIndex, int pageSize) {
         List<Praise> resList = new ArrayList<Praise>();
-        Cursor cursor = mDatabase.query(PraiseDBInfo.TABLE_NAME, null, null, null, null, null, null);
-        if(cursor.moveToFirst()){
-            do{
+        String sql = "select * from " + PraiseDBInfo.TABLE_NAME +
+                " Limit " + String.valueOf(pageSize) + " Offset " + String.valueOf(pageIndex * pageSize);
+        AppContext.commonLog.i(sql);
+        Cursor cursor = mDatabase.rawQuery(sql, null);
+        if (cursor.moveToFirst()) {
+            do {
+                AppContext.commonLog.i(parsePraise(cursor).toString());
                 resList.add(parsePraise(cursor));
-            }while(cursor.moveToNext());
+            } while (cursor.moveToNext());
         }
+        cursor.close();
         return resList;
     }
 
-    public List<Praise> getUnReadPraises(){
+    public List<Praise> getAll() {
+        List<Praise> resList = new ArrayList<Praise>();
+        Cursor cursor = mDatabase.query(PraiseDBInfo.TABLE_NAME, null, null, null, null, null, null);
+        if (cursor.moveToFirst()) {
+            do {
+                resList.add(parsePraise(cursor));
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return resList;
+    }
+
+    public List<Praise> getUnReadPraises() {
         List<Praise> resList = new ArrayList<Praise>();
         String sql = "select * from " + PraiseDBInfo.TABLE_NAME + " where " + PraiseDBInfo.STATE + " = '"
                 + "0" + "'";
-        Cursor cursor = mDatabase.rawQuery(sql,null);
-        if(cursor.moveToFirst()){
-            do{
+        Cursor cursor = mDatabase.rawQuery(sql, null);
+        if (cursor.moveToFirst()) {
+            do {
                 resList.add(parsePraise(cursor));
-            }while(cursor.moveToNext());
+            } while (cursor.moveToNext());
         }
+        cursor.close();
         return resList;
     }
 
@@ -62,6 +82,14 @@ public class PraiseDBManager extends BaseDBManager {
                 + "1 " + "where id = " + praiseId;
         mDatabase.execSQL(sql);
     }
+
+    public void updateAllRead() {
+        String sql = "update " + PraiseDBInfo.TABLE_NAME + " set state = "
+                + "1 " + "where " + PraiseDBInfo.STATE + " = 0";
+        mDatabase.execSQL(sql);
+    }
+
+
 
     public void deleteAll(){
         deleteAll(PraiseDBInfo.TABLE_NAME);

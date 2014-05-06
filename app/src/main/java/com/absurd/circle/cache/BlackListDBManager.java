@@ -56,6 +56,7 @@ public class BlackListDBManager extends BaseDBManager{
                 return parseBlackList(cursor);
             }
         }
+        cursor.close();
         return null;
     }
 
@@ -68,6 +69,7 @@ public class BlackListDBManager extends BaseDBManager{
                 resList.add(parseBlackList(cursor));
             }while(cursor.moveToNext());
         }
+        cursor.close();
         return resList;
     }
 
@@ -83,6 +85,7 @@ public class BlackListDBManager extends BaseDBManager{
                 resList.add(parseBlackList(cursor));
             }while(cursor.moveToNext());
         }
+        cursor.close();
         return resList;
     }
 

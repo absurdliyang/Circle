@@ -28,12 +28,15 @@ import java.util.List;
 public abstract class RefreshableFragment<V> extends Fragment {
     protected PullToRefreshListView mContentLv;
     protected BeanAdapter<V> mAdapter;
-    private View mHeader;
+    protected View mHeader;
+    private PullToRefreshBase.Mode mRefreshMode;
 
-    private IProgressBarActivity mActivity;
+    protected IProgressBarActivity mActivity;
     protected boolean mIsBusy = false;
 
-    private int mCurrentPageIndex = 0;
+    protected int mCurrentPageIndex = 0;
+
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

@@ -77,4 +77,5 @@ public class BeanAdapter<E> extends BaseAdapter {
     public View getView(int i, View view, ViewGroup viewGroup) {
         return null;
     }
+
 }

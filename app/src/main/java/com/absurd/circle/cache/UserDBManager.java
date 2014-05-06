@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 
+import com.absurd.circle.app.AppContext;
 import com.absurd.circle.cache.util.Column;
 import com.absurd.circle.cache.util.SQLiteTable;
 import com.absurd.circle.data.model.User;
@@ -68,20 +69,23 @@ public class UserDBManager extends BaseDBManager{
         User res = null;
         String sql = "select * from " + UserDBInfo.TABLE_NAME + " where " + UserDBInfo.USER_ID + " = '"
                 + userId + "'";
+        AppContext.commonLog.i(sql);
         Cursor cursor = mDatabase.rawQuery(sql, null);
         if(cursor.moveToFirst()){
             res = parseUser(cursor);
         }
+        cursor.close();
+        AppContext.commonLog.i(res.toString());
         return res;
     }
 
     public User getUser(){
         Cursor cursor = mDatabase.query(UserDBInfo.TABLE_NAME,null,null,null,null,null,null);
-        User user = new User();
         if(cursor.moveToFirst()){
             cursor.move(0);
             return parseUser(cursor);
         }
+        cursor.close();
         return null;
     }
 

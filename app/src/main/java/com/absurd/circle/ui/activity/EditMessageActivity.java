@@ -65,7 +65,6 @@ public class EditMessageActivity extends BaseActivity implements AMapLocationLis
     private Uri mImageFileUri;
     private String mPicPath;
 
-
     private Message mMessage = new Message();
 
     private boolean mIsbusy = false;

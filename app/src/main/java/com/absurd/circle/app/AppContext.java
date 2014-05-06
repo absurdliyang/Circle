@@ -2,11 +2,14 @@ package com.absurd.circle.app;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 
 import com.absurd.circle.cache.CacheService;
 import com.absurd.circle.data.model.Position;
 import com.absurd.circle.data.model.User;
 import com.absurd.circle.im.manager.XmppConnectionManager;
+import com.absurd.circle.im.reciever.ChatBroadcastReciever;
 import com.absurd.circle.util.CommonLog;
 import com.absurd.circle.util.LogFactory;
 import com.absurd.circle.util.SharedPreferenceUtil;
@@ -42,6 +45,12 @@ public class AppContext extends Application{
         sharedPreferenceUtil = SharedPreferenceUtil.getInstance();
         cacheService = CacheService.getInstance(this);
         xmppConnectionManager = XmppConnectionManager.getInstance();
+
+        // Register ChatBroadcastReciever to let ChatService always running
+        // on backgound
+        IntentFilter filter = new IntentFilter(Intent.ACTION_TIME_TICK);
+        ChatBroadcastReciever reciever = new ChatBroadcastReciever();
+        registerReceiver(reciever, filter);
     }
 
     public static Context getContext(){

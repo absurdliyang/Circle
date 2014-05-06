@@ -66,6 +66,12 @@
     <string name="dont_have_camera_app">该设备没有拍照应用</string>
     <string name="cant_insert_album">发生意外，无法写入相册</string>
 
+    <string name="change_avatar_success">更改头像成功</string>
+    <string name="change_avatar_failed">更改头像失败</string>
+
+    <string name="change_background_success">更换背景成功</string>
+    <string name="change_background_failed">更换背景失败</string>
+
 
 
 

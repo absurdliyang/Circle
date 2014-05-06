@@ -65,12 +65,15 @@ public class FollowDBManager extends BaseDBManager{
                 resList.add(parseFollow(cursor));
             }while(cursor.moveToNext());
         }
+        cursor.close();
         return resList;
     }
 
     public int getCount(){
         Cursor cursor = mDatabase.query(FollowDBInfo.TABLE_NAME,null,null,null,null,null,null);
-        return cursor.getCount();
+        int res = cursor.getCount();
+        cursor.close();
+        return res;
     }
 
     public Follow findFollow(String followUserId){
@@ -82,6 +85,7 @@ public class FollowDBManager extends BaseDBManager{
                 return parseFollow(cursor);
             }
         }
+        cursor.close();
         return null;
     }
 

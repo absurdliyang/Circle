@@ -77,6 +77,7 @@ public class MessageDBManager extends BaseDBManager{
                 resList.add(message);
             }while(cursor.moveToNext());
         }
+        cursor.close();
         return resList;
     }
 

@@ -15,11 +15,14 @@ import com.absurd.circle.app.R;
 import com.absurd.circle.data.model.User;
 import com.absurd.circle.data.model.UserMessage;
 import com.absurd.circle.data.service.UserMessageService;
+import com.absurd.circle.data.util.JsonUtil;
 import com.absurd.circle.im.service.ChatService;
 import com.absurd.circle.ui.activity.base.BaseActivity;
 import com.absurd.circle.ui.adapter.ChatAdapter;
 import com.absurd.circle.ui.adapter.base.BeanAdapter;
 import com.absurd.circle.util.StringUtil;
+import com.microsoft.windowsazure.mobileservices.ServiceFilterResponse;
+import com.microsoft.windowsazure.mobileservices.TableOperationCallback;
 
 import org.jivesoftware.smack.Chat;
 import org.jivesoftware.smack.XMPPException;
@@ -51,8 +54,10 @@ public class ChatActivity extends BaseActivity {
             if(ChatService.NEW_MESSAGE_ACTION.equals(action)){
                 AppContext.commonLog.i("Receive a chat message");
                 UserMessage userMessage = (UserMessage)intent.getExtras().get("message");
+                userMessage.setState(1);
+                AppContext.cacheService.userMessageDBManager.updateUserMessageStateByUser(mToUser.getUserId());
                 AppContext.commonLog.i(userMessage.toString());
-                if(userMessage != null && userMessage.getToUserId().equals(AppContext.auth.getId() + "")){
+                if(userMessage != null && userMessage.getToUserId().equals(AppContext.auth.getUserId())){
                     recieveMessage(userMessage);
                 }
             }
@@ -96,7 +101,8 @@ public class ChatActivity extends BaseActivity {
         });
         mChatLv = (ListView)findViewById(R.id.lv_chat);
         mChatLv.setAdapter(new ChatAdapter(ChatActivity.this,mToUser));
-        List<UserMessage> historyMessages = AppContext.cacheService.userMessageDBManager.getUserHistoryMessages(mToUser.getId() + "");
+        List<UserMessage> historyMessages = AppContext.cacheService.userMessageDBManager.getUserHistoryMessages(mToUser.getUserId());
+        AppContext.cacheService.userMessageDBManager.updateUserMessageStateByUser(mToUser.getUserId());
         getAdapter().setItems(historyMessages);
         smoothToBottom();
 
@@ -114,58 +120,40 @@ public class ChatActivity extends BaseActivity {
     }
 
     private void initChat(){
-        mChat = AppContext.xmppConnectionManager.getConnection().getChatManager()
-                .createChat(mToUser.getId() + "@incircle/Smack", null);
-        /**
-        AppContext.xmppConnectionManager.getConnection().getChatManager()
-                .addChatListener(new ChatManagerListener() {
-                    @Override
-                    public void chatCreated(Chat chat, boolean b) {
-                        chat.addMessageListener(new MessageListener() {
-                            @Override
-                            public void processMessage(Chat chat, Message message) {
-                                AppContext.commonLog.i(message.getBody() + " " +  message.getFrom() + " " + message.getTo());
-
-                            }
-                        });
-                    }
-                });
-         **/
-
+        mChat = AppContext.xmppConnectionManager.initChat(mToUser.getId() + "");
     }
 
 
-
     private void sendMessage(){
+        UserMessage userMessage = new UserMessage();
         String chatContent = mChatContentEt.getText().toString();
         if(StringUtil.isEmpty(chatContent)){
             warning(R.string.chat_content_null);
             return;
         }
         mChatContentEt.setText("");
-        Message message = new Message();
-        message.setType(Message.Type.chat);
-        message.setBody(chatContent);
-        try {
-            if(AppContext.xmppConnectionManager.getConnection().isConnected()){
-                AppContext.commonLog.i("Xmpp connection connected");
-            }else{
-                AppContext.commonLog.i("Xmpp connection unconnected");
-            }
-            AppContext.commonLog.i("mChat Thread id --> " + mChat.getThreadID());
-            mChat.sendMessage(message);
-        } catch (XMPPException e) {
-            e.printStackTrace();
-            return;
-        }
-        AppContext.commonLog.i("Send a message --> " + message.getBody().toString() + " To --> " + message.getTo());
-        UserMessage userMessage = new UserMessage();
-        String strTo = message.getTo().toString();
-        userMessage.setToUserId(strTo.substring(0,strTo.indexOf('@')));
-        userMessage.setDate(Calendar.getInstance().getTime());
-        String strFrom = message.getFrom().toString();
-        userMessage.setFromUserId(strFrom.substring(0,strFrom.indexOf('@')));
         userMessage.setContent(chatContent);
+        userMessage.setToUserId(mToUser.getUserId());
+        userMessage.setToUserName(mToUser.getName());
+        userMessage.setFromUserId(AppContext.auth.getUserId());
+        userMessage.setFromUserName(AppContext.auth.getName());
+        userMessage.setDate(Calendar.getInstance().getTime());
+
+        AppContext.xmppConnectionManager.send(mChat, userMessage, mToUser.getUserId());
+
+
+        mUserMessageService.insertUserMessage(userMessage,new TableOperationCallback<UserMessage>() {
+            @Override
+            public void onCompleted(UserMessage entity, Exception exception, ServiceFilterResponse response) {
+                if(entity == null){
+                    if(exception != null){
+                        exception.printStackTrace();
+                    }
+                }else{
+                    AppContext.commonLog.i("insert UserMessage success");
+                }
+            }
+        });
         userMessage.setState(1);
         AppContext.cacheService.userMessageDBManager.insertUserMessage(userMessage);
 
@@ -174,6 +162,7 @@ public class ChatActivity extends BaseActivity {
         smoothToBottom();
     }
 
+
     private void recieveMessage(UserMessage userMessage){
         getAdapter().addItem(userMessage);
         // ListView scroll to bottom
@@ -181,15 +170,6 @@ public class ChatActivity extends BaseActivity {
         mChatLv.invalidateViews();
     }
 
-    /**
-    private class CircleMessageListener implements MessageListener{
-
-        @Override
-        public void processMessage(Chat chat, Message message) {
-            recieveMessage(message);
-        }
-    }
-**/
 
     private void smoothToBottom(){
         mChatLv.setSelection(getAdapter().getItems().size() - 1);
@@ -214,7 +194,7 @@ public class ChatActivity extends BaseActivity {
     @Override
     public void onRightBtnClicked(View view) {
         super.onRightBtnClicked(view);
-        AppContext.cacheService.userMessageDBManager.deleteUserHistory(mToUser.getId() + "");
+        AppContext.cacheService.userMessageDBManager.deleteUserHistory(mToUser.getUserId());
         getAdapter().deleteAllItems();
     }
 

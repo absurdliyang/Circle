@@ -1,11 +1,15 @@
 package com.absurd.circle.ui.activity;
 
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.DatePicker;
@@ -20,14 +24,18 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import com.absurd.circle.app.AppConstant;
 import com.absurd.circle.app.AppContext;
 import com.absurd.circle.app.R;
 import com.absurd.circle.data.client.volley.BitmapFilter;
 import com.absurd.circle.data.client.volley.RequestManager;
 import com.absurd.circle.data.model.FunsCount;
 import com.absurd.circle.data.model.User;
+import com.absurd.circle.data.service.BCSService;
 import com.absurd.circle.data.service.UserService;
 import com.absurd.circle.ui.activity.base.BaseActivity;
 import com.absurd.circle.ui.view.IUploadImage;
@@ -70,6 +78,11 @@ public class MyProfileActivity extends BaseActivity implements IUploadImage{
     private TextView mJobTv;
 
     private PhotoFragment mPhotoFragment;
+    private boolean mPhotoSelectedStatus;
+    private String mPicPath;
+    private Uri mImageUri;
+    private String mImageUrl;
+
 
     public MyProfileActivity(){
         setRightBtnStatus(RIGHT_TEXT);
@@ -108,6 +121,8 @@ public class MyProfileActivity extends BaseActivity implements IUploadImage{
         mBirthdayTv = (TextView)findViewById(R.id.tv_my_profile_birthday);
         mSexTv = (TextView)findViewById(R.id.tv_my_profile_sex);
         mPhoneTv = (TextView)findViewById(R.id.tv_my_profile_phone);
+
+        mPhotoFragment = new PhotoFragment();
     }
 
     private void bindData(){
@@ -158,10 +173,21 @@ public class MyProfileActivity extends BaseActivity implements IUploadImage{
             mAvatarIv.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    mPhotoFragment = new PhotoFragment();
+                    mPhotoFragment.setTitle("更换头像");
+                    mPhotoSelectedStatus = true;
                     mPhotoFragment.setIUploadImage(MyProfileActivity.this);
                     mPhotoFragment.show(getSupportFragmentManager(),null);
 
+                }
+            });
+
+            mUserBackGroundIv.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mPhotoFragment.setTitle("更换背景");
+                    mPhotoSelectedStatus = false;
+                    mPhotoFragment.setIUploadImage(MyProfileActivity.this);
+                    mPhotoFragment.show(getSupportFragmentManager(),null);
                 }
             });
 
@@ -169,17 +195,38 @@ public class MyProfileActivity extends BaseActivity implements IUploadImage{
     }
 
     private void invalidateView(){
-        bindData();
+        if(user != null) {
+            if (user.getSex() == "m") {
+                mSexIv.setImageBitmap(mFemailBitmap);
+                mSexTv.setText("女");
+            } else {
+                mSexIv.setImageBitmap(mMaleBitmap);
+                mSexTv.setText("男");
+            }
+            mUsernameTv.setText(user.getName());
+            mLevelTv.setText("LV. " + user.getLevel());
+            mAgeTv.setText(TimeUtil.toAge(user.getAge()));
+
+            mIdTv.setText(user.getId() + "");
+            mNicknameTv.setText(user.getName());
+            mDescTv.setText(user.getDescription());
+            mInterestTv.setText(user.getHobby());
+            mJobTv.setText(user.getProfession());
+            mBirthdayTv.setText(user.getAge().toString());
+        }
     }
 
     public void onProfileItemClick(View view){
         String tag = "";
+        String value = "";
         switch(view.getId()){
             case R.id.btn_item_my_profile_nickname:
                 tag = "nickname";
+                value = AppContext.auth.getName();
                 break;
             case R.id.btn_item_my_profile_description:
                 tag = "description";
+                value = AppContext.auth.getDescription();
                 break;
             case R.id.btn_item_my_profile_birthday:
                 tag = "birhday";
@@ -203,12 +250,15 @@ public class MyProfileActivity extends BaseActivity implements IUploadImage{
                 return;
             case R.id.btn_item_my_profile_interest:
                 tag = "interest";
+                value = AppContext.auth.getHobby();
                 break;
             case R.id.btn_item_my_profile_job:
                 tag = "job";
+                value = AppContext.auth.getProfession();
                 break;
             case R.id.btn_item_my_profile_phone:
                 tag = "phone";
+                value = AppContext.auth.getPhone();
                 break;
             case R.id.btn_item_my_profile_sex:
                 tag = "sex";
@@ -231,7 +281,10 @@ public class MyProfileActivity extends BaseActivity implements IUploadImage{
                 sexsDialog.show();
                 return;
         }
-        IntentUtil.startActivity(this, EditItemActivity.class, "tag", tag);
+        Map<String, String> params = new HashMap<String,String>();
+        params.put("tag",tag);
+        params.put("value",value);
+        IntentUtil.startActivity(this, EditItemActivity.class, params);
     }
 
     public void onMyDynamicClick(View view){
@@ -288,8 +341,8 @@ public class MyProfileActivity extends BaseActivity implements IUploadImage{
             Toast.makeText(this, "选择图片出错", Toast.LENGTH_SHORT).show();
             return;
         }
-        Uri photoUri = data.getData();
-        cropPhoto(photoUri);
+        mImageUri = data.getData();
+        cropPhoto(mImageUri);
     }
     @Override
     public void onResultByTake(Intent data) {
@@ -299,6 +352,7 @@ public class MyProfileActivity extends BaseActivity implements IUploadImage{
             File fi = new File("/sdcard/tmp");
             try {
                 u = Uri.parse(android.provider.MediaStore.Images.Media.insertImage(this.getContentResolver(), fi.getAbsolutePath(), null, null));
+                mImageUri = u;
                 if (!fi.delete()) {
                     AppContext.commonLog.i("Failed to delete " + fi);
                 }
@@ -307,20 +361,26 @@ public class MyProfileActivity extends BaseActivity implements IUploadImage{
             }
         } else {
             u = PhotoFragment.uri;
+            mImageUri = u;
         }
         cropPhoto(u);
     }
     @Override
     public void onResultByCrop(Intent data) {
         // TODO Auto-generated method stub
+        mPicPath = getPicPathFromUri(mImageUri, this);
         Bundle extras = data.getExtras();
-        if (extras != null)
-        {
+        if (extras != null){
             Bitmap photo = extras.getParcelable("data");
             if(photo != null){
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
                 photo.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-                mAvatarIv.setImageBitmap(ImageUtil.roundBitmap(photo));
+                if(mPhotoSelectedStatus) {
+                    mAvatarIv.setImageBitmap(ImageUtil.roundBitmap(photo));
+                }else{
+                    mUserBackGroundIv.setImageBitmap(photo);
+                }
+                new ImageUploadTask().execute();
             }
         }
     }
@@ -333,10 +393,21 @@ public class MyProfileActivity extends BaseActivity implements IUploadImage{
         Intent intent = new Intent("com.android.camera.action.CROP");
         intent.setDataAndType(uri, "image/*");
         intent.putExtra("crop", "true");
-        intent.putExtra("aspectX", 1);
-        intent.putExtra("aspectY", 1);
-        intent.putExtra("outputX", 80);
-        intent.putExtra("outputY", 80);
+        if(mPhotoSelectedStatus) {
+            intent.putExtra("aspectX", 1);
+            intent.putExtra("aspectY", 1);
+            intent.putExtra("outputX", 200);
+            intent.putExtra("outputY", 200);
+        }else{
+            intent.putExtra("aspectX", 2);
+            intent.putExtra("aspectY", 1);
+            intent.putExtra("outputX", 500);
+            intent.putExtra("outputY", 250);
+        }
+        // save the croped picture
+        Uri saveUri = mPhotoFragment.getUriPath();
+        mImageUri = saveUri;
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, saveUri);
         intent.putExtra("return-data", true);
         this.startActivityForResult(intent, IUploadImage.IMAGE_CROP);
     }
@@ -346,5 +417,48 @@ public class MyProfileActivity extends BaseActivity implements IUploadImage{
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         mPhotoFragment.onActivityResult(requestCode, resultCode, data);
+    }
+
+
+    public class ImageUploadTask extends AsyncTask<String, Void, Boolean> {
+        @Override
+        protected Boolean doInBackground(String... params) {
+            // TODO Auto-generated method stub
+            AppContext.commonLog.i(mPicPath);
+            if(mPicPath != null){
+                String loadPicPath = ImageUtil.compressPic(MyProfileActivity.this, mPicPath, 1);
+                File f = new File(loadPicPath);
+                mImageUrl = BCSService.uploadImageByFile(f);
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            // TODO Auto-generated method stub
+            super.onPostExecute(result);
+            if(mPhotoSelectedStatus) {
+                AppContext.auth.setAvatar(mImageUrl);
+                AppContext.cacheService.userDBManager.updateUser(AppContext.auth);
+                warning(R.string.change_avatar_success);
+            }else{
+                AppContext.auth.setBackgroundImage(mImageUrl);
+                AppContext.cacheService.userDBManager.updateUser(AppContext.auth);
+                warning(R.string.change_background_success);
+            }
+        }
+    }
+
+    public  String getPicPathFromUri(Uri uri, Activity activity) {
+        String value = uri.getPath();
+        if (value.startsWith("/external")) {
+            String[] proj = {MediaStore.Images.Media.DATA};
+            Cursor cursor = activity.managedQuery(uri, proj, null, null, null);
+            int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+            cursor.moveToFirst();
+            return cursor.getString(column_index);
+        } else {
+            return value;
+        }
     }
 }

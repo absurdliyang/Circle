@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -51,8 +52,11 @@ import com.microsoft.windowsazure.mobileservices.TableQueryCallback;
 
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smackx.OfflineMessageManager;
 
+import java.util.Iterator;
 import java.util.List;
 
 
@@ -102,7 +106,9 @@ public class HomeActivity extends SlidingFragmentActivity
             setBusy(false);
         }
 
-        new ChatLoginTask().execute();
+        //new ChatLoginTask().execute();
+        Intent chatServiceIntent = new Intent(HomeActivity.this, ChatService.class);
+        HomeActivity.this.startService(chatServiceIntent);
 
 
         //initAMap();
@@ -310,12 +316,32 @@ public class HomeActivity extends SlidingFragmentActivity
             super.onPostExecute(b);
             if(b){
                 AppContext.commonLog.i("Chat login success");
-
                 Intent chatServiceIntent = new Intent(HomeActivity.this, ChatService.class);
                 HomeActivity.this.startService(chatServiceIntent);
+                getOfflineMessage();
             }
         }
     }
+
+    private void getOfflineMessage(){
+        OfflineMessageManager offlineManager = new OfflineMessageManager(AppContext.xmppConnectionManager.getConnection());
+        try {
+            Iterator<Message> it = offlineManager.getMessages();
+            AppContext.commonLog.i("have offline messages" + it.hasNext());
+
+            AppContext.commonLog.i(offlineManager.supportsFlexibleRetrieval() + "");
+            AppContext.commonLog.i("get offlien count "  + offlineManager.getMessageCount() + "");
+            while(it.hasNext()) {
+                Message message = it.next();
+                AppContext.commonLog.i(message.toString());
+            }
+            offlineManager.deleteMessages();
+        } catch (XMPPException e) {
+            e.printStackTrace();
+        }
+
+    }
+
 
     public void setBusy(boolean busy){
         if(busy){

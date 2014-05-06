@@ -56,10 +56,11 @@ public abstract class NotificationAdapter<V> extends BeanAdapter<V> {
             view.setTag(holder);
         }else{
             holder = (ViewHolder)view.getTag();
+            if(holder.avatarLoader != null){
+                holder.avatarLoader.cancelRequest();
+            }
         }
-        if(holder.avatarLoader != null){
-            holder.avatarLoader.cancelRequest();
-        }
+
         handleView(holder,item);
         return view;
     }

@@ -115,7 +115,9 @@
         </activity>
         <activity
             android:name="com.absurd.circle.ui.activity.EditItemActivity"
-            android:label="@string/title_activity_edit_item" >
+            android:label="@string/title_activity_edit_item"
+            android:launchMode="singleTop"
+            android:windowSoftInputMode="stateVisible|adjustResize">
         </activity>
         <activity
             android:name="com.absurd.circle.ui.activity.ChatActivity"

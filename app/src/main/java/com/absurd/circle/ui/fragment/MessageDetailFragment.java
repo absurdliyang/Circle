@@ -44,6 +44,8 @@ import com.microsoft.windowsazure.mobileservices.TableDeleteCallback;
 import com.microsoft.windowsazure.mobileservices.TableOperationCallback;
 import com.microsoft.windowsazure.mobileservices.TableQueryCallback;
 
+import org.jivesoftware.smack.Chat;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -70,6 +72,8 @@ public class MessageDetailFragment extends Fragment{
     private int mCurrentPageIndex = 0;
     private boolean mQueryOrder = true;
 
+    private Chat mChat;
+
     private Praise mPraise = new Praise(-1);
 
     @Override
@@ -82,6 +86,8 @@ public class MessageDetailFragment extends Fragment{
         initCommentList(inflater, rootView);
         initBottomBar(rootView);
         refresh();
+
+        mChat = AppContext.xmppConnectionManager.initChat(MessageDetailActivity.message.getUserId());
 
         return rootView;
     }
@@ -227,6 +233,7 @@ public class MessageDetailFragment extends Fragment{
                 mPraise.setMessageId(MessageDetailActivity.message.getId());
                 mPraise.setUserId(AppContext.userId);
                 mPraise.setToUserId(MessageDetailActivity.message.getUserId());
+                AppContext.xmppConnectionManager.send(mChat,mPraise,MessageDetailActivity.message.getUserId());
                 mMessageService.insertPraise(mPraise,new TableOperationCallback<Praise>() {
                     @Override
                     public void onCompleted(Praise entity, Exception exception, ServiceFilterResponse response) {

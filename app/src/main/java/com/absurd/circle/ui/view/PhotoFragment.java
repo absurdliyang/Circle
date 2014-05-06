@@ -25,11 +25,15 @@ public class PhotoFragment extends DialogFragment{
 	public static Uri uri;
 	public static Intent data;
 	private IUploadImage mIUploadImage;
-	
+    private PhotoDialog mDialog;
+
+    private String mTitle;
+
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
         // TODO Auto-generated method stub
-        PhotoDialog mDialog = new PhotoDialog(this.getActivity());
+        mDialog = new PhotoDialog(this.getActivity());
+        mDialog.setTitle(mTitle);
         mDialog.setOnGallaryClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -51,6 +55,10 @@ public class PhotoFragment extends DialogFragment{
 		this.mIUploadImage = i;
 		return this;
 	}
+
+    public void setTitle(String title){
+        this.mTitle = title;
+    }
 	
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -72,25 +80,10 @@ public class PhotoFragment extends DialogFragment{
 	 * On taking a photo
 	 */
 	private void onTake(){
-		String savePath = "";
-		String storageState = Environment.getExternalStorageState();		
-		if(storageState.equals(Environment.MEDIA_MOUNTED)){
-			savePath = Environment.getExternalStorageDirectory().getAbsolutePath() + AppConstant.TAKE_PHOTO_PATH;
-			File savedir = new File(savePath);
-			if (!savedir.exists()) {
-				savedir.mkdirs();
-			}
-		}
-
-		if(StringUtil.isEmpty(savePath)){
-            Toast.makeText(getActivity(), "Create save photo path error!", Toast.LENGTH_SHORT).show();
+        Uri uri = getUriPath();
+        if(uri == null){
             return;
-		}
-
-		String timeStamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
-		String fileName = "circle_" + timeStamp + ".jpg";
-		File out = new File(savePath, fileName);
-		Uri uri = Uri.fromFile(out);
+        }
 		Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 		if (hasImageCaptureBug()) {
 		    intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File("/sdcard/tmp")));
@@ -102,12 +95,40 @@ public class PhotoFragment extends DialogFragment{
 		PhotoFragment.data = intent;
 		getActivity().startActivityForResult(intent, IUploadImage.SELECT_BY_TAKE_PHOTO);
 	}
-	
+
+    public Uri getUriPath(){
+        String savePath = "";
+        String storageState = Environment.getExternalStorageState();
+        if(storageState.equals(Environment.MEDIA_MOUNTED)){
+            savePath = Environment.getExternalStorageDirectory().getAbsolutePath() + AppConstant.TAKE_PHOTO_PATH;
+            File saveDir = new File(savePath);
+            if (!saveDir.exists()) {
+                saveDir.mkdirs();
+            }
+        }
+
+        if(StringUtil.isEmpty(savePath)){
+            Toast.makeText(getActivity(), "Create save photo path error!", Toast.LENGTH_SHORT).show();
+            return null;
+        }
+
+        String timeStamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+        String fileName = "circle_" + timeStamp + ".jpg";
+        File out = new File(savePath, fileName);
+        Uri uri = Uri.fromFile(out);
+        return uri;
+    }
+
 	
 	/**
 	 * On select album
 	 */
 	private void onAlbum(){
+        /**
+        Intent choosePictureIntent = new Intent(Intent.ACTION_PICK,
+                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(choosePictureIntent, IUploadImage.SELECT_BY_ALBUM);
+         **/
 		Intent intent = new Intent();
 		intent.setType("image/*");
 		intent.setAction(Intent.ACTION_GET_CONTENT);

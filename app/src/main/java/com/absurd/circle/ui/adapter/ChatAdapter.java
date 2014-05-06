@@ -77,7 +77,7 @@ public class ChatAdapter extends BeanAdapter<UserMessage> {
         if(holder.avatarLoader != null){
             holder.avatarLoader.cancelRequest();
         }
-        if(userMessage.getFromUserId().equals(AppContext.auth.getId() + "")){
+        if(userMessage.getFromUserId().equals(AppContext.auth.getUserId())){
             holder.fromUserView.setVisibility(View.VISIBLE);
             holder.toUserView.setVisibility(View.GONE);
             holder.fromUserContent.setText(FacesUtil.parseFaceByText(mContext,userMessage.getContent()));

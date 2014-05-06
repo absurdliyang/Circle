@@ -102,7 +102,7 @@ public class RequestManager {
 
             @Override
             public void onResponse(ImageLoader.ImageContainer response, boolean isImmediate) {
-                AppContext.commonLog.i("isImmediate " + isImmediate + "response.getBitmap" + response.getBitmap());
+                //AppContext.commonLog.i("isImmediate " + isImmediate + "response.getBitmap" + response.getBitmap());
                 if (response.getBitmap() != null) {
                     if (!isImmediate && defaultImageBitmap != null) {
                         TransitionDrawable transitionDrawable;

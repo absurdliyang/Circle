@@ -4,9 +4,11 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 
+import com.absurd.circle.app.AppContext;
 import com.absurd.circle.cache.util.Column;
 import com.absurd.circle.cache.util.SQLiteTable;
 import com.absurd.circle.data.model.Comment;
+import com.absurd.circle.data.model.Follow;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,6 +56,22 @@ public class CommentDBManager extends BaseDBManager {
         mDatabase.insert(CommentDBInfo.TABLE_NAME, null, value);
     }
 
+    public List<Comment> getPage(int pageIndex, int pageSize){
+        List<Comment> resList = new ArrayList<Comment>();
+        String sql= "select * from " + CommentDBInfo.TABLE_NAME +
+                " Limit "+String.valueOf(pageSize)+ " Offset " +String.valueOf(pageIndex * pageSize);
+        AppContext.commonLog.i(sql);
+        Cursor cursor = mDatabase.rawQuery(sql, null);
+        if(cursor.moveToFirst()){
+            do{
+                AppContext.commonLog.i(parseComment(cursor).toString());
+                resList.add(parseComment(cursor));
+            }while(cursor.moveToNext());
+        }
+        cursor.close();
+        return resList;
+    }
+
 
     public List<Comment> getAllComent(){
         List<Comment> resList = new ArrayList<Comment>();
@@ -63,6 +81,7 @@ public class CommentDBManager extends BaseDBManager {
                 resList.add(parseComment(cursor));
             }while(cursor.moveToNext());
         }
+        cursor.close();
         return resList;
     }
 
@@ -76,6 +95,7 @@ public class CommentDBManager extends BaseDBManager {
                 resList.add(parseComment(cursor));
             }while(cursor.moveToNext());
         }
+        cursor.close();
         return resList;
 
     }
@@ -83,6 +103,12 @@ public class CommentDBManager extends BaseDBManager {
     public void updateCommentState(int commentId) {
         String sql = "update " + CommentDBInfo.TABLE_NAME + " set state = "
                 + "1 " + "where id = " + commentId;
+        mDatabase.execSQL(sql);
+    }
+
+    public void updateAllRead(){
+        String sql = "update " + CommentDBInfo.TABLE_NAME + " set state = "
+                + "1 " + "where " + CommentDBInfo.STATE + " = 0";
         mDatabase.execSQL(sql);
     }
 
