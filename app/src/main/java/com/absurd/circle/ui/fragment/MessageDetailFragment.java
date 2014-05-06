@@ -45,6 +45,7 @@ import com.microsoft.windowsazure.mobileservices.TableOperationCallback;
 import com.microsoft.windowsazure.mobileservices.TableQueryCallback;
 
 import org.jivesoftware.smack.Chat;
+import java.util.Calendar;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -87,7 +88,11 @@ public class MessageDetailFragment extends Fragment{
         initBottomBar(rootView);
         refresh();
 
-        mChat = AppContext.xmppConnectionManager.initChat(MessageDetailActivity.message.getUserId());
+        if(AppContext.xmppConnectionManager.getConnection() != null) {
+            mChat = AppContext.xmppConnectionManager.initChat(MessageDetailActivity.message.getUser().getId() + "");
+        }else{
+            mMessageDetailActivity.warning(R.string.chat_not_prepared_warning);
+        }
 
         return rootView;
     }
@@ -233,23 +238,27 @@ public class MessageDetailFragment extends Fragment{
                 mPraise.setMessageId(MessageDetailActivity.message.getId());
                 mPraise.setUserId(AppContext.userId);
                 mPraise.setToUserId(MessageDetailActivity.message.getUserId());
-                AppContext.xmppConnectionManager.send(mChat,mPraise,MessageDetailActivity.message.getUserId());
-                mMessageService.insertPraise(mPraise,new TableOperationCallback<Praise>() {
-                    @Override
-                    public void onCompleted(Praise entity, Exception exception, ServiceFilterResponse response) {
-                        if(entity == null){
-                            if(exception != null){
-                                exception.printStackTrace();
+                mPraise.setDate(Calendar.getInstance().getTime());
+                if(mChat != null) {
+                    AppContext.xmppConnectionManager.send(mChat, mPraise, MessageDetailActivity.message.getUser().getId() + "");
+
+                    mMessageService.insertPraise(mPraise, new TableOperationCallback<Praise>() {
+                        @Override
+                        public void onCompleted(Praise entity, Exception exception, ServiceFilterResponse response) {
+                            if (entity == null) {
+                                if (exception != null) {
+                                    exception.printStackTrace();
+                                }
+                            } else {
+                                AppContext.commonLog.i("Insert Praise success");
+                                MessageDetailActivity.message.incPraiseCount();
+                                mPraise = entity;
+                                mPraiseDescTv.setText("取消赞");
+                                refreshBottomBar();
                             }
-                        }else{
-                            AppContext.commonLog.i("Insert Praise success");
-                            MessageDetailActivity.message.incPraiseCount();
-                            mPraise = entity;
-                            mPraiseDescTv.setText("取消赞");
-                            refreshBottomBar();
                         }
-                    }
-                });
+                    });
+                }
             }
         }
     }

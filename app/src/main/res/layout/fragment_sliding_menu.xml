@@ -68,9 +68,21 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_marginLeft="20dp"
+                android:layout_gravity="center_vertical"
                 android:textSize="20dp"
                 android:textColor="#ffffffff"
                 android:text="消息" />
+
+
+            <TextView
+                android:id="@+id/tv_notification_num"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="15dp"
+                android:layout_gravity="center"
+                android:textColor="#ffffffff"
+                android:textSize="18dp"
+                />
         </LinearLayout>
         <LinearLayout
             android:id="@+id/llyt_drawer_menu_contact"

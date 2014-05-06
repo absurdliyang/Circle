@@ -5,15 +5,28 @@
     android:layout_height="match_parent"
     android:background="@color/theme_color"
     >
-    <ImageView
-        android:id="@+id/iv_actionbar_home"
+    <FrameLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_centerVertical="true"
-        android:layout_marginLeft="5dp"
-        android:clickable="true"
-        android:src="@drawable/actionbar_icon_home"/>
+        android:layout_centerVertical="true">
+        <ImageView
+            android:id="@+id/iv_actionbar_home"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:clickable="true"
+            android:src="@drawable/actionbar_icon_home"/>
+        <TextView
+            android:id="@+id/tv_tv_ab_notification_num"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:textColor="#ffffffff"
+            android:gravity="center"
+            android:paddingBottom="3dp"
+            android:background="@drawable/notification_num_bg"/>
+    </FrameLayout>
 
     <LinearLayout
         android:id="@+id/llyt_cutom_actionbar_title"

@@ -66,6 +66,9 @@ public abstract class RefreshableFragment<V> extends Fragment {
                         refreshTranscation();
                     }
                 }else if(direction.equals(PullToRefreshBase.Mode.PULL_FROM_END)){
+                    mContentLv.getLoadingLayoutProxy().setPullLabel("加载更多");
+                    mContentLv.getLoadingLayoutProxy().setRefreshingLabel("正在载入");
+                    mContentLv.getLoadingLayoutProxy().setReleaseLabel("加载更多");
                     if (state.equals(PullToRefreshBase.State.PULL_TO_REFRESH)) {
                         nextPageTransaction();
                     }

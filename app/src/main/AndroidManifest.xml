@@ -121,7 +121,9 @@
         </activity>
         <activity
             android:name="com.absurd.circle.ui.activity.ChatActivity"
-            android:label="@string/title_activity_chat" >
+            android:label="@string/title_activity_chat"
+            android:launchMode="singleTop"
+            android:windowSoftInputMode="stateVisible|adjustResize">
         </activity>
         <activity android:name="com.absurd.circle.ui.activity.BrowseImageActivity"
                   android:label="@string/title_activity_browse_image"/>

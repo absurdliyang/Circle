@@ -72,6 +72,14 @@
     <string name="change_background_success">更换背景成功</string>
     <string name="change_background_failed">更换背景失败</string>
 
+    <string name="exit_mention">再次按返回键退出</string>
+    <string name="chat_not_prepared_warning">网络不给力哦~</string>
+
+    <string name="update_location">更新位置</string>
+
+
+
+
 
 
 

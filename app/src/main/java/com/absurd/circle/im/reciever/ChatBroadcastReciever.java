@@ -20,13 +20,17 @@ public class ChatBroadcastReciever extends BroadcastReceiver {
         if(intent.getAction().equals(Intent.ACTION_TIME_TICK)){
             ActivityManager manager  = (ActivityManager) AppContext.getContext()
                     .getSystemService(Context.ACTIVITY_SERVICE);
+            //AppContext.commonLog.i("start chatBroascastReciever");
             for(ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)){
+                //AppContext.commonLog.i(service.service.getClassName());
                 if("com.absurd.circle.im.service.ChatService".equals(service.service.getClassName())){
                     mIsService = true;
+                    break;
                 }else{
                     mIsService = false;
                 }
             }
+            //AppContext.commonLog.i("mIsService " + mIsService);
             if(!mIsService){
                 Intent i = new Intent(context, ChatService.class);
                 context.startService(i);

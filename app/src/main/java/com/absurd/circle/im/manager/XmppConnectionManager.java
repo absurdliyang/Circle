@@ -90,7 +90,8 @@ public class XmppConnectionManager{
      */
     public XMPPConnection getConnection() {
         if (mConnection == null) {
-            throw new RuntimeException("请先初始化XMPPConnection连接");
+            //throw new RuntimeException("请先初始化XMPPConnection连接");
+            return null;
         }
         return mConnection;
     }
@@ -145,6 +146,7 @@ public class XmppConnectionManager{
 
     public void send(Chat chat, Praise praise, String toUserId){
         String jsonPraise = JsonUtil.toJson(praise);
+        AppContext.commonLog.i(jsonPraise);
         send(chat, jsonPraise, toUserId, ChatMessageType.PRAISE);
     }
 

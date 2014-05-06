@@ -168,6 +168,7 @@ public class MyProfileActivity extends BaseActivity implements IUploadImage{
             mDescTv.setText(user.getDescription());
             mInterestTv.setText(user.getHobby());
             mJobTv.setText(user.getProfession());
+            mPhoneTv.setText(user.getPhone());
             mBirthdayTv.setText(user.getAge().toString());
 
             mAvatarIv.setOnClickListener(new View.OnClickListener() {

@@ -36,6 +36,8 @@ public class AppContext extends Application{
 
     public static Position lastPosition;
 
+    public static int notificationNum;
+
 
 
     @Override
@@ -45,6 +47,8 @@ public class AppContext extends Application{
         sharedPreferenceUtil = SharedPreferenceUtil.getInstance();
         cacheService = CacheService.getInstance(this);
         xmppConnectionManager = XmppConnectionManager.getInstance();
+
+        notificationNum = sharedPreferenceUtil.getNotificationNum();
 
         // Register ChatBroadcastReciever to let ChatService always running
         // on backgound

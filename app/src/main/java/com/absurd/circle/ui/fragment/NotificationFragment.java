@@ -39,6 +39,8 @@ public class NotificationFragment extends LocalRefreshableFragment<UserMessage> 
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mContentLv.setMode(PullToRefreshBase.Mode.DISABLED);
+        AppContext.notificationNum = 0;
+        AppContext.sharedPreferenceUtil.setNotificationNum(AppContext.notificationNum);
     }
 
     @Override
@@ -121,9 +123,11 @@ public class NotificationFragment extends LocalRefreshableFragment<UserMessage> 
     @Override
     protected void onListItemClick(AdapterView<?> adapterView, View view, int i, long l) {
         super.onListItemClick(adapterView, view, i, l);
-        User user = AppContext.cacheService.userDBManager.getUser(((UserMessage)mAdapter.getItem(i - 2)).getFromUserId());
-        if(user != null){
-            IntentUtil.startActivity(this.getActivity(), ChatActivity.class, "touser", user);
+        if(i  >= 2) {
+            User user = AppContext.cacheService.userDBManager.getUser(((UserMessage) mAdapter.getItem(i - 2)).getFromUserId());
+            if (user != null) {
+                IntentUtil.startActivity(this.getActivity(), ChatActivity.class, "touser", user);
+            }
         }
     }
 }

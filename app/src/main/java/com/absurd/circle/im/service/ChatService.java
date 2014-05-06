@@ -1,16 +1,22 @@
 package com.absurd.circle.im.service;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.IBinder;
 
 import com.absurd.circle.app.AppContext;
+import com.absurd.circle.app.R;
 import com.absurd.circle.data.model.ChatMessageType;
 import com.absurd.circle.data.model.Comment;
 import com.absurd.circle.data.model.Praise;
 import com.absurd.circle.data.model.UserMessage;
 import com.absurd.circle.data.util.JsonUtil;
+import com.absurd.circle.ui.activity.NotificationActivity;
 import com.absurd.circle.util.StringUtil;
 
 
@@ -36,9 +42,28 @@ public class ChatService extends Service {
             Message message = (Message)packet;
             AppContext.commonLog.i("Recieve a packet");
             saveRecievedMessageBody(message);
-            AppContext.commonLog.i(message.toString());
+            AppContext.commonLog.i("body " + message.getBody() + " to " + message.getTo() + " from " + message.getFrom());
         }
     };
+
+    private void showNotification(String text){
+        String title = "圈圈";
+        Notification.Builder builder = new Notification.Builder(this)
+                .setTicker(title)
+                .setContentTitle(title)
+                .setContentText(text)
+                .setDefaults(Notification.DEFAULT_SOUND)
+                .setDefaults(Notification.DEFAULT_VIBRATE)
+                .setSmallIcon(R.drawable.ic_launcher);
+
+        PendingIntent pendIntent = PendingIntent.getActivity(this, 0, new Intent(this, NotificationActivity.class), 0);
+        builder.addAction(0, "", pendIntent);
+
+        Notification notification = builder.getNotification();
+        NotificationManager notificationManager = (NotificationManager) AppContext.getContext()
+                .getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.notify(0, notification);
+    }
 
     @Override
     public void onCreate() {
@@ -71,17 +96,17 @@ public class ChatService extends Service {
         if (message != null && message.getBody() != null
                 && !message.getBody().equals("null")) {
             String body = message.getBody();
-            AppContext.commonLog.i(body);
 
-            Praise p= JsonUtil.fromJson(body, Praise.class);
-            p.setState(false);
-            AppContext.cacheService.praiseDBManager.insertPraise(p);
             if(!StringUtil.isEmpty(message.getSubject())) {
+                AppContext.notificationNum ++;
+                AppContext.sharedPreferenceUtil.setNotificationNum(AppContext.notificationNum);
+                String text = "";
                 if (message.getSubject().equals(ChatMessageType.USERMESSAGE)) {
                     UserMessage userMessage = JsonUtil.fromJson(body, UserMessage.class);
                     userMessage.setState(0);
                     AppContext.cacheService.userMessageDBManager.insertUserMessage(userMessage);
 
+                    text = userMessage.getFromUserName() + "发来了新消息";
                     Intent intent = new Intent(NEW_MESSAGE_ACTION);
                     intent.putExtra("message", userMessage);
                     sendBroadcast(intent);
@@ -90,12 +115,15 @@ public class ChatService extends Service {
 
                     Comment comment = JsonUtil.fromJson(body, Comment.class);
                     comment.setState(0);
+                    text = comment.getUser().getName() + "评论了我的动态";
                     AppContext.cacheService.commnetDBManager.insertComment(comment);
                 } else if (message.getSubject().equals(ChatMessageType.PRAISE)) {
                     Praise praise = JsonUtil.fromJson(body, Praise.class);
                     praise.setState(false);
+                    text = praise.getUser().getName() + "赞了我的动态";
                     AppContext.cacheService.praiseDBManager.insertPraise(praise);
                 }
+                showNotification(text);
             }
         }
     }
@@ -124,10 +152,26 @@ public class ChatService extends Service {
                 AppContext.commonLog.i("chat login success");
                 AppContext.xmppConnectionManager.getConnection()
                     .addPacketListener(mPacketListener, null);
-                getOfflineMessages();
+                //getOfflineMessages();
+                new GetOfflineMessageTask().execute();
                 Presence presence = new Presence(Presence.Type.available);
                 AppContext.xmppConnectionManager.getConnection().sendPacket(presence);
             }
+        }
+    }
+
+
+    public class GetOfflineMessageTask extends AsyncTask<Void, Void, Void>{
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            getOfflineMessages();
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
         }
     }
 

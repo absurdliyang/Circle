@@ -5,10 +5,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 
 import com.absurd.circle.app.AppContext;
 import com.absurd.circle.app.R;
@@ -20,6 +24,8 @@ import com.absurd.circle.im.service.ChatService;
 import com.absurd.circle.ui.activity.base.BaseActivity;
 import com.absurd.circle.ui.adapter.ChatAdapter;
 import com.absurd.circle.ui.adapter.base.BeanAdapter;
+import com.absurd.circle.ui.widget.smileypicker.SmileyPicker;
+import com.absurd.circle.ui.widget.smileypicker.SmileyPickerUtility;
 import com.absurd.circle.util.StringUtil;
 import com.microsoft.windowsazure.mobileservices.ServiceFilterResponse;
 import com.microsoft.windowsazure.mobileservices.TableOperationCallback;
@@ -40,6 +46,10 @@ public class ChatActivity extends BaseActivity {
     private EditText mChatContentEt;
     private Button mChatSendBtn;
     private ListView mChatLv;
+    private ImageView mChatSmileyBtn;
+
+    private SmileyPicker mSmiley;
+    private RelativeLayout mContainer;
 
     private User mToUser;
 
@@ -90,7 +100,6 @@ public class ChatActivity extends BaseActivity {
     }
 
     private void initUI(){
-
         mChatContentEt = (EditText)findViewById(R.id.et_chat_content);
         mChatSendBtn = (Button)findViewById(R.id.btn_chat_send);
         mChatSendBtn.setOnClickListener(new View.OnClickListener() {
@@ -99,8 +108,35 @@ public class ChatActivity extends BaseActivity {
                 sendMessage();
             }
         });
+
+        mContainer = (RelativeLayout)findViewById(R.id.chat_container);
+        mContainer.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                if (mSmiley.isShown()) {
+                    hideSmileyPicker(false);
+                }
+                return true;
+            }
+        });
+        mSmiley = (SmileyPicker)findViewById(R.id.chat_smileypicker);
+        mSmiley.setEditText(this, ((LinearLayout) findViewById(R.id.chat_root_layout)), mChatContentEt);
+
+        mChatSmileyBtn = (ImageView)findViewById(R.id.iv_chat_smiley);
+        mChatSmileyBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mSmiley.isShown()) {
+                    hideSmileyPicker(true);
+                } else {
+                    showSmileyPicker(
+                            SmileyPickerUtility.isKeyBoardShow(ChatActivity.this));
+                }
+            }
+        });
+
         mChatLv = (ListView)findViewById(R.id.lv_chat);
-        mChatLv.setAdapter(new ChatAdapter(ChatActivity.this,mToUser));
+        mChatLv.setAdapter(new ChatAdapter(ChatActivity.this, mToUser));
         List<UserMessage> historyMessages = AppContext.cacheService.userMessageDBManager.getUserHistoryMessages(mToUser.getUserId());
         AppContext.cacheService.userMessageDBManager.updateUserMessageStateByUser(mToUser.getUserId());
         getAdapter().setItems(historyMessages);
@@ -120,7 +156,11 @@ public class ChatActivity extends BaseActivity {
     }
 
     private void initChat(){
-        mChat = AppContext.xmppConnectionManager.initChat(mToUser.getId() + "");
+        if(AppContext.xmppConnectionManager.getConnection() != null) {
+            mChat = AppContext.xmppConnectionManager.initChat(mToUser.getId() + "");
+        }else{
+            warning(R.string.chat_not_prepared_warning);
+        }
     }
 
 
@@ -139,27 +179,30 @@ public class ChatActivity extends BaseActivity {
         userMessage.setFromUserName(AppContext.auth.getName());
         userMessage.setDate(Calendar.getInstance().getTime());
 
-        AppContext.xmppConnectionManager.send(mChat, userMessage, mToUser.getUserId());
+        if(mChat != null) {
+            AppContext.xmppConnectionManager.send(mChat, userMessage, mToUser.getId() + "");
 
-
-        mUserMessageService.insertUserMessage(userMessage,new TableOperationCallback<UserMessage>() {
-            @Override
-            public void onCompleted(UserMessage entity, Exception exception, ServiceFilterResponse response) {
-                if(entity == null){
-                    if(exception != null){
-                        exception.printStackTrace();
+            mUserMessageService.insertUserMessage(userMessage,new TableOperationCallback<UserMessage>() {
+                @Override
+                public void onCompleted(UserMessage entity, Exception exception, ServiceFilterResponse response) {
+                    if(entity == null){
+                        if(exception != null){
+                            exception.printStackTrace();
+                        }
+                    }else{
+                        AppContext.commonLog.i("insert UserMessage success");
                     }
-                }else{
-                    AppContext.commonLog.i("insert UserMessage success");
                 }
-            }
-        });
-        userMessage.setState(1);
-        AppContext.cacheService.userMessageDBManager.insertUserMessage(userMessage);
+            });
+            userMessage.setState(1);
+            AppContext.cacheService.userMessageDBManager.insertUserMessage(userMessage);
 
-        getAdapter().addItem(userMessage);
-        // ListView scroll to bottom
-        smoothToBottom();
+            getAdapter().addItem(userMessage);
+            // ListView scroll to bottom
+            smoothToBottom();
+
+        }
+
     }
 
 
@@ -204,4 +247,61 @@ public class ChatActivity extends BaseActivity {
         unregisterReceiver(mChatMessageReceiver);
     }
 
+
+    @Override
+    public void onBackPressed() {
+        if (mSmiley.isShown()) {
+            hideSmileyPicker(false);
+        }
+        else {
+            super.onBackPressed();
+        }
+    }
+
+
+
+    private void showSmileyPicker(boolean showAnimation) {
+        this.mSmiley.show(this, showAnimation);
+        lockContainerHeight(SmileyPickerUtility.getAppContentHeight(this));
+
+    }
+
+    public void hideSmileyPicker(boolean showKeyBoard) {
+        if (this.mSmiley.isShown()) {
+            if (showKeyBoard) {
+                //this time softkeyboard is hidden
+                LinearLayout.LayoutParams localLayoutParams = (LinearLayout.LayoutParams) this
+                        .mContainer.getLayoutParams();
+                localLayoutParams.height = mSmiley.getTop();
+                localLayoutParams.weight = 0.0F;
+                this.mSmiley.hide(this);
+
+                SmileyPickerUtility.showKeyBoard(mChatContentEt);
+                mChatContentEt.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        unlockContainerHeightDelayed();
+                    }
+                }, 200L);
+            } else {
+                this.mSmiley.hide(this);
+                unlockContainerHeightDelayed();
+            }
+        }
+
+    }
+
+    private void lockContainerHeight(int paramInt) {
+        LinearLayout.LayoutParams localLayoutParams = (LinearLayout.LayoutParams) this.mContainer
+                .getLayoutParams();
+        localLayoutParams.height = paramInt;
+        localLayoutParams.weight = 0.0F;
+    }
+
+    public void unlockContainerHeightDelayed() {
+
+        ((LinearLayout.LayoutParams) this.mContainer.getLayoutParams()).weight
+                = 1.0F;
+
+    }
 }

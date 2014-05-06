@@ -2,10 +2,12 @@ package com.absurd.circle.ui.activity;
 
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Rect;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
@@ -15,8 +17,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.absurd.circle.app.AppConstant;
 import com.absurd.circle.app.AppContext;
 import com.absurd.circle.app.R;
 import com.absurd.circle.data.client.AzureClient;
@@ -56,12 +60,17 @@ import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smackx.OfflineMessageManager;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
 
 public class HomeActivity extends SlidingFragmentActivity
-        implements IProgressBarActivity, AMapLocationListener, LocationSource {
+        implements IProgressBarActivity, AMapLocationListener, LocationSource{
     private HomeFragment mContent;
     /**
      * false MessageListFragment
@@ -73,6 +82,7 @@ public class HomeActivity extends SlidingFragmentActivity
 
     private UserService mUserService;
 
+    private boolean mIsExitPressed = false;
 
     //AMap backgroung
     private MapView mMapView;
@@ -110,9 +120,31 @@ public class HomeActivity extends SlidingFragmentActivity
         Intent chatServiceIntent = new Intent(HomeActivity.this, ChatService.class);
         HomeActivity.this.startService(chatServiceIntent);
 
-
         //initAMap();
+        // Get user's current location
+        mLocationManagerProxy = LocationManagerProxy.getInstance(HomeActivity.this);
+        updateLocation();
 
+    }
+
+    private void updateLocation(){
+        if(NetworkUtil.isNetConnected()) {
+            setBusy(true);
+        }else{
+            warning(R.string.network_disconnected);
+        }
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    // 防止在界面初始化时阻塞UI线程
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                mLocationManagerProxy.requestLocationUpdates(LocationProviderProxy.AMapNetwork, 5000, 10, HomeActivity.this);
+            }
+        }).start();
     }
 
     private void initUI(Bundle savedInstanceState){
@@ -128,8 +160,8 @@ public class HomeActivity extends SlidingFragmentActivity
                 .commit();
 
         // Map background
-        mMapView = (MapView)findViewById(R.id.map_view);
-        mMapView.onCreate(savedInstanceState);
+        //mMapView = (MapView)findViewById(R.id.map_view);
+        //mMapView.onCreate(savedInstanceState);
         //new Thread(new InitMapThread()).start();
 
         // set the Behind View
@@ -280,10 +312,20 @@ public class HomeActivity extends SlidingFragmentActivity
 
 
     @Override
+    public void onBackPressed() {
+        if(!mIsExitPressed) {
+            warning(R.string.exit_mention);
+            mIsExitPressed = true;
+        }else{
+            this.finish();
+        }
+    }
+
+    @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         getSupportFragmentManager().putFragment(outState, "mContent", mContent);
-        mMapView.onSaveInstanceState(outState);
+        //mMapView.onSaveInstanceState(outState);
     }
 
     @Override
@@ -296,51 +338,6 @@ public class HomeActivity extends SlidingFragmentActivity
         return super.onOptionsItemSelected(item);
     }
 
-
-    public class ChatLoginTask extends AsyncTask<Void, Void, Boolean> {
-
-        @Override
-        protected Boolean doInBackground(Void... voids) {
-            if(AppContext.isAuthed()) {
-                AppContext.xmppConnectionManager.init();
-                if (!AppContext.xmppConnectionManager.getConnection().isAuthenticated()) {
-                    AppContext.xmppConnectionManager.login(AppContext.auth.getId() + "", AppContext.auth.getId() + "");
-                }
-                return true;
-            }
-            return false;
-        }
-
-        @Override
-        protected void onPostExecute(Boolean b) {
-            super.onPostExecute(b);
-            if(b){
-                AppContext.commonLog.i("Chat login success");
-                Intent chatServiceIntent = new Intent(HomeActivity.this, ChatService.class);
-                HomeActivity.this.startService(chatServiceIntent);
-                getOfflineMessage();
-            }
-        }
-    }
-
-    private void getOfflineMessage(){
-        OfflineMessageManager offlineManager = new OfflineMessageManager(AppContext.xmppConnectionManager.getConnection());
-        try {
-            Iterator<Message> it = offlineManager.getMessages();
-            AppContext.commonLog.i("have offline messages" + it.hasNext());
-
-            AppContext.commonLog.i(offlineManager.supportsFlexibleRetrieval() + "");
-            AppContext.commonLog.i("get offlien count "  + offlineManager.getMessageCount() + "");
-            while(it.hasNext()) {
-                Message message = it.next();
-                AppContext.commonLog.i(message.toString());
-            }
-            offlineManager.deleteMessages();
-        } catch (XMPPException e) {
-            e.printStackTrace();
-        }
-
-    }
 
 
     public void setBusy(boolean busy){
@@ -355,20 +352,28 @@ public class HomeActivity extends SlidingFragmentActivity
     @Override
     public void onResume() {
         super.onResume();
-        mMapView.onResume();
+        // Invalidate the notification on the actionbar
+        TextView notificationNumTv = (TextView)findViewById(R.id.tv_tv_ab_notification_num);
+        if(AppContext.notificationNum == 0){
+            notificationNumTv.setVisibility(View.GONE);
+        }else{
+            notificationNumTv.setVisibility(View.VISIBLE);
+            notificationNumTv.setText(AppContext.notificationNum + "");
+        }
+        //mMapView.onResume();
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        mMapView.onPause();
+        //mMapView.onPause();
         deactivate();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mMapView.onDestroy();
+        //mMapView.onDestroy();
     }
 
     @Override
@@ -376,16 +381,19 @@ public class HomeActivity extends SlidingFragmentActivity
         AppContext.commonLog.i("Location changed");
         if(aMapLocation == null){
             //Toast.makeText(this,"Get location failed!",Toast.LENGTH_SHORT).show();
-            warning(R.string.location_success);
+            // warning(R.string.location_success);
         }
         if(mOnLocationChangedListener != null) {
             AppContext.commonLog.i("Get location success!");
+            warning(R.string.update_location);
             mOnLocationChangedListener.onLocationChanged(aMapLocation);
             AppContext.lastPosition = new Position();
             AppContext.lastPosition.setLatitude(aMapLocation.getLatitude());
             AppContext.lastPosition.setLongitude(aMapLocation.getLongitude());
             AppContext.sharedPreferenceUtil.setLastPosition(AppContext.lastPosition);
 
+            // Cancel refresh location
+            mLocationManagerProxy.destory();
             //mContent.refreshTranscation();
             deactivate();
         }
@@ -428,8 +436,6 @@ public class HomeActivity extends SlidingFragmentActivity
             }).start();
         }
 
-
-
     }
 
     @Override
@@ -441,6 +447,8 @@ public class HomeActivity extends SlidingFragmentActivity
         }
         mLocationManagerProxy = null;
     }
+
+
 
 
     public void warning(String content){

@@ -72,6 +72,15 @@ public class SharedPreferenceUtil {
         return mSharedPreferences.getInt("defaultKeyboardHeight",400);
     }
 
+    public void setNotificationNum(int num){
+        mEditor.putInt("notificationNum", num)
+                .commit();
+    }
+
+    public int getNotificationNum(){
+        return mSharedPreferences.getInt("notificationNum",0);
+    }
+
     public void clearAll(){
         mEditor.clear()
                 .commit();

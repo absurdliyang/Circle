@@ -31,6 +31,8 @@ public class SlidingMenuFragment extends Fragment {
 
     private TextView mUsernameTv;
 
+    private TextView mNotificationTv;
+
     private View mRootView;
 
     @Override
@@ -93,6 +95,14 @@ public class SlidingMenuFragment extends Fragment {
                 IntentUtil.startActivity(mHomeActivity, SettingActivity.class);
             }
         });
+
+        mNotificationTv = (TextView)mRootView.findViewById(R.id.tv_notification_num);
+        if(AppContext.notificationNum == 0){
+            mNotificationTv.setVisibility(View.GONE);
+        }else {
+            mNotificationTv.setVisibility(View.VISIBLE);
+            mNotificationTv.setText(AppContext.notificationNum + "");
+        }
     }
 
 

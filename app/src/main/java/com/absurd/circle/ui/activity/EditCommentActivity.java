@@ -20,6 +20,7 @@ import com.microsoft.windowsazure.mobileservices.ServiceFilterResponse;
 import com.microsoft.windowsazure.mobileservices.TableOperationCallback;
 
 import org.jivesoftware.smack.Chat;
+import java.util.Calendar;
 
 public class EditCommentActivity extends BaseActivity {
 
@@ -56,7 +57,11 @@ public class EditCommentActivity extends BaseActivity {
 
         mSmiley = (SmileyPicker)findViewById(R.id.edit_comment_smileypicker);
         mSmiley.setEditText(this, ((LinearLayout) findViewById(R.id.edit_comment_root_layout)), mContentEt);
-        mChat = AppContext.xmppConnectionManager.initChat(mParentComment.getUserId());
+        if(AppContext.xmppConnectionManager.getConnection() != null) {
+            mChat = AppContext.xmppConnectionManager.initChat(MessageDetailActivity.message.getUser().getId() + "");
+        }else{
+            warning(R.string.chat_not_prepared_warning);
+        }
     }
 
     @Override
@@ -158,35 +163,37 @@ public class EditCommentActivity extends BaseActivity {
             comment.setParentId(mParentComment.getId());
             comment.setParentText(mParentComment.getContent());
         }
-        /**
         comment.setDate(Calendar.getInstance().getTime());
+        /**
         comment.setWeiboId("");
         comment.setMediaType(0);
         comment.setMediaUrl("");
          **/
-        AppContext.xmppConnectionManager.send(mChat, comment, mParentComment.getUserId());
-        CommentService service = new CommentService();
-        setBusy(true);
+        if(mChat != null) {
+            AppContext.xmppConnectionManager.send(mChat, comment, MessageDetailActivity.message.getUser().getId() + "");
+            CommentService service = new CommentService();
+            setBusy(true);
 
-        service.insertComment(comment, new TableOperationCallback<Comment>() {
-            @Override
-            public void onCompleted(Comment entity, Exception exception, ServiceFilterResponse response) {
-                if(entity == null){
-                    if(exception != null){
-                        exception.printStackTrace();
+            service.insertComment(comment, new TableOperationCallback<Comment>() {
+                @Override
+                public void onCompleted(Comment entity, Exception exception, ServiceFilterResponse response) {
+                    if (entity == null) {
+                        if (exception != null) {
+                            exception.printStackTrace();
+                        }
+                        EditCommentActivity.this.finish();
+                        warning(R.string.send_comment_failed);
+                        return;
                     }
+                    AppContext.commonLog.i(entity.toString());
+                    AppContext.commonLog.i("Add comment success!");
+                    MessageDetailActivity.message.incCommentCount();
+                    setBusy(false);
+                    warning(R.string.send_comment_success);
                     EditCommentActivity.this.finish();
-                    warning(R.string.send_comment_failed);
-                    return;
                 }
-                AppContext.commonLog.i(entity.toString());
-                AppContext.commonLog.i("Add comment success!");
-                MessageDetailActivity.message.incCommentCount();
-                setBusy(false);
-                warning(R.string.send_comment_success);
-                EditCommentActivity.this.finish();
-            }
-        });
+            });
+        }
     }
 
     private boolean invalidateContent(){
