@@ -299,7 +299,7 @@ public class MessageDetailFragment extends Fragment{
                 if(result == null){
                     if(exception != null){
                         exception.printStackTrace();
-                        Toast.makeText(MessageDetailFragment.this.getActivity(),"get Comment failed!",Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(MessageDetailFragment.this.getActivity(),"get Comment failed!",Toast.LENGTH_SHORT).show();
                     }
                 }else {
                     // HeaderViewListAdapter can not cast to BaseAdapter directly
