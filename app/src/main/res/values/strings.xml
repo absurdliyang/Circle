@@ -74,6 +74,9 @@
 
     <string name="exit_mention">再次按返回键退出</string>
     <string name="chat_not_prepared_warning">网络不给力哦~</string>
+    <string name="chat_not_prepared_warning_send_failed">网络不通畅，发送失败</string>
+
+    <string name="praise_failed">赞失败</string>
 
     <string name="update_location">更新位置</string>
 

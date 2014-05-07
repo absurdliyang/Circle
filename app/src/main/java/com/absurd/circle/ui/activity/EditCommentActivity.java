@@ -147,32 +147,39 @@ public class EditCommentActivity extends BaseActivity {
     }
 
     private void sendComment(){
-        Comment comment = new Comment();
-        if(AppContext.lastPosition != null){
-            comment.setLatitude(AppContext.lastPosition.getLatitude());
-            comment.setLongitude(AppContext.lastPosition.getLongitude());
-            //comment.setLocationDec("");
-        }
-        if(MessageDetailActivity.message != null){
-            comment.setMessageId(MessageDetailActivity.message.getId());
-            comment.setToUserId(MessageDetailActivity.message.getUserId());
-        }
-        comment.setContent(mContent);
+        if(mChat == null){
+            warning(R.string.chat_not_prepared_warning_send_failed);
+            setBusy(false);
+            mIsbusy = false;
+            return;
+        }else{
+            Comment comment = new Comment();
+            if(AppContext.lastPosition != null){
+                comment.setLatitude(AppContext.lastPosition.getLatitude());
+                comment.setLongitude(AppContext.lastPosition.getLongitude());
+                //comment.setLocationDec("");
+            }
+            if(MessageDetailActivity.message != null){
+                comment.setMessageId(MessageDetailActivity.message.getId());
+                comment.setToUserId(MessageDetailActivity.message.getUserId());
+            }
+            comment.setContent(mContent);
 
-        if(mParentComment != null){
-            comment.setParentId(mParentComment.getId());
-            comment.setParentText(mParentComment.getContent());
-        }
-        comment.setDate(Calendar.getInstance().getTime());
-        /**
-        comment.setWeiboId("");
-        comment.setMediaType(0);
-        comment.setMediaUrl("");
-         **/
-        if(mChat != null) {
+            if(mParentComment != null){
+                comment.setParentId(mParentComment.getId());
+                comment.setParentText(mParentComment.getContent());
+            }else {
+                comment.setParentId(MessageDetailActivity.message.getId());
+                comment.setParentText(MessageDetailActivity.message.getContent());
+            }
+            comment.setDate(Calendar.getInstance().getTime());
+            /**
+            comment.setWeiboId("");
+            comment.setMediaType(0);
+            comment.setMediaUrl("");
+             **/
             AppContext.xmppConnectionManager.send(mChat, comment, MessageDetailActivity.message.getUser().getId() + "");
             CommentService service = new CommentService();
-            setBusy(true);
 
             service.insertComment(comment, new TableOperationCallback<Comment>() {
                 @Override
@@ -189,6 +196,7 @@ public class EditCommentActivity extends BaseActivity {
                     AppContext.commonLog.i("Add comment success!");
                     MessageDetailActivity.message.incCommentCount();
                     setBusy(false);
+                    mIsbusy = false;
                     warning(R.string.send_comment_success);
                     EditCommentActivity.this.finish();
                 }

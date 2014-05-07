@@ -14,6 +14,7 @@ import android.widget.AdapterView;
 import android.widget.HeaderViewListAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -63,6 +64,8 @@ public class MessageDetailFragment extends Fragment{
     private TextView mPraiseDescTv;
     private TextView mPraiseCountTv;
     private TextView mCommentCountTv;
+
+    private ProgressBar mPraiseLodingPb;
 
 
     private MessageDetailActivity mMessageDetailActivity;
@@ -174,6 +177,8 @@ public class MessageDetailFragment extends Fragment{
     private void initBottomBar(View rootView){
         mPraiseDescTv = (TextView)rootView.findViewById(R.id.tv_btn_praise_text);
         mCommentCountTv = (TextView)rootView.findViewById(R.id.tv_comment_count);
+        mPraiseLodingPb = (ProgressBar)rootView.findViewById(R.id.pb_praise_loading);
+        mPraiseLodingPb.setVisibility(View.VISIBLE);
         mPraiseCountTv = (TextView)rootView.findViewById(R.id.tv_praise_count);
         mCommentCountTv.setText(MessageDetailActivity.message.getCommentCount() + "");
         mPraiseCountTv.setText(MessageDetailActivity.message.getPraiseCount() + "");
@@ -183,6 +188,7 @@ public class MessageDetailFragment extends Fragment{
                     new TableQueryCallback<Praise>() {
                         @Override
                         public void onCompleted(List<Praise> result, int count, Exception exception, ServiceFilterResponse response) {
+                            mPraiseLodingPb.setVisibility(View.INVISIBLE);
                             if (result == null) {
                                 if (exception != null) {
                                     exception.printStackTrace();
@@ -209,6 +215,7 @@ public class MessageDetailFragment extends Fragment{
         rootView.findViewById(R.id.llyt_bar_btn_praise).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                mPraiseLodingPb.setVisibility(View.VISIBLE);
                 praiseMessage();
             }
         });
@@ -216,12 +223,14 @@ public class MessageDetailFragment extends Fragment{
 
     private void praiseMessage(){
         if(mPraise != null && mPraise.getId() == -1){
+            mPraiseLodingPb.setVisibility(View.INVISIBLE);
             return;
         }else{
             if (mPraise != null) {
                 mMessageService.deletePraise(mPraise,new TableDeleteCallback() {
                     @Override
                     public void onCompleted(Exception exception, ServiceFilterResponse response) {
+                        mPraiseLodingPb.setVisibility(View.INVISIBLE);
                         if(exception != null){
                             exception.printStackTrace();
                         }else{
@@ -234,20 +243,26 @@ public class MessageDetailFragment extends Fragment{
                     }
                 });
             } else {
-                mPraise = new Praise();
-                mPraise.setMessageId(MessageDetailActivity.message.getId());
-                mPraise.setUserId(AppContext.userId);
-                mPraise.setToUserId(MessageDetailActivity.message.getUserId());
-                mPraise.setDate(Calendar.getInstance().getTime());
-                if(mChat != null) {
+                if(mChat == null) {
+                    mMessageDetailActivity.warning(R.string.chat_not_prepared_warning_send_failed);
+                    return;
+                }else{
+                    mPraise = new Praise();
+                    mPraise.setMessageId(MessageDetailActivity.message.getId());
+                    mPraise.setUserId(AppContext.userId);
+                    mPraise.setToUserId(MessageDetailActivity.message.getUserId());
+                    mPraise.setDate(Calendar.getInstance().getTime());
+                    mPraise.setParentText(MessageDetailActivity.message.getContent());
                     AppContext.xmppConnectionManager.send(mChat, mPraise, MessageDetailActivity.message.getUser().getId() + "");
 
                     mMessageService.insertPraise(mPraise, new TableOperationCallback<Praise>() {
                         @Override
                         public void onCompleted(Praise entity, Exception exception, ServiceFilterResponse response) {
+                            mPraiseLodingPb.setVisibility(View.INVISIBLE);
                             if (entity == null) {
                                 if (exception != null) {
                                     exception.printStackTrace();
+                                    mMessageDetailActivity.warning(R.string.praise_failed);
                                 }
                             } else {
                                 AppContext.commonLog.i("Insert Praise success");

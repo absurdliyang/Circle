@@ -116,9 +116,6 @@ public class HomeActivity extends SlidingFragmentActivity
             setBusy(false);
         }
 
-        //new ChatLoginTask().execute();
-        Intent chatServiceIntent = new Intent(HomeActivity.this, ChatService.class);
-        HomeActivity.this.startService(chatServiceIntent);
 
         //initAMap();
         // Get user's current location

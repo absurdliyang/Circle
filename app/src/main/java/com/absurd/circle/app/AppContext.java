@@ -10,6 +10,7 @@ import com.absurd.circle.data.model.Position;
 import com.absurd.circle.data.model.User;
 import com.absurd.circle.im.manager.XmppConnectionManager;
 import com.absurd.circle.im.reciever.ChatBroadcastReciever;
+import com.absurd.circle.im.service.ChatService;
 import com.absurd.circle.util.CommonLog;
 import com.absurd.circle.util.LogFactory;
 import com.absurd.circle.util.SharedPreferenceUtil;
@@ -55,6 +56,10 @@ public class AppContext extends Application{
         IntentFilter filter = new IntentFilter(Intent.ACTION_TIME_TICK);
         ChatBroadcastReciever reciever = new ChatBroadcastReciever();
         registerReceiver(reciever, filter);
+
+        // Start chat service
+        Intent chatServiceIntent = new Intent(this, ChatService.class);
+        this.startService(chatServiceIntent);
     }
 
     public static Context getContext(){

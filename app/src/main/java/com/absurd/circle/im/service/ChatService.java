@@ -47,6 +47,7 @@ public class ChatService extends Service {
     };
 
     private void showNotification(String text){
+        AppContext.commonLog.i("funck fucking");
         String title = "圈圈";
         Notification.Builder builder = new Notification.Builder(this)
                 .setTicker(title)
@@ -57,9 +58,10 @@ public class ChatService extends Service {
                 .setSmallIcon(R.drawable.ic_launcher);
 
         PendingIntent pendIntent = PendingIntent.getActivity(this, 0, new Intent(this, NotificationActivity.class), 0);
-        builder.addAction(0, "", pendIntent);
 
         Notification notification = builder.getNotification();
+        notification.setLatestEventInfo(this, title, "test test", pendIntent);
+
         NotificationManager notificationManager = (NotificationManager) AppContext.getContext()
                 .getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.notify(0, notification);
