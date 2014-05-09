@@ -70,8 +70,12 @@ public class ChatService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        if(NetworkUtil.isNetConnected()){
-            new ChatLoginTask().execute();
+        if(AppContext.isAuthed()) {
+            if (NetworkUtil.isNetConnected()) {
+                new ChatLoginTask().execute();
+            }
+        }else{
+            stopSelf();
         }
     }
 
@@ -142,7 +146,9 @@ public class ChatService extends Service {
                 AppContext.xmppConnectionManager.init();
             }
             if (!AppContext.xmppConnectionManager.getConnection().isAuthenticated()) {
-                AppContext.xmppConnectionManager.login(AppContext.auth.getId() + "", AppContext.auth.getId() + "");
+                if(AppContext.isAuthed()) {
+                    AppContext.xmppConnectionManager.login(AppContext.auth.getId() + "", AppContext.auth.getId() + "");
+                }
             }
             if(!AppContext.xmppConnectionManager.isInit() || !AppContext.xmppConnectionManager.getConnection().isAuthenticated()){
                 return false;

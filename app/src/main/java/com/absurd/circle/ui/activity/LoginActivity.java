@@ -26,6 +26,7 @@ import com.absurd.circle.data.model.SinaWeiboUser;
 import com.absurd.circle.data.model.User;
 import com.absurd.circle.data.service.UserService;
 import com.absurd.circle.data.util.JsonUtil;
+import com.absurd.circle.im.service.ChatService;
 import com.absurd.circle.ui.view.LoadingDialog;
 import com.absurd.circle.util.IntentUtil;
 import com.android.volley.NetworkResponse;
@@ -135,6 +136,8 @@ public class LoginActivity extends ActionBarActivity {
                     AppContext.cacheService.userDBManager.insertUser(user);
                     AppContext.commonLog.i("get User info success ----> " + user.toString());
                     getFollowers(user.getUserId());
+                    Intent chatServiceIntent = new Intent(LoginActivity.this, ChatService.class);
+                    LoginActivity.this.startService(chatServiceIntent);
                     IntentUtil.startActivity(LoginActivity.this, HomeActivity.class);
                     LoginActivity.this.finish();
                 }
@@ -157,8 +160,7 @@ public class LoginActivity extends ActionBarActivity {
         });
     }
 
-    private void registerSinaUser(SinaWeiboUser sinaUser){
-        final User user = new User();
+    private void registerSinaUser(final User user, SinaWeiboUser sinaUser){
         user.setLoginType(1);
         user.setName(sinaUser.getName());
         user.setSex(sinaUser.getGender());
@@ -185,6 +187,8 @@ public class LoginActivity extends ActionBarActivity {
                     AppContext.cacheService.userDBManager.insertUser(entity);
                     IntentUtil.startActivity(LoginActivity.this, HomeActivity.class);
                     getFollowers(user.getUserId());
+                    Intent chatServiceIntent = new Intent(LoginActivity.this, ChatService.class);
+                    LoginActivity.this.startService(chatServiceIntent);
                     LoginActivity.this.finish();
                 }
             }
@@ -208,7 +212,7 @@ public class LoginActivity extends ActionBarActivity {
                 }else{
                     initConfig(entity);
                     if(entity.getId() != 0){
-                        registerSinaUser(sinaUser);
+                        registerSinaUser(entity, sinaUser);
                     }else{
                         getUserInfo(entity.getUserId());
                     }
@@ -220,7 +224,7 @@ public class LoginActivity extends ActionBarActivity {
 
     private void loginQQUser(final QQUser qqUser){
         String userId = "qq:" + mTencent.getOpenId();
-        User user = new User();
+        final User user = new User();
         user.setUserId(userId);
         user.setLoginType(1);
         mUserService.insertUser(user, new TableOperationCallback<User>() {
@@ -233,7 +237,7 @@ public class LoginActivity extends ActionBarActivity {
                 }else{
                     initConfig(entity);
                     if(entity.getId() != 0){
-                        registerQQUser(qqUser);
+                        registerQQUser(entity, qqUser);
                     }else{
                         // mTencent.logout(AppContext.getContext());
                         getUserInfo(entity.getUserId());
@@ -244,8 +248,7 @@ public class LoginActivity extends ActionBarActivity {
         });
     }
 
-    private void registerQQUser(QQUser qqUser){
-        final User user = new User();
+    private void registerQQUser(final User user,QQUser qqUser){
         user.setLoginType(1);
         user.setName(qqUser.getNickname());
         if(qqUser.getGender().equals("男")){
@@ -273,6 +276,8 @@ public class LoginActivity extends ActionBarActivity {
                     AppContext.commonLog.i("register user success ----> " + entity.toString());
                     AppContext.cacheService.userDBManager.insertUser(entity);
                     IntentUtil.startActivity(LoginActivity.this, HomeActivity.class);
+                    Intent chatServiceIntent = new Intent(LoginActivity.this, ChatService.class);
+                    LoginActivity.this.startService(chatServiceIntent);
                     getFollowers(user.getUserId());
                     LoginActivity.this.finish();
                 }
