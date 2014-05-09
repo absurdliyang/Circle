@@ -82,4 +82,5 @@ public abstract class MessageListFragment extends RefreshableFragment<Message>{
         IntentUtil.startActivity(MessageListFragment.this.getActivity(), MessageDetailActivity.class,"messageIndexId",i-1);
     }
 
+
 }

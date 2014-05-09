@@ -17,6 +17,7 @@ import com.absurd.circle.data.model.Praise;
 import com.absurd.circle.data.model.UserMessage;
 import com.absurd.circle.data.util.JsonUtil;
 import com.absurd.circle.ui.activity.NotificationActivity;
+import com.absurd.circle.util.NetworkUtil;
 import com.absurd.circle.util.StringUtil;
 
 
@@ -47,7 +48,6 @@ public class ChatService extends Service {
     };
 
     private void showNotification(String text){
-        AppContext.commonLog.i("funck fucking");
         String title = "圈圈";
         Notification.Builder builder = new Notification.Builder(this)
                 .setTicker(title)
@@ -60,7 +60,7 @@ public class ChatService extends Service {
         PendingIntent pendIntent = PendingIntent.getActivity(this, 0, new Intent(this, NotificationActivity.class), 0);
 
         Notification notification = builder.getNotification();
-        notification.setLatestEventInfo(this, title, "test test", pendIntent);
+        notification.setLatestEventInfo(this, title,text, pendIntent);
 
         NotificationManager notificationManager = (NotificationManager) AppContext.getContext()
                 .getSystemService(Context.NOTIFICATION_SERVICE);
@@ -70,7 +70,9 @@ public class ChatService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        new ChatLoginTask().execute();
+        if(NetworkUtil.isNetConnected()){
+            new ChatLoginTask().execute();
+        }
     }
 
 
@@ -81,7 +83,7 @@ public class ChatService extends Service {
             // Fix the fucking bug of asmack ( ServiceDiscoveryManager.getInstanceFor return null)
             new ServiceDiscoveryManager(AppContext.xmppConnectionManager.getConnection());
 
-            AppContext.commonLog.i("get offlien count "  + offlineManager.getMessageCount() + "");
+            AppContext.commonLog.i("get offline count "  + offlineManager.getMessageCount() + "");
             while(it.hasNext()) {
                 Message message = it.next();
                 AppContext.commonLog.i(message.getBody().toString());
@@ -100,6 +102,7 @@ public class ChatService extends Service {
             String body = message.getBody();
 
             if(!StringUtil.isEmpty(message.getSubject())) {
+                AppContext.commonLog.i("Message subject --> " + message.getSubject());
                 AppContext.notificationNum ++;
                 AppContext.sharedPreferenceUtil.setNotificationNum(AppContext.notificationNum);
                 String text = "";
@@ -114,15 +117,16 @@ public class ChatService extends Service {
                     sendBroadcast(intent);
                     AppContext.commonLog.i("sendBroadCast");
                 } else if (message.getSubject().equals(ChatMessageType.COMMENT)) {
-
+                    AppContext.commonLog.i("New Comment Notification");
                     Comment comment = JsonUtil.fromJson(body, Comment.class);
+                    AppContext.commonLog.i(comment.toString());
                     comment.setState(0);
-                    text = comment.getUser().getName() + "评论了我的动态";
+                    text = "动态有了新的评论";
                     AppContext.cacheService.commnetDBManager.insertComment(comment);
                 } else if (message.getSubject().equals(ChatMessageType.PRAISE)) {
                     Praise praise = JsonUtil.fromJson(body, Praise.class);
                     praise.setState(false);
-                    text = praise.getUser().getName() + "赞了我的动态";
+                    text = "动态有了新的赞";
                     AppContext.cacheService.praiseDBManager.insertPraise(praise);
                 }
                 showNotification(text);
@@ -151,13 +155,14 @@ public class ChatService extends Service {
         protected void onPostExecute(Boolean b) {
             super.onPostExecute(b);
             if(b){
-                AppContext.commonLog.i("chat login success");
-                AppContext.xmppConnectionManager.getConnection()
-                    .addPacketListener(mPacketListener, null);
-                //getOfflineMessages();
-                new GetOfflineMessageTask().execute();
-                Presence presence = new Presence(Presence.Type.available);
-                AppContext.xmppConnectionManager.getConnection().sendPacket(presence);
+                if(AppContext.xmppConnectionManager.getConnection().isConnected()) {
+                    AppContext.commonLog.i("chat login success");
+                    AppContext.xmppConnectionManager.getConnection()
+                            .addPacketListener(mPacketListener, null);
+                    new GetOfflineMessageTask().execute();
+                    Presence presence = new Presence(Presence.Type.available);
+                    AppContext.xmppConnectionManager.getConnection().sendPacket(presence);
+                }
             }
         }
     }

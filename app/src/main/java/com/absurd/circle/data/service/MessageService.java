@@ -65,6 +65,10 @@ public class MessageService extends BaseService{
         getMessageTable().insert(message,callback);
     }
 
+    public void deleteMessage(Message message, TableDeleteCallback callback){
+        getMessageTable().delete(message, callback);
+    }
+
     public void isPraised(String userId, int messageId, TableQueryCallback<Praise> callback){
         getPraiseTable().where()
                 .field("userid").eq(userId)

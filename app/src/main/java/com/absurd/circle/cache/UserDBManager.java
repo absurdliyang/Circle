@@ -75,7 +75,6 @@ public class UserDBManager extends BaseDBManager{
             res = parseUser(cursor);
         }
         cursor.close();
-        AppContext.commonLog.i(res.toString());
         return res;
     }
 

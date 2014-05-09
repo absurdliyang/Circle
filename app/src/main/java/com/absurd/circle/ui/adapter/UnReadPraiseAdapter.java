@@ -31,24 +31,28 @@ public class UnReadPraiseAdapter extends NotificationAdapter<Praise> {
         holder.timeView.setText(TimeUtil.formatShowTime(item.getDate()));
         holder.descView.setText("赞了我的微博:");
         holder.contentView.setText(item.getParentText());
-        User user = AppContext.cacheService.userDBManager.getUser(item.getUserId());
-        if( user != null){
-            bindUserInfo(holder, user);
+        if(item.getUser() != null) {
+            bindUserInfo(holder,item.getUser());
         }else {
-            UserService service = new UserService();
-            service.getUser(item.getUserId(), new TableQueryCallback<User>() {
-                @Override
-                public void onCompleted(List<User> result, int count, Exception exception, ServiceFilterResponse response) {
-                    if(result == null){
-                        if(exception != null){
-                            exception.printStackTrace();
+            User user = AppContext.cacheService.userDBManager.getUser(item.getUserId());
+            if (user != null) {
+                bindUserInfo(holder, user);
+            } else {
+                UserService service = new UserService();
+                service.getUser(item.getUserId(), new TableQueryCallback<User>() {
+                    @Override
+                    public void onCompleted(List<User> result, int count, Exception exception, ServiceFilterResponse response) {
+                        if (result == null) {
+                            if (exception != null) {
+                                exception.printStackTrace();
+                            }
+                        } else {
+                            AppContext.cacheService.userDBManager.insertUser(result.get(0));
+                            bindUserInfo(holder, result.get(0));
                         }
-                    }else{
-                        AppContext.cacheService.userDBManager.insertUser(result.get(0));
-                        bindUserInfo(holder, result.get(0));
                     }
-                }
-            });
+                });
+            }
         }
     }
 

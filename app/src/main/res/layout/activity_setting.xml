@@ -180,6 +180,29 @@
                       android:background="#ff999999"/>
             </LinearLayout>
 
+            <LinearLayout
+                android:id="@+id/btn_send_advice"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="13dp"
+                android:clickable="true"
+                android:onClick="onClick"
+                android:background="@drawable/setting_item_sel_bg"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:textSize="17dp"
+                    android:text="建议反馈"
+                    />
+                <View android:layout_height="1dp"
+                      android:layout_width="match_parent"
+                      android:layout_marginTop="13dp"
+                      android:background="#ff999999"/>
+            </LinearLayout>
+
+
 
             <LinearLayout
                 android:id="@+id/btn_version"

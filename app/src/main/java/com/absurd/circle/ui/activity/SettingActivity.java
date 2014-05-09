@@ -70,9 +70,20 @@ public class SettingActivity extends BaseActivity {
                     mPushNotificationCb.setChecked(true);
                 }
                 break;
+            case R.id.btn_send_advice:
+                sendAdvice();
+                break;
             default:
                 break;
         }
+    }
+
+    private void sendAdvice(){
+        Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:"));
+        emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[] {"absurdliyang@gmail.com"});
+        emailIntent.putExtra(Intent.EXTRA_SUBJECT, "subject");
+        emailIntent.putExtra(Intent.EXTRA_TEXT, "body");
+        startActivity(Intent.createChooser(emailIntent, null));
     }
 
 

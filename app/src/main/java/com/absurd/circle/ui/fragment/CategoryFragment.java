@@ -59,6 +59,10 @@ public class CategoryFragment extends Fragment {
     private void initDefaultFilter(){
         categoryFilter = new ArrayList<Integer>();
         categoryFilter.add(1);
+        categoryFilter.add(7);
+        categoryFilter.add(8);
+        categoryFilter.add(9);
+        categoryFilter.add(10);
         orderFilter = true;
         distanceFilter = 5;
     }

@@ -20,7 +20,7 @@ import com.absurd.circle.util.SharedPreferenceUtil;
  */
 public class AppContext extends Application{
 
-    public static final Boolean DEBUG = true;
+    public static final Boolean DEBUG = false;
 
     private static Context mContext;
 

@@ -153,7 +153,7 @@ public abstract class BaseActivity extends SwipeBackActivity implements IProgres
 
 
     public void onBackClicked(View view){
-        this.finish();
+        this.onBackPressed();
     }
 
     public void onMoreClicked(View view){

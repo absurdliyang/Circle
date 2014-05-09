@@ -9,6 +9,7 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.NetworkOnMainThreadException;
 import android.provider.MediaStore;
 import android.view.View;
 import android.widget.CheckBox;
@@ -38,6 +39,7 @@ import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationListener;
 import com.amap.api.location.LocationManagerProxy;
 import com.amap.api.location.LocationProviderProxy;
+import com.android.volley.Network;
 import com.microsoft.windowsazure.mobileservices.ServiceFilterResponse;
 import com.microsoft.windowsazure.mobileservices.TableOperationCallback;
 
@@ -171,10 +173,14 @@ public class EditMessageActivity extends BaseActivity implements AMapLocationLis
 
     @Override
     public void onRightBtnClicked(View view) {
-        if(invalidateContent() && !mIsbusy){
-            setBusy(true);
-            mIsbusy = true;
-            sendMessage();
+        if(NetworkUtil.isNetConnected()) {
+            if (invalidateContent() && !mIsbusy) {
+                setBusy(true);
+                mIsbusy = true;
+                sendMessage();
+            }
+        }else{
+            warning(R.string.chat_not_prepared_warning_send_failed);
         }
     }
 
@@ -231,7 +237,7 @@ public class EditMessageActivity extends BaseActivity implements AMapLocationLis
             return false;
         }
         mContent = mContent.trim();
-        if(mContentType == MessageType.SHOW && StringUtil.isEmpty(mImageUrl)){
+        if(mContentType == MessageType.SHOW && StringUtil.isEmpty(mPicPath)){
             AppContext.commonLog.i("Image can not be null");
             warning(R.string.warinig_image_null);
             return false;

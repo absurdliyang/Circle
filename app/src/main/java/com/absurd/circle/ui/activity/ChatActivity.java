@@ -200,7 +200,8 @@ public class ChatActivity extends BaseActivity {
             getAdapter().addItem(userMessage);
             // ListView scroll to bottom
             smoothToBottom();
-
+        }else{
+            warning(R.string.chat_not_prepared_warning_send_failed);
         }
 
     }

@@ -12,6 +12,7 @@ import com.absurd.circle.ui.fragment.base.MessageListFragment;
 
 public class MessageDetailActivity extends BaseActivity {
 
+    public int mIndexId;
     public static Message message;
 
     private MessageDetailFragment mMessageDetailFragment;
@@ -25,8 +26,8 @@ public class MessageDetailActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_message_detail);
         // Set custom actionbar
-        int indexId = (Integer)getIntent().getSerializableExtra("messageIndexId");
-        message = MessageListFragment.messages.get(indexId);
+        mIndexId = (Integer)getIntent().getSerializableExtra("messageIndexId");
+        message = MessageListFragment.messages.get(mIndexId);
 
         mMessageDetailFragment = new MessageDetailFragment();
         getSupportFragmentManager().beginTransaction()

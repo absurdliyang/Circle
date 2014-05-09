@@ -51,7 +51,8 @@
                 android:layout_marginTop="10.0dp"
                 android:layout_marginRight="10.0dp"
                 android:lineSpacingMultiplier="1.1"
-                android:text="fjdskl"
+                android:maxLines="4"
+                android:ellipsize="end"
                 android:textSize="14dp"
                 android:textColor="#ff433d3d"
                 />

@@ -3,12 +3,11 @@ package com.absurd.circle.data.model;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import java.io.Serializable;
 
 /**
  * Created by absurd on 14-3-25.
  */
-public class Comment extends Message implements Serializable {
+public class Comment extends Message{
 
     @Expose
     @SerializedName("messageid")
@@ -27,11 +26,13 @@ public class Comment extends Message implements Serializable {
     private int mState;
 
 
-    private String mParentText;
-
     @Expose
     @SerializedName("seconds")
     private int mSeconds;
+
+    @Expose
+    @SerializedName("ParentText")
+    private String mParentText;
 
     public int getMessageId() {
         return mMessageId;
@@ -83,7 +84,7 @@ public class Comment extends Message implements Serializable {
 
     @Override
     public String toString() {
-        return "Message{" +
+        return "Comment{" +
                 "mId=" + mId +
                 ", mContent='" + mContent + '\'' +
                 ", mContentType=" + mContentType +

@@ -129,11 +129,29 @@ public class LoginActivity extends ActionBarActivity {
                 }else {
                     AppContext.commonLog.i(result.get(0).toString());
                     User user = result.get(0);
+                    user.setOsName(AppConstant.OS_NAME);
+                    user.setAppVer(AppConstant.APP_VER);
+                    updateUserInfo(user);
                     AppContext.cacheService.userDBManager.insertUser(user);
                     AppContext.commonLog.i("get User info success ----> " + user.toString());
                     getFollowers(user.getUserId());
                     IntentUtil.startActivity(LoginActivity.this, HomeActivity.class);
                     LoginActivity.this.finish();
+                }
+            }
+        });
+    }
+
+    private void updateUserInfo(User user){
+        mUserService.updateUser(user, new TableOperationCallback<User>() {
+            @Override
+            public void onCompleted(User entity, Exception exception, ServiceFilterResponse response) {
+                if(entity == null){
+                    if(exception != null){
+                        exception.printStackTrace();
+                    }
+                }else {
+                    AppContext.commonLog.i("Update user info success");
                 }
             }
         });
@@ -149,6 +167,7 @@ public class LoginActivity extends ActionBarActivity {
         user.setLocation(sinaUser.getLocation());
         user.setAvatar(sinaUser.getAvatarLarge());
         user.setOsName(AppConstant.OS_NAME);
+        user.setAppVer(AppConstant.APP_VER);
         java.util.Calendar calendar = java.util.Calendar.getInstance();
         user.setDate(new java.sql.Date(calendar.getTimeInMillis()));
         user.setAge(new java.sql.Date(calendar.getTimeInMillis()));
@@ -237,6 +256,7 @@ public class LoginActivity extends ActionBarActivity {
         user.setUserId("qq:" + mTencent.getOpenId());
         user.setAvatar(qqUser.getFigureUrl2());
         user.setOsName(AppConstant.OS_NAME);
+        user.setAppVer(AppConstant.APP_VER);
         java.util.Calendar calendar = java.util.Calendar.getInstance();
         user.setDate(new java.sql.Date(calendar.getTimeInMillis()));
         user.setAge(new java.sql.Date(calendar.getTimeInMillis()));

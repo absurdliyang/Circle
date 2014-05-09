@@ -34,6 +34,7 @@ import com.absurd.circle.ui.activity.ImageDetailActivity;
 import com.absurd.circle.ui.activity.MessageDetailActivity;
 import com.absurd.circle.ui.activity.UserProfileActivity;
 import com.absurd.circle.ui.adapter.CommentAdapter;
+import com.absurd.circle.ui.fragment.base.MessageListFragment;
 import com.absurd.circle.ui.view.ItemDialog;
 import com.absurd.circle.util.FacesUtil;
 import com.absurd.circle.util.ImageUtil;
@@ -46,6 +47,8 @@ import com.microsoft.windowsazure.mobileservices.TableOperationCallback;
 import com.microsoft.windowsazure.mobileservices.TableQueryCallback;
 
 import org.jivesoftware.smack.Chat;
+import org.jivesoftware.smack.MessageListener;
+
 import java.util.Calendar;
 
 import java.util.ArrayList;
@@ -89,7 +92,6 @@ public class MessageDetailFragment extends Fragment{
 
         initCommentList(inflater, rootView);
         initBottomBar(rootView);
-        refresh();
 
         if(AppContext.xmppConnectionManager.getConnection() != null) {
             mChat = AppContext.xmppConnectionManager.initChat(MessageDetailActivity.message.getUser().getId() + "");
@@ -169,8 +171,6 @@ public class MessageDetailFragment extends Fragment{
             }
         });
 
-        //Init comment list on start
-        refresh();
     }
 
 
@@ -249,7 +249,7 @@ public class MessageDetailFragment extends Fragment{
                 }else{
                     mPraise = new Praise();
                     mPraise.setMessageId(MessageDetailActivity.message.getId());
-                    mPraise.setUserId(AppContext.userId);
+                    mPraise.setUserId(AppContext.auth.getUserId());
                     mPraise.setToUserId(MessageDetailActivity.message.getUserId());
                     mPraise.setDate(Calendar.getInstance().getTime());
                     mPraise.setParentText(MessageDetailActivity.message.getContent());
@@ -336,6 +336,9 @@ public class MessageDetailFragment extends Fragment{
         items.add("倒叙查看评论");
         items.add("举报该信息");
         items.add("复制信息");
+        if(MessageDetailActivity.message.getUserId().equals(AppContext.auth.getUserId())){
+            items.add("删除");
+        }
         final ItemDialog dialog = new ItemDialog(mMessageDetailActivity,items);
         dialog.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -353,6 +356,8 @@ public class MessageDetailFragment extends Fragment{
                     case 2:
                         copyClipboard();
                         break;
+                    case 3:
+                        deleteMessage();
                 }
                 dialog.cancel();
             }
@@ -390,6 +395,24 @@ public class MessageDetailFragment extends Fragment{
                 }else{
                     mMessageDetailActivity.warning(R.string.report_message_success);;
                 }
+            }
+        });
+    }
+
+    public void deleteMessage(){
+        mMessageService.deleteMessage(MessageDetailActivity.message, new TableDeleteCallback() {
+            @Override
+            public void onCompleted(Exception exception, ServiceFilterResponse response) {
+                //mMessageDetailActivity.warning("");
+                if(exception != null){
+                    exception.printStackTrace();
+                    return;
+                }
+                AppContext.commonLog.i("Delate message success");
+                if(MessageListFragment.messages != null)
+                    MessageListFragment.messages.remove(mMessageDetailActivity.mIndexId);
+                mMessageDetailActivity.finish();
+
             }
         });
     }

@@ -43,6 +43,11 @@ public abstract class LocalRefreshableFragment<V> extends RefreshableFragment<V>
     }
 
 
+    public void clearList(){
+        getAdapter().deleteAllItems();
+    }
+
+
     public class LoadLocalDataTask extends AsyncTask<Void, Void, List<V>> {
 
         @Override

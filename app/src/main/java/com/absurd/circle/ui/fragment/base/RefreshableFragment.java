@@ -135,6 +135,8 @@ public abstract class RefreshableFragment<V> extends Fragment {
         }
     };
 
+
+
     public void refreshTranscation(){
         if(!mIsBusy) {
             //mContentLv.smoothScrollToPosition(0);

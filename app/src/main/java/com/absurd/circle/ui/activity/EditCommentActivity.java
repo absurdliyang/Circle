@@ -153,11 +153,11 @@ public class EditCommentActivity extends BaseActivity {
             mIsbusy = false;
             return;
         }else{
-            Comment comment = new Comment();
+            final Comment comment = new Comment();
+            comment.setUserId(AppContext.auth.getUserId());
             if(AppContext.lastPosition != null){
                 comment.setLatitude(AppContext.lastPosition.getLatitude());
                 comment.setLongitude(AppContext.lastPosition.getLongitude());
-                //comment.setLocationDec("");
             }
             if(MessageDetailActivity.message != null){
                 comment.setMessageId(MessageDetailActivity.message.getId());
@@ -168,17 +168,12 @@ public class EditCommentActivity extends BaseActivity {
             if(mParentComment != null){
                 comment.setParentId(mParentComment.getId());
                 comment.setParentText(mParentComment.getContent());
-            }else {
-                comment.setParentId(MessageDetailActivity.message.getId());
-                comment.setParentText(MessageDetailActivity.message.getContent());
             }
             comment.setDate(Calendar.getInstance().getTime());
-            /**
             comment.setWeiboId("");
             comment.setMediaType(0);
             comment.setMediaUrl("");
-             **/
-            AppContext.xmppConnectionManager.send(mChat, comment, MessageDetailActivity.message.getUser().getId() + "");
+
             CommentService service = new CommentService();
 
             service.insertComment(comment, new TableOperationCallback<Comment>() {
@@ -198,6 +193,7 @@ public class EditCommentActivity extends BaseActivity {
                     setBusy(false);
                     mIsbusy = false;
                     warning(R.string.send_comment_success);
+                    AppContext.xmppConnectionManager.send(mChat, comment, MessageDetailActivity.message.getUser().getId() + "");
                     EditCommentActivity.this.finish();
                 }
             });

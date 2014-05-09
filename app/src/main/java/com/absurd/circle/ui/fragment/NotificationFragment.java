@@ -120,6 +120,8 @@ public class NotificationFragment extends LocalRefreshableFragment<UserMessage> 
     }
 
 
+
+
     @Override
     protected void onListItemClick(AdapterView<?> adapterView, View view, int i, long l) {
         super.onListItemClick(adapterView, view, i, l);

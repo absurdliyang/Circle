@@ -70,7 +70,7 @@ import java.util.List;
 
 
 public class HomeActivity extends SlidingFragmentActivity
-        implements IProgressBarActivity, AMapLocationListener, LocationSource{
+        implements IProgressBarActivity, AMapLocationListener{
     private HomeFragment mContent;
     /**
      * false MessageListFragment
@@ -87,7 +87,6 @@ public class HomeActivity extends SlidingFragmentActivity
     //AMap backgroung
     private MapView mMapView;
     private AMap mAMap;
-    private OnLocationChangedListener mOnLocationChangedListener;
     private LocationManagerProxy mLocationManagerProxy;
 
     @Override
@@ -174,17 +173,6 @@ public class HomeActivity extends SlidingFragmentActivity
     }
 
 
-    private void initAMap(){
-        if(mAMap == null) {
-            mAMap = mMapView.getMap();
-        }
-        UiSettings uiSettings = mAMap.getUiSettings();
-        uiSettings.setZoomControlsEnabled(false);
-        mAMap.setLocationSource(this);
-        mAMap.setMyLocationEnabled(true);
-        // Setting zoom
-        mAMap.moveCamera(CameraUpdateFactory.zoomTo(18));
-    }
 
 
     private void init(){
@@ -363,23 +351,34 @@ public class HomeActivity extends SlidingFragmentActivity
     @Override
     public void onPause() {
         super.onPause();
-        //mMapView.onPause();
-        deactivate();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        //mMapView.onDestroy();
     }
 
     @Override
     public void onLocationChanged(AMapLocation aMapLocation) {
         AppContext.commonLog.i("Location changed");
         if(aMapLocation == null){
-            //Toast.makeText(this,"Get location failed!",Toast.LENGTH_SHORT).show();
-            // warning(R.string.location_success);
+            AppContext.commonLog.i("Get location failed");
+            warning(R.string.location_success);
+        }else{
+            AppContext.commonLog.i("Get location success!");
+            warning(R.string.update_location);
+            AppContext.lastPosition = new Position();
+            AppContext.lastPosition.setLatitude(aMapLocation.getLatitude());
+            AppContext.lastPosition.setLongitude(aMapLocation.getLongitude());
+            AppContext.sharedPreferenceUtil.setLastPosition(AppContext.lastPosition);
+
+            // Cancel refresh location
+            mLocationManagerProxy.destory();
+            //mContent.refreshTranscation();
+            //deactivate();
         }
+
+        /**
         if(mOnLocationChangedListener != null) {
             AppContext.commonLog.i("Get location success!");
             warning(R.string.update_location);
@@ -393,7 +392,11 @@ public class HomeActivity extends SlidingFragmentActivity
             mLocationManagerProxy.destory();
             //mContent.refreshTranscation();
             deactivate();
+        }else{
+            AppContext.commonLog.i("Get location failed");
+            warning(R.string.update_location_failed);
         }
+         **/
     }
 
 
@@ -415,35 +418,6 @@ public class HomeActivity extends SlidingFragmentActivity
     public void onProviderDisabled(String s) {
     }
 
-    @Override
-    public void activate(OnLocationChangedListener onLocationChangedListener) {
-        mOnLocationChangedListener = onLocationChangedListener;
-        if(mLocationManagerProxy == null){
-            mLocationManagerProxy = LocationManagerProxy.getInstance(this);
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    mLocationManagerProxy.requestLocationUpdates(LocationProviderProxy.AMapNetwork,5000,10,HomeActivity.this);
-                }
-            }).start();
-        }
-
-    }
-
-    @Override
-    public void deactivate() {
-        mOnLocationChangedListener = null;
-        if(mLocationManagerProxy != null){
-            mLocationManagerProxy.removeUpdates(this);
-            mLocationManagerProxy.destory();
-        }
-        mLocationManagerProxy = null;
-    }
 
 
 

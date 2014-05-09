@@ -43,6 +43,7 @@ import com.absurd.circle.ui.view.ItemDialog;
 import com.absurd.circle.ui.view.PhotoFragment;
 import com.absurd.circle.util.ImageUtil;
 import com.absurd.circle.util.IntentUtil;
+import com.absurd.circle.util.NetworkUtil;
 import com.absurd.circle.util.TimeUtil;
 import com.android.volley.Response;
 import com.microsoft.windowsazure.mobileservices.ServiceFilterResponse;
@@ -308,17 +309,17 @@ public class MyProfileActivity extends BaseActivity implements IUploadImage{
     public void onRightBtnClicked(View view) {
         super.onRightBtnClicked(view);
         setBusy(true);
-        mUserService.updateUser(user,new TableOperationCallback<User>() {
+        mUserService.updateUser(user, new TableOperationCallback<User>() {
             @Override
             public void onCompleted(User entity, Exception exception, ServiceFilterResponse response) {
                 setBusy(false);
-                if(entity == null){
-                    if(exception != null){
+                if (entity == null) {
+                    if (exception != null) {
                         exception.printStackTrace();
                     }
                     warning(R.string.update_user_profile_failed);
                     return;
-                }else{
+                } else {
                     AppContext.auth = entity;
                     warning(R.string.update_user_profile_success);
                     AppContext.cacheService.userDBManager.updateUser(entity);
@@ -381,7 +382,11 @@ public class MyProfileActivity extends BaseActivity implements IUploadImage{
                 }else{
                     mUserBackGroundIv.setImageBitmap(photo);
                 }
-                new ImageUploadTask().execute();
+                if(NetworkUtil.isNetConnected()) {
+                    new ImageUploadTask().execute();
+                }else{
+                    warning(R.string.net_disconnected_warning_upload_failed);
+                }
             }
         }
     }
