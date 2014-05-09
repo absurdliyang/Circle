@@ -71,13 +71,14 @@
     <orderEntry type="jdk" jdkName="Android API 19 Platform" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" exported="" name="Android_Location_V1.1.0" level="project" />
-    <orderEntry type="library" exported="" name="dom4j-1.6.1" level="project" />
     <orderEntry type="library" exported="" name="appcompat-v7-19.0.1" level="project" />
+    <orderEntry type="library" exported="" name="dom4j-1.6.1" level="project" />
     <orderEntry type="library" exported="" name="gson-2.2.2" level="project" />
     <orderEntry type="library" exported="" name="weibosdkcore" level="project" />
     <orderEntry type="library" exported="" name="support-v4-19.0.1" level="project" />
     <orderEntry type="library" exported="" name="mta-sdk-1.0.0" level="project" />
     <orderEntry type="library" exported="" name="open_sdk" level="project" />
+    <orderEntry type="library" exported="" name="umeng-sdk-analytics_v5.2.2_fb_v4.3.1_update_v2.4.1" level="project" />
     <orderEntry type="library" exported="" name="bcs-sdk-java_1.4.5" level="project" />
     <orderEntry type="library" exported="" name="volley" level="project" />
     <orderEntry type="library" exported="" name="pushservice-3.0.0" level="project" />

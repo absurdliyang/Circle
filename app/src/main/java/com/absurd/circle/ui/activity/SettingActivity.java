@@ -6,17 +6,20 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.TextView;
 
 import com.absurd.circle.app.AppContext;
 import com.absurd.circle.app.R;
 import com.absurd.circle.ui.activity.base.BaseActivity;
 import com.absurd.circle.util.IntentUtil;
+import com.absurd.circle.util.SystemUtil;
 
 public class SettingActivity extends BaseActivity {
 
     private Button mLogoutBtn;
 
     private CheckBox mPushNotificationCb;
+    private TextView mVersionTv;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -32,6 +35,10 @@ public class SettingActivity extends BaseActivity {
             }
         });
         mPushNotificationCb = (CheckBox)findViewById(R.id.cb_push_notification);
+
+        mVersionTv = (TextView)findViewById(R.id.tv_version);
+
+        mVersionTv.setText(SystemUtil.getAppVersion());
     }
 
     private void logout(){

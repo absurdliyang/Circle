@@ -100,7 +100,6 @@ public class ChatService extends Service {
         if (message != null && message.getBody() != null
                 && !message.getBody().equals("null")) {
             String body = message.getBody();
-
             if(!StringUtil.isEmpty(message.getSubject())) {
                 AppContext.commonLog.i("Message subject --> " + message.getSubject());
                 AppContext.notificationNum ++;
@@ -139,16 +138,17 @@ public class ChatService extends Service {
 
         @Override
         protected Boolean doInBackground(Void... voids) {
-            if(AppContext.isAuthed()) {
-                if(!AppContext.xmppConnectionManager.isInit()){
-                    AppContext.xmppConnectionManager.init();
-                }
-                if (!AppContext.xmppConnectionManager.getConnection().isAuthenticated()) {
-                    AppContext.xmppConnectionManager.login(AppContext.auth.getId() + "", AppContext.auth.getId() + "");
-                }
+            if(!AppContext.xmppConnectionManager.isInit()){
+                AppContext.xmppConnectionManager.init();
+            }
+            if (!AppContext.xmppConnectionManager.getConnection().isAuthenticated()) {
+                AppContext.xmppConnectionManager.login(AppContext.auth.getId() + "", AppContext.auth.getId() + "");
+            }
+            if(!AppContext.xmppConnectionManager.isInit() || !AppContext.xmppConnectionManager.getConnection().isAuthenticated()){
+                return false;
+            }else{
                 return true;
             }
-            return false;
         }
 
         @Override
@@ -163,6 +163,8 @@ public class ChatService extends Service {
                     Presence presence = new Presence(Presence.Type.available);
                     AppContext.xmppConnectionManager.getConnection().sendPacket(presence);
                 }
+            }else{
+                new ChatLoginTask().execute();
             }
         }
     }

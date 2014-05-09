@@ -61,7 +61,7 @@ public class Message implements Serializable{
 
 
     @Expose
-    @SerializedName("commentdate")
+    @SerializedName("CommentDate")
     protected Date mCommentDate;
 
     @Expose

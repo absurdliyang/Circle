@@ -36,6 +36,10 @@ public class UserService extends BaseService {
         getUserTable().insert(user, callback);
     }
 
+    public void deleteUser(User user, TableDeleteCallback callback){
+        getUserTable().delete(user, callback);
+    }
+
     public void getUser(String userId,TableQueryCallback<User> callback){
         getUserTable().where().field("userId").eq(userId).execute(callback);
     }

@@ -50,10 +50,6 @@ public class NotificationFragment extends LocalRefreshableFragment<UserMessage> 
 
     @Override
     protected void loadData(int pageIndex, TableQueryCallback<UserMessage> callback) {
-        if(AppContext.auth != null) {
-            //mNotificationService.getUserMessages(AppContext.auth.getUserId(),pageIndex, 10, callback);
-            AppContext.cacheService.userMessageDBManager.getAllUserMessages();
-        }
     }
 
     @Override
@@ -93,25 +89,31 @@ public class NotificationFragment extends LocalRefreshableFragment<UserMessage> 
     protected List<UserMessage> loadDataLocal(int pageIndex) {
         if(AppContext.auth != null) {
             List<UserMessage> allMessages = AppContext.cacheService.userMessageDBManager
-                    .getAllNotificationUserMessages(AppContext.auth.getUserId());
+                    .getAllUserMessages();
             Map<String, UserMessage> userLatestDate = new HashMap<String,UserMessage>();
             for(UserMessage userMessage: allMessages){
-                if(!userLatestDate.containsKey(userMessage.getFromUserId())){
-                    userLatestDate.put(userMessage.getFromUserId(), userMessage);
+                String key = "";
+                if(userMessage.getFromUserId().equals(AppContext.auth.getUserId())){
+                    key = userMessage.getFromUserId() + userMessage.getToUserId();
+                }else{
+                    key = userMessage.getToUserId() + userMessage.getFromUserId();
+                }
+                if(!userLatestDate.containsKey(key)){
+                    userLatestDate.put(key, userMessage);
                 }else{
                     Calendar curretnCalendar = Calendar.getInstance();
                     curretnCalendar.setTime(userMessage.getDate());
                     Calendar latestCalendar = Calendar.getInstance();
-                    latestCalendar.setTime(userLatestDate.get(userMessage.getFromUserId()).getDate());
+                    latestCalendar.setTime(userLatestDate.get(key).getDate());
                     if(curretnCalendar.compareTo(latestCalendar) == 1){
-                        userLatestDate.put(userMessage.getFromUserId(), userMessage);
+                        userLatestDate.put(key, userMessage);
                     }
                 }
             }
             List<UserMessage> result = new ArrayList<UserMessage>();
             java.util.Iterator it = userLatestDate.entrySet().iterator();
             while (it.hasNext()) {
-            Map.Entry entry = (Map.Entry) it.next();
+                Map.Entry entry = (Map.Entry) it.next();
                 result.add((UserMessage) entry.getValue());
             }
             return result;
@@ -126,7 +128,14 @@ public class NotificationFragment extends LocalRefreshableFragment<UserMessage> 
     protected void onListItemClick(AdapterView<?> adapterView, View view, int i, long l) {
         super.onListItemClick(adapterView, view, i, l);
         if(i  >= 2) {
-            User user = AppContext.cacheService.userDBManager.getUser(((UserMessage) mAdapter.getItem(i - 2)).getFromUserId());
+            UserMessage item = (UserMessage) mAdapter.getItem(i - 2);
+            String userId = null;
+            if(item.getFromUserId().equals(AppContext.auth.getUserId())) {
+                userId = item.getToUserId();
+            }else{
+                userId = item.getFromUserId();
+            }
+            User user = AppContext.cacheService.userDBManager.getUser(userId);
             if (user != null) {
                 IntentUtil.startActivity(this.getActivity(), ChatActivity.class, "touser", user);
             }

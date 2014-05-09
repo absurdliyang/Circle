@@ -63,6 +63,7 @@ public class ChatActivity extends BaseActivity {
             AppContext.commonLog.i("Recieve a chat message");
             if(ChatService.NEW_MESSAGE_ACTION.equals(action)){
                 AppContext.commonLog.i("Receive a chat message");
+                AppContext.notificationNum --;
                 UserMessage userMessage = (UserMessage)intent.getExtras().get("message");
                 userMessage.setState(1);
                 AppContext.cacheService.userMessageDBManager.updateUserMessageStateByUser(mToUser.getUserId());
@@ -116,6 +117,9 @@ public class ChatActivity extends BaseActivity {
                 if (mSmiley.isShown()) {
                     hideSmileyPicker(false);
                 }
+                if(SmileyPickerUtility.isKeyBoardShow(ChatActivity.this)) {
+                    SmileyPickerUtility.hideSoftInput(mChatContentEt);
+                }
                 return true;
             }
         });
@@ -137,6 +141,18 @@ public class ChatActivity extends BaseActivity {
 
         mChatLv = (ListView)findViewById(R.id.lv_chat);
         mChatLv.setAdapter(new ChatAdapter(ChatActivity.this, mToUser));
+        mChatLv.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                if (mSmiley.isShown()) {
+                    hideSmileyPicker(false);
+                }
+                if(SmileyPickerUtility.isKeyBoardShow(ChatActivity.this)) {
+                    SmileyPickerUtility.hideSoftInput(mChatContentEt);
+                }
+                return false;
+            }
+        });
         List<UserMessage> historyMessages = AppContext.cacheService.userMessageDBManager.getUserHistoryMessages(mToUser.getUserId());
         AppContext.cacheService.userMessageDBManager.updateUserMessageStateByUser(mToUser.getUserId());
         getAdapter().setItems(historyMessages);
@@ -159,7 +175,7 @@ public class ChatActivity extends BaseActivity {
         if(AppContext.xmppConnectionManager.getConnection() != null) {
             mChat = AppContext.xmppConnectionManager.initChat(mToUser.getId() + "");
         }else{
-            warning(R.string.chat_not_prepared_warning);
+            //warning(R.string.chat_not_prepared_warning);
         }
     }
 
@@ -177,29 +193,29 @@ public class ChatActivity extends BaseActivity {
         userMessage.setToUserName(mToUser.getName());
         userMessage.setFromUserId(AppContext.auth.getUserId());
         userMessage.setFromUserName(AppContext.auth.getName());
-        userMessage.setDate(Calendar.getInstance().getTime());
+        //userMessage.setDate(Calendar.getInstance().getTime());
 
         if(mChat != null) {
-            AppContext.xmppConnectionManager.send(mChat, userMessage, mToUser.getId() + "");
-
-            mUserMessageService.insertUserMessage(userMessage,new TableOperationCallback<UserMessage>() {
+            mUserMessageService.insertUserMessage(userMessage, new TableOperationCallback<UserMessage>() {
                 @Override
                 public void onCompleted(UserMessage entity, Exception exception, ServiceFilterResponse response) {
-                    if(entity == null){
-                        if(exception != null){
+                    if (entity == null) {
+                        if (exception != null) {
                             exception.printStackTrace();
                         }
-                    }else{
+                    } else {
                         AppContext.commonLog.i("insert UserMessage success");
+
+                        AppContext.xmppConnectionManager.send(mChat, entity, mToUser.getId() + "");
+
+                        entity.setState(1);
+                        AppContext.cacheService.userMessageDBManager.insertUserMessage(entity);
+                        getAdapter().addItem(entity);
+                        // ListView scroll to bottom
+                        smoothToBottom();
                     }
                 }
             });
-            userMessage.setState(1);
-            AppContext.cacheService.userMessageDBManager.insertUserMessage(userMessage);
-
-            getAdapter().addItem(userMessage);
-            // ListView scroll to bottom
-            smoothToBottom();
         }else{
             warning(R.string.chat_not_prepared_warning_send_failed);
         }

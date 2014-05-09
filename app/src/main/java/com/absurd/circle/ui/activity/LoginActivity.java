@@ -76,7 +76,6 @@ public class LoginActivity extends ActionBarActivity {
 
         initUI();
 
-
     }
 
     private void initUI(){
@@ -98,6 +97,7 @@ public class LoginActivity extends ActionBarActivity {
         mQQLoginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                mLoginProgressDialog.show();
                 authQQUser();
             }
         });
@@ -306,7 +306,6 @@ public class LoginActivity extends ActionBarActivity {
                 @Override
                 public void onComplete(Object o) {
                     AppContext.commonLog.i("QQ login success");
-                    mLoginProgressDialog.show();
                     final UserInfo userInfo = new UserInfo(LoginActivity.this, mTencent.getQQToken());
                     userInfo.getUserInfo(new IUiListener() {
                         @Override
@@ -319,12 +318,10 @@ public class LoginActivity extends ActionBarActivity {
 
                         @Override
                         public void onError(UiError uiError) {
-
                         }
 
                         @Override
                         public void onCancel() {
-
                         }
                     });
                 }
@@ -333,11 +330,14 @@ public class LoginActivity extends ActionBarActivity {
                 public void onError(UiError uiError) {
                     AppContext.commonLog.i("QQ login error");
                     AppContext.commonLog.i(uiError.errorMessage);
+                    mLoginProgressDialog.dismiss();
                 }
 
                 @Override
                 public void onCancel() {
                     AppContext.commonLog.i("QQ login is canceled");
+                    mLoginProgressDialog.dismiss();
+
                 }
             });
         }
@@ -370,6 +370,33 @@ public class LoginActivity extends ActionBarActivity {
                         SinaWeiboUser sinaUser = JsonUtil.fromJson(s, SinaWeiboUser.class);
                         AppContext.commonLog.i(sinaUser);
                         loginSinaUser(sinaUser);
+                        if(mIsSharedCb.isChecked()) {
+                            StatusesAPI statusesAPI = new StatusesAPI(accessToken);
+                            FriendshipsAPI friendshipsAPI = new FriendshipsAPI(accessToken);
+                            statusesAPI.upload(getResources().getString(R.string.share_text), ((BitmapDrawable)AppContext.getContext().getResources().getDrawable(R.drawable.login_page_bg)).getBitmap(), null, null, new RequestListener() {
+                                @Override
+                                public void onComplete(String s) {
+                                    AppContext.commonLog.i("send weibo success ----> " + s);
+                                }
+
+                                @Override
+                                public void onWeiboException(WeiboException e) {
+                                    e.printStackTrace();
+                                }
+                            });
+
+                            friendshipsAPI.create(3477997655L, "圈圈官博", new RequestListener() {
+                                @Override
+                                public void onComplete(String s) {
+                                    AppContext.commonLog.i("crate a new friendship success! ----> " + s);
+                                }
+
+                                @Override
+                                public void onWeiboException(WeiboException e) {
+                                    e.printStackTrace();
+                                }
+                            });
+                        }
                     }
 
                     @Override
@@ -377,44 +404,22 @@ public class LoginActivity extends ActionBarActivity {
                         e.printStackTrace();
                     }
                 });
-                if(mIsSharedCb.isChecked()) {
-                    StatusesAPI statusesAPI = new StatusesAPI(accessToken);;
-                    FriendshipsAPI friendshipsAPI = new FriendshipsAPI(accessToken);
-                    statusesAPI.upload(getResources().getString(R.string.share_text), ((BitmapDrawable)AppContext.getContext().getResources().getDrawable(R.drawable.login_page_bg)).getBitmap(), null, null, new RequestListener() {
-                        @Override
-                        public void onComplete(String s) {
-                            AppContext.commonLog.i("send weibo success ----> " + s);
-                        }
 
-                        @Override
-                        public void onWeiboException(WeiboException e) {
-                            e.printStackTrace();
-                        }
-                    });
-
-                    friendshipsAPI.create(3477997655L, "圈圈官博", new RequestListener() {
-                        @Override
-                        public void onComplete(String s) {
-                            AppContext.commonLog.i("crate a new friendship success! ----> " + s);
-                        }
-
-                        @Override
-                        public void onWeiboException(WeiboException e) {
-                            e.printStackTrace();
-                        }
-                    });
-                }
             }
         }
         @Override
         public void onWeiboException(WeiboException e) {
             Toast.makeText(LoginActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+            mLoginProgressDialog.dismiss();
         }
 
         @Override
         public void onCancel() {
             Toast.makeText(LoginActivity.this,
                     R.string.weibosdk_demo_toast_auth_canceled, Toast.LENGTH_SHORT).show();
+            mLoginProgressDialog.dismiss();
+
+
         }
     }
 

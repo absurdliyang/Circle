@@ -33,13 +33,20 @@ public class UserMessageAdapter extends NotificationAdapter<UserMessage> {
 
     @Override
     protected void handleView(ViewHolder holder, UserMessage item) {
-        holder.usernameView .setText(item.getFromUserName());
+        String userId = null;
+        if(item.getFromUserId().equals(AppContext.auth.getUserId())) {
+            holder.usernameView.setText(item.getToUserName());
+            userId = item.getToUserId();
+        }else{
+            holder.usernameView.setText(item.getFromUserName());
+            userId = item.getFromUserId();
+        }
         holder.timeView.setText(TimeUtil.formatShowTime(item.getDate()));
         holder.descView.setVisibility(View.GONE);
         holder.contentView.setText(item.getContent());
 
         // Where coming a extra fucking space!???shit!!!
-        User fromUser = AppContext.cacheService.userDBManager.getUser(item.getFromUserId());
+        User fromUser = AppContext.cacheService.userDBManager.getUser(userId);
         if(fromUser != null){
             AppContext.commonLog.i("get from user " + fromUser.toString());
             holder.avatarLoader = RequestManager.loadImage(fromUser.getAvatar(),
@@ -51,7 +58,7 @@ public class UserMessageAdapter extends NotificationAdapter<UserMessage> {
                     })
             );
         }else{
-            getUserInfo(holder, item.getFromUserId());
+            getUserInfo(holder, userId);
         }
     }
 

@@ -53,6 +53,7 @@ import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.jeremyfeinstein.slidingmenu.lib.app.SlidingFragmentActivity;
 import com.microsoft.windowsazure.mobileservices.ServiceFilterResponse;
 import com.microsoft.windowsazure.mobileservices.TableQueryCallback;
+import com.umeng.update.UmengUpdateAgent;
 
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
@@ -92,6 +93,9 @@ public class HomeActivity extends SlidingFragmentActivity
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        UmengUpdateAgent.update(this);
+
         if(!getAuth()) {
             IntentUtil.startActivity(this,LoginActivity.class);
             this.finish();

@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.absurd.circle.app"
-    android:versionCode="1"
-    android:versionName="0.6.2">
+    package="com.absurd.circle.app">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
@@ -27,6 +25,18 @@
             android:value="80837d6d2302e9567a379416f49bee46" />
 
         <service android:name="com.absurd.circle.im.service.ChatService"/>
+
+        <meta-data android:value="536ce36156240b0a770916b2" android:name="UMENG_APPKEY"></meta-data>
+        <meta-data android:value="Channel ID" android:name="UMENG_CHANNEL"/>
+
+        <service
+            android:name="com.umeng.common.net.DownloadingService"
+            android:process=":DownloadingService" >
+        </service>
+        <activity
+            android:name="com.umeng.update.UpdateDialogActivity"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" >
+        </activity>
 
 
         <activity
