@@ -128,6 +128,14 @@ public class User implements Serializable, Cloneable{
     @SerializedName("level")
     private int mLevel;
 
+    @Expose
+    @SerializedName("longitude")
+    private double longitude;
+
+    @Expose
+    @SerializedName("latitude")
+    private double latitude;
+
 
 
     public int getId() {
@@ -353,6 +361,23 @@ public class User implements Serializable, Cloneable{
         mLevel = level;
     }
 
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
     @Override
     public Object clone(){
         User user = null;
@@ -395,6 +420,8 @@ public class User implements Serializable, Cloneable{
                 ", mAppVer='" + mAppVer + '\'' +
                 ", mIsAnnoymity=" + mIsAnnoymity +
                 ", mLevel=" + mLevel +
+                ", longitude=" + longitude +
+                ", latitude=" + latitude +
                 '}';
     }
 }

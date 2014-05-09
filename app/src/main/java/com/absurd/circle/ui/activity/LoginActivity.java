@@ -26,9 +26,9 @@ import com.absurd.circle.data.model.SinaWeiboUser;
 import com.absurd.circle.data.model.User;
 import com.absurd.circle.data.service.UserService;
 import com.absurd.circle.data.util.JsonUtil;
-import com.absurd.circle.im.service.ChatService;
-import com.absurd.circle.ui.view.LoadingDialog;
 import com.absurd.circle.util.IntentUtil;
+import com.absurd.circle.util.StringUtil;
+import com.absurd.circle.util.SystemUtil;
 import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -71,6 +71,14 @@ public class LoginActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        AppContext.userId = AppContext.sharedPreferenceUtil.getUserId();
+        AppContext.commonLog.i(AppContext.userId);
+        if(!StringUtil.isEmpty(AppContext.userId)){
+            IntentUtil.startActivity(this,HomeActivity.class);
+            this.finish();
+        }
+
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_login);
@@ -83,6 +91,11 @@ public class LoginActivity extends ActionBarActivity {
         mTencent = Tencent.createInstance(AppConstant.QQ_ID, AppContext.getContext());
 
         AuthInfo authInfo = new AuthInfo(this, AppConstant.SINA_CLIENT_ID, AppConstant.SINA_CALL_BACK_URL, AppConstant.SINA_SCOPE);
+
+        mLoginProgressDialog = new ProgressDialog(this);
+        mLoginProgressDialog.setMessage("正在登陆......");
+        mLoginProgressDialog.setCancelable(false);
+        mLoginProgressDialog.setCanceledOnTouchOutside(false);
 
         mSinaLoginBtn = (LoginoutButton) findViewById(R.id.lbtn_weibo_login);
         mSinaLoginBtn.setWeiboAuthInfo(authInfo, mLoginListener);
@@ -106,10 +119,6 @@ public class LoginActivity extends ActionBarActivity {
         mIsSharedCb = (CheckBox)findViewById(R.id.cb_is_share);
         mIsSharedCb.setChecked(true);
 
-        mLoginProgressDialog = new ProgressDialog(this);
-        mLoginProgressDialog.setMessage("正在登陆......");
-        mLoginProgressDialog.setCancelable(false);
-        mLoginProgressDialog.setCanceledOnTouchOutside(false);
     }
 
 
@@ -127,19 +136,20 @@ public class LoginActivity extends ActionBarActivity {
                     if(exception != null){
                         exception.printStackTrace();
                     }
+                    mLoginProgressDialog.dismiss();
+                    Toast.makeText(LoginActivity.this ,R.string.login_failed, Toast.LENGTH_SHORT).show();
                 }else {
                     AppContext.commonLog.i(result.get(0).toString());
                     User user = result.get(0);
                     user.setOsName(AppConstant.OS_NAME);
-                    user.setAppVer(AppConstant.APP_VER);
-                    updateUserInfo(user);
+                    user.setAppVer(SystemUtil.getAppVersion());
+                    //updateUserInfo(user);
                     AppContext.cacheService.userDBManager.insertUser(user);
                     AppContext.commonLog.i("get User info success ----> " + user.toString());
                     getFollowers(user.getUserId());
-                    Intent chatServiceIntent = new Intent(LoginActivity.this, ChatService.class);
-                    LoginActivity.this.startService(chatServiceIntent);
-                    IntentUtil.startActivity(LoginActivity.this, HomeActivity.class);
+                    mLoginProgressDialog.dismiss();
                     LoginActivity.this.finish();
+                    IntentUtil.startActivity(LoginActivity.this, HomeActivity.class);
                 }
             }
         });
@@ -169,7 +179,6 @@ public class LoginActivity extends ActionBarActivity {
         user.setLocation(sinaUser.getLocation());
         user.setAvatar(sinaUser.getAvatarLarge());
         user.setOsName(AppConstant.OS_NAME);
-        user.setAppVer(AppConstant.APP_VER);
         java.util.Calendar calendar = java.util.Calendar.getInstance();
         user.setDate(new java.sql.Date(calendar.getTimeInMillis()));
         user.setAge(new java.sql.Date(calendar.getTimeInMillis()));
@@ -182,14 +191,16 @@ public class LoginActivity extends ActionBarActivity {
                     if (exception != null) {
                         exception.printStackTrace();
                     }
+                    mLoginProgressDialog.dismiss();
+                    Toast.makeText(LoginActivity.this ,R.string.login_failed, Toast.LENGTH_SHORT).show();
                 } else {
                     AppContext.commonLog.i("register user success ----> " + entity.toString());
                     AppContext.cacheService.userDBManager.insertUser(entity);
                     IntentUtil.startActivity(LoginActivity.this, HomeActivity.class);
                     getFollowers(user.getUserId());
-                    Intent chatServiceIntent = new Intent(LoginActivity.this, ChatService.class);
-                    LoginActivity.this.startService(chatServiceIntent);
+                    mLoginProgressDialog.dismiss();
                     LoginActivity.this.finish();
+                    IntentUtil.startActivity(LoginActivity.this, HomeActivity.class);
                 }
             }
         });
@@ -209,6 +220,8 @@ public class LoginActivity extends ActionBarActivity {
                     if(exception != null){
                         exception.printStackTrace();
                     }
+                    mLoginProgressDialog.dismiss();
+                    Toast.makeText(LoginActivity.this ,R.string.login_failed, Toast.LENGTH_SHORT).show();
                 }else{
                     initConfig(entity);
                     if(entity.getId() != 0){
@@ -230,15 +243,17 @@ public class LoginActivity extends ActionBarActivity {
         mUserService.insertUser(user, new TableOperationCallback<User>() {
             @Override
             public void onCompleted(User entity, Exception exception, ServiceFilterResponse response) {
-                if(entity == null){
-                    if(exception != null){
+                if (entity == null) {
+                    if (exception != null) {
                         exception.printStackTrace();
                     }
-                }else{
+                    mLoginProgressDialog.dismiss();
+                    Toast.makeText(LoginActivity.this, R.string.login_failed, Toast.LENGTH_SHORT).show();
+                } else {
                     initConfig(entity);
-                    if(entity.getId() != 0){
+                    if (entity.getId() != 0) {
                         registerQQUser(entity, qqUser);
-                    }else{
+                    } else {
                         // mTencent.logout(AppContext.getContext());
                         getUserInfo(entity.getUserId());
                     }
@@ -250,7 +265,11 @@ public class LoginActivity extends ActionBarActivity {
 
     private void registerQQUser(final User user,QQUser qqUser){
         user.setLoginType(1);
-        user.setName(qqUser.getNickname());
+        if(StringUtil.isEmpty(qqUser.getNickname())){
+            user.setName("圈圈用户");
+        }else {
+            user.setName(qqUser.getNickname());
+        }
         if(qqUser.getGender().equals("男")){
             user.setSex("m");
         }else{
@@ -259,7 +278,7 @@ public class LoginActivity extends ActionBarActivity {
         user.setUserId("qq:" + mTencent.getOpenId());
         user.setAvatar(qqUser.getFigureUrl2());
         user.setOsName(AppConstant.OS_NAME);
-        user.setAppVer(AppConstant.APP_VER);
+        user.setAppVer(SystemUtil.getAppVersion());
         java.util.Calendar calendar = java.util.Calendar.getInstance();
         user.setDate(new java.sql.Date(calendar.getTimeInMillis()));
         user.setAge(new java.sql.Date(calendar.getTimeInMillis()));
@@ -272,14 +291,16 @@ public class LoginActivity extends ActionBarActivity {
                     if (exception != null) {
                         exception.printStackTrace();
                     }
+                    mLoginProgressDialog.dismiss();
+                    Toast.makeText(LoginActivity.this, R.string.login_failed, Toast.LENGTH_SHORT).show();
                 } else {
                     AppContext.commonLog.i("register user success ----> " + entity.toString());
                     AppContext.cacheService.userDBManager.insertUser(entity);
                     IntentUtil.startActivity(LoginActivity.this, HomeActivity.class);
-                    Intent chatServiceIntent = new Intent(LoginActivity.this, ChatService.class);
-                    LoginActivity.this.startService(chatServiceIntent);
                     getFollowers(user.getUserId());
+                    mLoginProgressDialog.dismiss();
                     LoginActivity.this.finish();
+                    IntentUtil.startActivity(LoginActivity.this, HomeActivity.class);
                 }
             }
         });
@@ -423,7 +444,6 @@ public class LoginActivity extends ActionBarActivity {
             Toast.makeText(LoginActivity.this,
                     R.string.weibosdk_demo_toast_auth_canceled, Toast.LENGTH_SHORT).show();
             mLoginProgressDialog.dismiss();
-
 
         }
     }

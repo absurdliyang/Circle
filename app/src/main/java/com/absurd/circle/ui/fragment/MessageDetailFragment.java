@@ -95,8 +95,6 @@ public class MessageDetailFragment extends Fragment{
 
         if(AppContext.xmppConnectionManager.getConnection() != null) {
             mChat = AppContext.xmppConnectionManager.initChat(MessageDetailActivity.message.getUser().getId() + "");
-        }else{
-            mMessageDetailActivity.warning(R.string.chat_not_prepared_warning);
         }
 
         return rootView;
@@ -333,7 +331,7 @@ public class MessageDetailFragment extends Fragment{
 
     public void onMoreClicked(View view){
         List<String> items = new ArrayList<String>();
-        items.add("倒叙查看评论");
+        items.add("倒序查看评论");
         items.add("举报该信息");
         items.add("复制信息");
         if(MessageDetailActivity.message.getUserId().equals(AppContext.auth.getUserId())){

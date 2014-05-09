@@ -42,11 +42,6 @@
         <activity
             android:name="com.absurd.circle.ui.activity.HomeActivity"
             android:label="@string/title_activity_home" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
             android:name="com.absurd.circle.ui.activity.EditMessageActivity"
@@ -93,7 +88,12 @@
 
         <activity
             android:name="com.absurd.circle.ui.activity.LoginActivity"
-            android:label="@string/title_activity_login">
+            android:label="@string/title_activity_home">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
         <activity
             android:name="com.absurd.circle.ui.activity.ImageDetailActivity"

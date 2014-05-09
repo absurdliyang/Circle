@@ -8,8 +8,14 @@ public interface AppConstant {
     public static final String TAG = "Circle";
     public static final String SETTING_INFOS = "circle_setting";
     public static final String OS_NAME = "android";
-    public static final String APP_VER = "0.6.1";
     public static final String AZURE_MOBILE_TAG = "AzureMobileService";
+
+    /**
+     * Default position
+     */
+    public static final double DEFAULT_LONGITUDE = 114.499431;
+    public static final double DEFAULT_LATITUDE = 38.143398;
+
 
     /**
      * Azure Setting

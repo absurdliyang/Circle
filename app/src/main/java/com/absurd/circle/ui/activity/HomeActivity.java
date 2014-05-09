@@ -1,74 +1,49 @@
 package com.absurd.circle.ui.activity;
 
 
-import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.Rect;
 import android.location.Location;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.absurd.circle.app.AppConstant;
 import com.absurd.circle.app.AppContext;
 import com.absurd.circle.app.R;
 import com.absurd.circle.data.client.AzureClient;
-import com.absurd.circle.data.model.Follow;
 import com.absurd.circle.data.model.Position;
 import com.absurd.circle.data.model.User;
 import com.absurd.circle.data.service.UserService;
-import com.absurd.circle.im.manager.XmppConnectionManager;
-import com.absurd.circle.im.service.ChatService;
 import com.absurd.circle.ui.activity.base.IProgressBarActivity;
 import com.absurd.circle.ui.fragment.CategoryFragment;
 import com.absurd.circle.ui.fragment.HomeFragment;
 import com.absurd.circle.ui.fragment.SlidingMenuFragment;
 import com.absurd.circle.ui.widget.AppMsg;
-import com.absurd.circle.util.CommonLog;
-import com.absurd.circle.util.IntentUtil;
-import com.absurd.circle.util.LogFactory;
 import com.absurd.circle.util.NetworkUtil;
 import com.absurd.circle.util.StringUtil;
+import com.absurd.circle.util.SystemUtil;
 import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationListener;
 import com.amap.api.location.LocationManagerProxy;
 import com.amap.api.location.LocationProviderProxy;
 import com.amap.api.maps2d.AMap;
-import com.amap.api.maps2d.CameraUpdateFactory;
-import com.amap.api.maps2d.LocationSource;
 import com.amap.api.maps2d.MapView;
-import com.amap.api.maps2d.UiSettings;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.jeremyfeinstein.slidingmenu.lib.app.SlidingFragmentActivity;
 import com.microsoft.windowsazure.mobileservices.ServiceFilterResponse;
+import com.microsoft.windowsazure.mobileservices.TableOperationCallback;
 import com.microsoft.windowsazure.mobileservices.TableQueryCallback;
 import com.umeng.update.UmengUpdateAgent;
 
-import org.jivesoftware.smack.XMPPConnection;
-import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smack.packet.Message;
-import org.jivesoftware.smack.packet.Presence;
-import org.jivesoftware.smackx.OfflineMessageManager;
-
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
-
+import java.util.Calendar;
 
 public class HomeActivity extends SlidingFragmentActivity
         implements IProgressBarActivity, AMapLocationListener{
@@ -93,14 +68,9 @@ public class HomeActivity extends SlidingFragmentActivity
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         UmengUpdateAgent.update(this);
 
-        if(!getAuth()) {
-            IntentUtil.startActivity(this,LoginActivity.class);
-            this.finish();
-        }
-
+        getAuth();
 
         // set the Above View
         if (savedInstanceState != null)
@@ -119,13 +89,14 @@ public class HomeActivity extends SlidingFragmentActivity
             setBusy(false);
         }
 
-
+        updateUserInfo();
         //initAMap();
         // Get user's current location
         mLocationManagerProxy = LocationManagerProxy.getInstance(HomeActivity.this);
         updateLocation();
 
     }
+
 
     private void updateLocation(){
         if(NetworkUtil.isNetConnected()) {
@@ -177,8 +148,6 @@ public class HomeActivity extends SlidingFragmentActivity
     }
 
 
-
-
     private void init(){
         AppContext.lastPosition = AppContext.sharedPreferenceUtil.getLastPosition();
     }
@@ -202,6 +171,46 @@ public class HomeActivity extends SlidingFragmentActivity
         }
         return false;
     }
+
+
+    private void updateUserInfo(){
+        mUserService.getUser(AppContext.auth.getUserId(), new TableQueryCallback<User>() {
+            @Override
+            public void onCompleted(List<User> result, int count, Exception exception, ServiceFilterResponse response) {
+                if(result == null || result.isEmpty()){
+                    if(exception != null){
+                        exception.printStackTrace();
+                    }
+                }else{
+                    AppContext.auth = result.get(0);
+                    AppContext.auth.setAppVer(SystemUtil.getAppVersion());
+                    AppContext.auth.setOsName(AppConstant.OS_NAME);
+                    AppContext.auth.setLastLoginDate(new java.sql.Date(Calendar.getInstance().getTime().getTime()));
+                    if(AppContext.lastPosition != null){
+                        AppContext.auth.setLatitude(AppContext.lastPosition.getLatitude());
+                        AppContext.auth.setLongitude(AppContext.lastPosition.getLongitude());
+                    }
+                    AppContext.cacheService.userDBManager.updateUser(result.get(0));
+                    mUserService.updateUser(AppContext.auth, new TableOperationCallback<User>() {
+                        @Override
+                        public void onCompleted(User entity, Exception exception, ServiceFilterResponse response) {
+                            if(entity == null){
+                                if(exception != null){
+                                    exception.printStackTrace();
+                                }
+                            }else{
+                                AppContext.commonLog.i("Update user info success");
+                            }
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+
+
+
 
 
     private void configureSlidingMenu(){
@@ -378,7 +387,7 @@ public class HomeActivity extends SlidingFragmentActivity
 
             // Cancel refresh location
             mLocationManagerProxy.destory();
-            //mContent.refreshTranscation();
+            mContent.refreshTranscation();
             //deactivate();
         }
 

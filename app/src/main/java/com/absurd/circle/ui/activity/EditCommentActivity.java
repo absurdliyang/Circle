@@ -59,8 +59,6 @@ public class EditCommentActivity extends BaseActivity {
         mSmiley.setEditText(this, ((LinearLayout) findViewById(R.id.edit_comment_root_layout)), mContentEt);
         if(AppContext.xmppConnectionManager.getConnection() != null) {
             mChat = AppContext.xmppConnectionManager.initChat(MessageDetailActivity.message.getUser().getId() + "");
-        }else{
-            warning(R.string.chat_not_prepared_warning);
         }
     }
 

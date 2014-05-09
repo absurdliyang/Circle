@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.HeaderViewListAdapter;
 
+import com.absurd.circle.app.AppConstant;
 import com.absurd.circle.app.AppContext;
 import com.absurd.circle.data.model.Message;
 import com.absurd.circle.ui.activity.HomeActivity;
@@ -41,6 +42,9 @@ public class HomeFragment extends MessageListFragment {
         CategoryFragment categoryFragment = CategoryFragment.getInstance();
         if(AppContext.lastPosition != null) {
             mMessageService.getNearMessage(pageIndex, AppContext.lastPosition.getLatitude(), AppContext.lastPosition.getLongitude(),
+                    categoryFragment.distanceFilter * 1000, categoryFragment.categoryFilter, categoryFragment.orderFilter, "1", callback);
+        }else{
+            mMessageService.getNearMessage(pageIndex, AppConstant.DEFAULT_LATITUDE, AppConstant.DEFAULT_LONGITUDE,
                     categoryFragment.distanceFilter * 1000, categoryFragment.categoryFilter, categoryFragment.orderFilter, "1", callback);
         }
     }
