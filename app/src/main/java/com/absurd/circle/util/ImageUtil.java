@@ -23,6 +23,9 @@ import android.media.ExifInterface;
 import android.util.Log;
 import android.widget.ImageView;
 
+import com.absurd.circle.app.AppConstant;
+import com.absurd.circle.app.AppContext;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -627,6 +630,27 @@ public class ImageUtil {
         } catch (IOException e) {
             return 0;
         }
+    }
+
+    /**
+     *
+     * @param originalUrl
+     * @param parameter
+     * @param mode true height false width
+     * @return
+     */
+    public static String getThumbnailUrl(String originalUrl, double parameter, boolean mode){
+        if(StringUtil.isEmpty(originalUrl)){
+            return "";
+        }
+        String url;
+        if(mode){
+            url = ImageProxyUtil.getImageByHeight(originalUrl, parameter);
+        }else{
+            url = ImageProxyUtil.getImageByWidth(originalUrl, parameter);
+        }
+        AppContext.commonLog.i(url);
+        return url;
     }
 
 

@@ -68,23 +68,21 @@ public class UserMessageAdapter extends NotificationAdapter<UserMessage> {
         userService.getUser(userId, new TableQueryCallback<User>() {
             @Override
             public void onCompleted(List<User> result, int count, Exception exception, ServiceFilterResponse response) {
-                if(result == null){
+                if(result == null || result.isEmpty()){
                     if(exception != null){
                         exception.printStackTrace();
                     }
                 }else {
-                    if (result.size() > 0) {
-                        mUser = result.get(0);
-                        AppContext.cacheService.userDBManager.insertUser(mUser);
-                        holder.avatarLoader = RequestManager.loadImage(mUser.getAvatar(),
-                                RequestManager.getImageListener(holder.avatarView, mAvatarDefaultBitmap, mAvatarDefaultBitmap, new BitmapFilter() {
-                                    @Override
-                                    public Bitmap filter(Bitmap bitmap) {
-                                        return ImageUtil.roundBitmap(bitmap);
-                                    }
-                                })
-                        );
-                    }
+                    mUser = result.get(0);
+                    AppContext.cacheService.userDBManager.insertUser(mUser);
+                    holder.avatarLoader = RequestManager.loadImage(mUser.getAvatar(),
+                            RequestManager.getImageListener(holder.avatarView, mAvatarDefaultBitmap, mAvatarDefaultBitmap, new BitmapFilter() {
+                                @Override
+                                public Bitmap filter(Bitmap bitmap) {
+                                    return ImageUtil.roundBitmap(bitmap);
+                                }
+                            })
+                    );
                 }
             }
         });

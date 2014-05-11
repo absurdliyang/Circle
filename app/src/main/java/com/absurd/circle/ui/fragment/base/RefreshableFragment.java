@@ -29,7 +29,6 @@ public abstract class RefreshableFragment<V> extends Fragment {
     protected PullToRefreshListView mContentLv;
     protected BeanAdapter<V> mAdapter;
     protected View mHeader;
-    private PullToRefreshBase.Mode mRefreshMode;
 
     protected IProgressBarActivity mActivity;
     protected boolean mIsBusy = false;

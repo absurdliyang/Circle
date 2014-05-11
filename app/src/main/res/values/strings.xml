@@ -82,8 +82,10 @@
     <string name="update_location">更新位置</string>
     <string name="update_location_failed">获取位置失败</string>
 
+    <string name="image_downloading_failed">图片下载失败</string>
 
-
+    <string name="picture_cant_download_or_sd_cant_read">图片下载失败</string>
+    <string name="download_finished_but_cant_read_picture_file">下载完成，但是无法读取图片</string>
 
 
 

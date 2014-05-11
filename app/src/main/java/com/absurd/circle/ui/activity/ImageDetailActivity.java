@@ -65,6 +65,7 @@ public class ImageDetailActivity extends ActionBarActivity implements View.OnTou
         mImageDetailIv = (ImageView)findViewById(R.id.iv_image_detail);
         RequestManager.loadImage(mImageUrl,
             new ImageLoader.ImageListener() {
+
                 @Override
                 public void onErrorResponse(VolleyError error) {
                     if (mMediaDefaultBitmap != null) {

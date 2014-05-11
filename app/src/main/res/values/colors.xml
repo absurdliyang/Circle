@@ -21,4 +21,7 @@
     <color name="confirm">#FF8800</color>
     <color name="info">#669900</color>
 
+    <!-- Gallery -->
+    <color name="dark_gray">#1E2129</color>
+
 </resources>

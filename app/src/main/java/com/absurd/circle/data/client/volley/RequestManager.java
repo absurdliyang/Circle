@@ -33,8 +33,6 @@ public class RequestManager {
     // 设置最大宽高来限制加载到内存中的图片的大小，减少OOM的发生，当加载一些大图片时，效果还是非常明显的
     private static final int HEIGHT = 900, WIDTH = 900;
 
-    private static CommonLog mLog = LogFactory.createLog();
-
     public static RequestQueue mRequestQueue = newRequestQueue();
 
     // 取运行内存阈值的1/3作为图片缓存
@@ -100,11 +98,14 @@ public class RequestManager {
                 }
             }
 
+
+
             @Override
             public void onResponse(ImageLoader.ImageContainer response, boolean isImmediate) {
                 //AppContext.commonLog.i("isImmediate " + isImmediate + "response.getBitmap" + response.getBitmap());
                 if (response.getBitmap() != null) {
                     if (!isImmediate && defaultImageBitmap != null) {
+                        /**
                         TransitionDrawable transitionDrawable;
                         if(bitmapFilter != null) {
                             transitionDrawable = new TransitionDrawable(
@@ -122,8 +123,12 @@ public class RequestManager {
                             );
                         }
                         transitionDrawable.setCrossFadeEnabled(true);
-                        view.setImageDrawable(transitionDrawable);
-                        transitionDrawable.startTransition(100);
+                         **/
+                        //view.setImageDrawable(transitionDrawable);
+
+                        //transitionDrawable.startTransition(100);
+
+                        view.setImageBitmap(response.getBitmap());
                     } else {
                         if(bitmapFilter != null) {
                             view.setImageBitmap(bitmapFilter.filter(response.getBitmap()));

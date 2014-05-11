@@ -61,7 +61,6 @@
                 android:layout_alignLeft="@id/tv_content"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
-                android:scaleType="centerInside"
                 android:layout_marginTop="5dp"
                 android:id="@+id/iv_media"/>
             <RelativeLayout

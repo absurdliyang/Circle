@@ -56,12 +56,13 @@ public class UserDBManager extends BaseDBManager{
     }
 
     public void updateUser(User user){
-        deleteUser();
+        deleteUser(user.getUserId());
         insertUser(user);
     }
 
-    public void deleteUser(){
-        String sql = "delete from " + UserDBInfo.TABLE_NAME;
+    public void deleteUser(String userId){
+        String sql = "delete from " + UserDBInfo.TABLE_NAME + " where " + UserDBInfo.USER_ID + " = '"
+                + userId + "'";
         mDatabase.execSQL(sql);
     }
 

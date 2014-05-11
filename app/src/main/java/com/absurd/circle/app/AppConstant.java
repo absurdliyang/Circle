@@ -77,6 +77,11 @@ public interface AppConstant {
     public static final String TAKE_PHOTO_PATH = "/circle/Camera/";
 
 
+    /**
+     * Image proxy url
+     */
+    public static final String IMAGE_PROXY_URL = "http://proxy.xgres.com/proxyImg.php";
+
 
 
 }

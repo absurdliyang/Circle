@@ -62,14 +62,16 @@ public class ChatActivity extends BaseActivity {
             String action = intent.getAction();
             AppContext.commonLog.i("Recieve a chat message");
             if(ChatService.NEW_MESSAGE_ACTION.equals(action)){
-                AppContext.commonLog.i("Receive a chat message");
-                AppContext.notificationNum --;
                 UserMessage userMessage = (UserMessage)intent.getExtras().get("message");
-                userMessage.setState(1);
-                AppContext.cacheService.userMessageDBManager.updateUserMessageStateByUser(mToUser.getUserId());
-                AppContext.commonLog.i(userMessage.toString());
-                if(userMessage != null && userMessage.getToUserId().equals(AppContext.auth.getUserId())){
-                    recieveMessage(userMessage);
+                if(userMessage.getToUserId().equals(mToUser.getUserId())) {
+                    AppContext.commonLog.i("Receive a chat message");
+                    AppContext.notificationNum--;
+                    userMessage.setState(1);
+                    AppContext.cacheService.userMessageDBManager.updateUserMessageStateByUser(mToUser.getUserId());
+                    AppContext.commonLog.i(userMessage.toString());
+                    if (userMessage != null && userMessage.getToUserId().equals(AppContext.auth.getUserId())) {
+                        recieveMessage(userMessage);
+                    }
                 }
             }
         }

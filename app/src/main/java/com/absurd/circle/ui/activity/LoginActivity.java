@@ -51,6 +51,7 @@ import com.tencent.connect.UserInfo;
 import com.tencent.tauth.IUiListener;
 import com.tencent.tauth.Tencent;
 import com.tencent.tauth.UiError;
+import com.umeng.update.UmengUpdateAgent;
 
 public class LoginActivity extends ActionBarActivity {
 
@@ -71,6 +72,7 @@ public class LoginActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        UmengUpdateAgent.update(this);
 
         AppContext.userId = AppContext.sharedPreferenceUtil.getUserId();
         AppContext.commonLog.i(AppContext.userId);

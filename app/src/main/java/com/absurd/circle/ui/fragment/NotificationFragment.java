@@ -32,7 +32,6 @@ import java.util.Calendar;
  * Created by absurd on 14-4-19.
  */
 public class NotificationFragment extends LocalRefreshableFragment<UserMessage> {
-    //private NotificationService mNotificationService = new NotificationService();
 
 
     @Override
@@ -88,6 +87,7 @@ public class NotificationFragment extends LocalRefreshableFragment<UserMessage> 
     @Override
     protected List<UserMessage> loadDataLocal(int pageIndex) {
         if(AppContext.auth != null) {
+            AppContext.commonLog.i("load Data local");
             List<UserMessage> allMessages = AppContext.cacheService.userMessageDBManager
                     .getAllUserMessages();
             Map<String, UserMessage> userLatestDate = new HashMap<String,UserMessage>();

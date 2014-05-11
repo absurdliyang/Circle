@@ -68,7 +68,6 @@ public class HomeActivity extends SlidingFragmentActivity
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        UmengUpdateAgent.update(this);
 
         getAuth();
 

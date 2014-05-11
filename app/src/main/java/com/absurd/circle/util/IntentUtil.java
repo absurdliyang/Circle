@@ -17,8 +17,7 @@ import android.os.Bundle;
  * Created by absurd on 14-3-14.
  */
 public class IntentUtil {
-    public static void startActivity(Context activity,Class<?> cls,Map<String,? extends Serializable> params)
-    {
+    public static void startActivity(Context activity,Class<?> cls,Map<String,? extends Serializable> params){
         Intent intent=new Intent();
         intent.setClass(activity,cls);
         if(params != null){
