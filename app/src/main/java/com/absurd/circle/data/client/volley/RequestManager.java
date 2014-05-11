@@ -127,8 +127,11 @@ public class RequestManager {
                         //view.setImageDrawable(transitionDrawable);
 
                         //transitionDrawable.startTransition(100);
-
-                        view.setImageBitmap(response.getBitmap());
+                        if(bitmapFilter != null) {
+                            view.setImageBitmap(bitmapFilter.filter(response.getBitmap()));
+                        }else{
+                            view.setImageBitmap(response.getBitmap());
+                        }
                     } else {
                         if(bitmapFilter != null) {
                             view.setImageBitmap(bitmapFilter.filter(response.getBitmap()));

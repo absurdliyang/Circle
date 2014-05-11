@@ -13,25 +13,32 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.os.Bundle;
+
+import com.absurd.circle.app.R;
+import com.absurd.circle.ui.activity.base.BaseActivity;
+
 /**
  * Created by absurd on 14-3-14.
  */
 public class IntentUtil {
-    public static void startActivity(Context activity,Class<?> cls,Map<String,? extends Serializable> params){
+    public static void startActivity(Context context,Class<?> cls,Map<String,? extends Serializable> params){
         Intent intent=new Intent();
-        intent.setClass(activity,cls);
+        intent.setClass(context,cls);
         if(params != null){
             for(Map.Entry<String,?> entry : params.entrySet()){
                 intent.putExtra(entry.getKey(),(Serializable)entry.getValue());
             }
         }
-        activity.startActivity(intent);
+        context.startActivity(intent);
+            //((BaseActivity)context).overridePendingTransition(R.anim.push_left_in, R.anim.push_left_in);
+
     }
 
-    public static void startActivity(Context activity, Class<?> cls){
+    public static void startActivity(Context context, Class<?> cls){
         Intent intent = new Intent();
-        intent.setClass(activity,cls);
-        activity.startActivity(intent);
+        intent.setClass(context,cls);
+        context.startActivity(intent);
+            //((BaseActivity)context).overridePendingTransition(R.anim.push_left_in, R.anim.push_left_in);
     }
 
 
@@ -43,6 +50,7 @@ public class IntentUtil {
         bundle.putSerializable(key, value);
         intent.putExtras(bundle);
         context.startActivity(intent);
+            //((BaseActivity)context).overridePendingTransition(R.anim.push_left_in, R.anim.push_left_in);
 
     }
 

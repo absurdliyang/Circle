@@ -2,6 +2,7 @@ package com.absurd.circle.ui.fragment;
 
 import android.content.ClipData;
 import android.content.ClipboardManager;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
@@ -16,7 +17,6 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.absurd.circle.app.AppContext;
 import com.absurd.circle.app.R;
@@ -28,9 +28,9 @@ import com.absurd.circle.data.model.ReportMessage;
 import com.absurd.circle.data.service.CommentService;
 import com.absurd.circle.data.service.MessageService;
 import com.absurd.circle.data.service.NotificationService;
+import com.absurd.circle.ui.activity.LoadOriginImaegAcitivty;
 import com.absurd.circle.ui.activity.base.BaseActivity;
 import com.absurd.circle.ui.activity.EditCommentActivity;
-import com.absurd.circle.ui.activity.ImageDetailActivity;
 import com.absurd.circle.ui.activity.MessageDetailActivity;
 import com.absurd.circle.ui.activity.UserProfileActivity;
 import com.absurd.circle.ui.adapter.CommentAdapter;
@@ -47,12 +47,15 @@ import com.microsoft.windowsazure.mobileservices.TableOperationCallback;
 import com.microsoft.windowsazure.mobileservices.TableQueryCallback;
 
 import org.jivesoftware.smack.Chat;
-import org.jivesoftware.smack.MessageListener;
 
+import java.io.ByteArrayOutputStream;
+import java.io.Serializable;
 import java.util.Calendar;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by absurd on 14-3-14.
@@ -139,10 +142,18 @@ public class MessageDetailFragment extends Fragment{
         if(!StringUtil.isEmpty(MessageDetailActivity.message.getMediaUrl()) && StringUtil.isUrl(MessageDetailActivity.message.getMediaUrl())){
             RequestManager.loadImage(MessageDetailActivity.message.getMediaUrl(),RequestManager.getImageListener(headerMediaView,
                     mMediaDefaultBitmap,mMediaDefaultBitmap,null));
+            final Bitmap thumbnailBitmap = ((BitmapDrawable)headerMediaView.getDrawable()).getBitmap();
             headerMediaView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    IntentUtil.startActivity(mMessageDetailActivity,ImageDetailActivity.class,"mediaUrl",MessageDetailActivity.message.getMediaUrl());
+
+                    Intent intent = new Intent(MessageDetailFragment.this.getActivity(), LoadOriginImaegAcitivty.class);
+                    intent.putExtra("meidaUrl", MessageDetailActivity.message.getMediaUrl());
+                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                    thumbnailBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                    byte[] bytes = stream.toByteArray();
+                    intent.putExtra("thumbnailBitmap", bytes);
+                    MessageDetailFragment.this.getActivity().startActivity(intent);
                 }
             });
         }else{

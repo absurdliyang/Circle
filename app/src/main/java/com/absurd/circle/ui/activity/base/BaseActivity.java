@@ -173,4 +173,9 @@ public abstract class BaseActivity extends SwipeBackActivity implements IProgres
         warning(content);
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+
+    }
 }

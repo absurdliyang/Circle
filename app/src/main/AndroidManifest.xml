@@ -97,10 +97,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.absurd.circle.ui.activity.ImageDetailActivity"
-            android:label="ImageDetailActivity" >
-        </activity>
-        <activity
             android:name="com.absurd.circle.ui.activity.UserDynamicActivity"
             android:label="@string/title_activity_user_message" >
         </activity>
@@ -144,7 +140,7 @@
                   android:label="@string/title_activity_browse_image"
                   android:theme="@style/GalleryTheme"/>
 
-        <activity android:name="com.absurd.circle.ui.activity.TestActivity"
+        <activity android:name="com.absurd.circle.ui.activity.LoadOriginImaegAcitivty"
                   android:label="test">
         </activity>
     </application>
