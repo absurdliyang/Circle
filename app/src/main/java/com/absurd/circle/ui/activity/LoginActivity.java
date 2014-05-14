@@ -69,9 +69,11 @@ public class LoginActivity extends ActionBarActivity {
     private AuthListener mLoginListener = new AuthListener();
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        com.umeng.common.Log.LOG = true;
         UmengUpdateAgent.update(this);
 
         AppContext.userId = AppContext.sharedPreferenceUtil.getUserId();

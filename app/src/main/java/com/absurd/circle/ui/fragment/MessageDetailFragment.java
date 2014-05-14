@@ -140,19 +140,28 @@ public class MessageDetailFragment extends Fragment{
             });
         }
         if(!StringUtil.isEmpty(MessageDetailActivity.message.getMediaUrl()) && StringUtil.isUrl(MessageDetailActivity.message.getMediaUrl())){
+            headerMediaView.setTag("loading");
             RequestManager.loadImage(MessageDetailActivity.message.getMediaUrl(),RequestManager.getImageListener(headerMediaView,
                     mMediaDefaultBitmap,mMediaDefaultBitmap,null));
-            final Bitmap thumbnailBitmap = ((BitmapDrawable)headerMediaView.getDrawable()).getBitmap();
+
+            final Bitmap thumbnailBitmap;
+            if(headerMediaView.getTag().equals("loading")){
+                thumbnailBitmap = null;
+            }else{
+                thumbnailBitmap = ((BitmapDrawable)headerMediaView.getDrawable()).getBitmap();
+            }
             headerMediaView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
 
                     Intent intent = new Intent(MessageDetailFragment.this.getActivity(), LoadOriginImaegAcitivty.class);
-                    intent.putExtra("meidaUrl", MessageDetailActivity.message.getMediaUrl());
+                    intent.putExtra("mediaUrl", MessageDetailActivity.message.getMediaUrl());
                     ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                    thumbnailBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-                    byte[] bytes = stream.toByteArray();
-                    intent.putExtra("thumbnailBitmap", bytes);
+                    if(thumbnailBitmap != null) {
+                        thumbnailBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                        byte[] bytes = stream.toByteArray();
+                        intent.putExtra("thumbnailBitmap", bytes);
+                    }
                     MessageDetailFragment.this.getActivity().startActivity(intent);
                 }
             });

@@ -51,14 +51,7 @@ public class LoadOriginImaegAcitivty extends BaseActivity {
         mPhotoView = (PhotoView)findViewById(R.id.animation);
         mLoadingPb = (ProgressBar)findViewById(R.id.pb_loading_image);
         mLoadingPb.setVisibility(View.VISIBLE);
-        mLoadingPb.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(mLoadingPb.getVisibility() == View.VISIBLE){
-                    LoadOriginImaegAcitivty.this.onBackPressed();
-                }
-            }
-        });
+
 
         if(mThumbnailBitmap != null){
             mPhotoView.setImageBitmap(mThumbnailBitmap);
@@ -68,6 +61,7 @@ public class LoadOriginImaegAcitivty extends BaseActivity {
 
 
         if(mOriginalImageUrl == null){
+            mLoadingPb.setVisibility(View.INVISIBLE);
             loadImagError();
         }else {
             RequestManager.loadImage(mOriginalImageUrl,

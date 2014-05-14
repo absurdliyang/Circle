@@ -195,7 +195,7 @@ public class ChatActivity extends BaseActivity {
         userMessage.setToUserName(mToUser.getName());
         userMessage.setFromUserId(AppContext.auth.getUserId());
         userMessage.setFromUserName(AppContext.auth.getName());
-        //userMessage.setDate(Calendar.getInstance().getTime());
+        userMessage.setDate(Calendar.getInstance().getTime());
 
         if(mChat != null) {
             mUserMessageService.insertUserMessage(userMessage, new TableOperationCallback<UserMessage>() {
@@ -212,12 +212,13 @@ public class ChatActivity extends BaseActivity {
 
                         entity.setState(1);
                         AppContext.cacheService.userMessageDBManager.insertUserMessage(entity);
-                        getAdapter().addItem(entity);
-                        // ListView scroll to bottom
-                        smoothToBottom();
+
                     }
                 }
             });
+            getAdapter().addItem(userMessage);
+            // ListView scroll to bottom
+            smoothToBottom();
         }else{
             warning(R.string.chat_not_prepared_warning_send_failed);
         }

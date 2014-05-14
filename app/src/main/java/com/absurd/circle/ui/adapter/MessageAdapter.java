@@ -29,6 +29,7 @@ import com.absurd.circle.util.ImageUtil;
 import com.absurd.circle.util.IntentUtil;
 import com.absurd.circle.util.TimeUtil;
 import com.absurd.circle.util.StringUtil;
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 
 import java.io.ByteArrayOutputStream;
@@ -109,9 +110,9 @@ public class MessageAdapter extends BeanAdapter<Message> {
                     @Override
                     public void onClick(View view) {
                         if(message.getUserId().equals(AppContext.userId)){
-                            IntentUtil.startActivity(mContext, MyProfileActivity.class);
+                            IntentUtil.startActivity(mActivity, MyProfileActivity.class);
                         }else {
-                            IntentUtil.startActivity(mContext, UserProfileActivity.class, "user", message.getUser());
+                            IntentUtil.startActivity(mActivity, UserProfileActivity.class, "user", message.getUser());
                         }
                     }
                 });
@@ -134,20 +135,27 @@ public class MessageAdapter extends BeanAdapter<Message> {
         if(message.getMediaUrl() != null){
             final String thumbnailUrl = ImageUtil.getThumbnailUrl(message.getMediaUrl(), 200, true);
             holder.mediaIv.setVisibility(View.VISIBLE);
+            holder.mediaIv.setTag("loading");
             holder.mediaRequest = RequestManager.loadImage(thumbnailUrl,
                     RequestManager.getImageListener(holder.mediaIv, mMediaDefaultBitmap, mMediaDefaultBitmap,null));
 
-            final Bitmap bitmap = ((BitmapDrawable)holder.mediaIv.getDrawable()).getBitmap();
+            final Bitmap bitmap;
+            if(holder.mediaIv.getTag().equals("loading")){
+                bitmap = null;
+            }else{
+                bitmap = ((BitmapDrawable)holder.mediaIv.getDrawable()).getBitmap();
+            }
             holder.mediaIv.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Intent intent = new Intent(mContext, LoadOriginImaegAcitivty.class);
                     intent.putExtra("mediaUrl", message.getMediaUrl());
-
-                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-                    byte[] bytes = stream.toByteArray();
-                    intent.putExtra("thumbnailBitmap", bytes);
+                    if(bitmap != null) {
+                        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                        bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                        byte[] bytes = stream.toByteArray();
+                        intent.putExtra("thumbnailBitmap", bytes);
+                    }
                     mActivity.startActivity(intent);
                 }
             });
@@ -156,6 +164,7 @@ public class MessageAdapter extends BeanAdapter<Message> {
         }
         return view;
     }
+
 
 
 }

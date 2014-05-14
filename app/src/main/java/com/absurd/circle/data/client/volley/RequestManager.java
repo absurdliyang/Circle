@@ -44,7 +44,7 @@ public class RequestManager {
 
     private static DiskBasedCache mDiskCache = (DiskBasedCache) mRequestQueue.getCache();
 
-    private RequestManager(){
+    private RequestManager() {
 
     }
 
@@ -92,63 +92,62 @@ public class RequestManager {
                 if (errorImageBitmap != null) {
                     if (bitmapFilter != null) {
                         view.setImageBitmap(bitmapFilter.filter(errorImageBitmap));
-                    }else{
+                    } else {
                         view.setImageBitmap(errorImageBitmap);
                     }
                 }
             }
 
 
-
             @Override
             public void onResponse(ImageLoader.ImageContainer response, boolean isImmediate) {
                 //AppContext.commonLog.i("isImmediate " + isImmediate + "response.getBitmap" + response.getBitmap());
                 if (response.getBitmap() != null) {
+                    view.setTag("loadSuccess");
                     if (!isImmediate && defaultImageBitmap != null) {
                         /**
-                        TransitionDrawable transitionDrawable;
-                        if(bitmapFilter != null) {
-                            transitionDrawable = new TransitionDrawable(
-                                    new Drawable[]{
-                                            new BitmapDrawable(AppContext.getContext().getResources(),bitmapFilter.filter(defaultImageBitmap)),
-                                            new BitmapDrawable(AppContext.getContext().getResources(),bitmapFilter.filter(response.getBitmap()))
-                                    }
-                            );
-                        }else{
-                            transitionDrawable = new TransitionDrawable(
-                                    new Drawable[]{
-                                            new BitmapDrawable(AppContext.getContext().getResources(),defaultImageBitmap),
-                                            new BitmapDrawable(AppContext.getContext().getResources(),response.getBitmap())
-                                    }
-                            );
-                        }
-                        transitionDrawable.setCrossFadeEnabled(true);
+                         TransitionDrawable transitionDrawable;
+                         if(bitmapFilter != null) {
+                         transitionDrawable = new TransitionDrawable(
+                         new Drawable[]{
+                         new BitmapDrawable(AppContext.getContext().getResources(),bitmapFilter.filter(defaultImageBitmap)),
+                         new BitmapDrawable(AppContext.getContext().getResources(),bitmapFilter.filter(response.getBitmap()))
+                         }
+                         );
+                         }else{
+                         transitionDrawable = new TransitionDrawable(
+                         new Drawable[]{
+                         new BitmapDrawable(AppContext.getContext().getResources(),defaultImageBitmap),
+                         new BitmapDrawable(AppContext.getContext().getResources(),response.getBitmap())
+                         }
+                         );
+                         }
+                         transitionDrawable.setCrossFadeEnabled(true);
                          **/
                         //view.setImageDrawable(transitionDrawable);
 
                         //transitionDrawable.startTransition(100);
-                        if(bitmapFilter != null) {
+                        if (bitmapFilter != null) {
                             view.setImageBitmap(bitmapFilter.filter(response.getBitmap()));
-                        }else{
+                        } else {
                             view.setImageBitmap(response.getBitmap());
                         }
                     } else {
-                        if(bitmapFilter != null) {
+                        if (bitmapFilter != null) {
                             view.setImageBitmap(bitmapFilter.filter(response.getBitmap()));
-                        }else{
+                        } else {
                             view.setImageBitmap(response.getBitmap());
                         }
                     }
                 } else if (defaultImageBitmap != null) {
-                    if(bitmapFilter != null) {
+                    if (bitmapFilter != null) {
                         view.setImageBitmap(bitmapFilter.filter(defaultImageBitmap));
-                    }else{
+                    } else {
                         view.setImageBitmap(defaultImageBitmap);
                     }
                 }
             }
         };
     }
-
 
 }

@@ -2,6 +2,7 @@ package com.absurd.circle.ui.adapter;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,13 +30,16 @@ import java.util.List;
  */
 public class CommentAdapter extends BeanAdapter<Comment> {
 
+    private FragmentActivity mActivity;
+
 
     public CommentAdapter(Context context, List<Comment> items) {
         super(context, items);
     }
 
-    public CommentAdapter(Context context){
-        super(context);
+    public CommentAdapter(FragmentActivity activity){
+        super(activity);
+        mActivity = activity;
     }
 
     private class ViewHolder{
@@ -87,7 +91,7 @@ public class CommentAdapter extends BeanAdapter<Comment> {
             holder.userAvatarIv.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    IntentUtil.startActivity(mContext,UserProfileActivity.class,"user",comment.getUser());
+                    IntentUtil.startActivity(mActivity,UserProfileActivity.class,"user",comment.getUser());
                 }
             });
         }
@@ -107,7 +111,7 @@ public class CommentAdapter extends BeanAdapter<Comment> {
         holder.replyIconIv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                IntentUtil.startActivity(mContext, EditCommentActivity.class, "parentComment", comment);
+                IntentUtil.startActivity(mActivity, EditCommentActivity.class, "parentComment", comment);
             }
         });
         return view;

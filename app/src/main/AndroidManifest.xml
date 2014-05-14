@@ -136,9 +136,6 @@
         </activity>
         <activity android:name="com.absurd.circle.ui.activity.BrowseImageActivity"
                   android:label="@string/title_activity_browse_image"/>
-        <activity android:name="com.absurd.circle.ui.activity.gallery.GalleryAnimationActivity"
-                  android:label="@string/title_activity_browse_image"
-                  android:theme="@style/GalleryTheme"/>
 
         <activity android:name="com.absurd.circle.ui.activity.LoadOriginImaegAcitivty"
                   android:label="test">
