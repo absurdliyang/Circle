@@ -25,6 +25,9 @@ package com.microsoft.windowsazure.mobileservices;
 
 import android.os.AsyncTask;
 
+import com.absurd.circle.app.AppConstant;
+import com.absurd.circle.app.AppContext;
+
 /**
  * Default implementation for performing requests using AsyncTask
  */
@@ -74,6 +77,7 @@ abstract class RequestAsyncTask extends
 	@Override
 	protected ServiceFilterResponse doInBackground(Void... params) {
 		// Call start method that executes the request
+        AppContext.commonLog.i("doInbackground");
 		mConnection.start(mRequest, new ServiceFilterResponseCallback() {
 
 			@Override

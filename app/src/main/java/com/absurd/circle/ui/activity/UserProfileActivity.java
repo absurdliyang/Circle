@@ -193,7 +193,7 @@ public class UserProfileActivity extends BaseActivity {
                             exception.printStackTrace();
                         }
                     }else{
-                        AppContext.cacheService.followDBManager.insertFollow(follow);
+                        AppContext.cacheService.followDBManager.insertFollow(entity);
                         mAddFollowTextTv.setText("取消关注");
                         mFollow = entity;
                         warning(R.string.add_follow_success);

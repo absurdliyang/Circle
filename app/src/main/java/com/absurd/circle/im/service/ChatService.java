@@ -19,6 +19,7 @@ import com.absurd.circle.data.util.JsonUtil;
 import com.absurd.circle.ui.activity.NotificationActivity;
 import com.absurd.circle.util.NetworkUtil;
 import com.absurd.circle.util.StringUtil;
+import com.microsoft.windowsazure.mobileservices.AsyncTaskUtil;
 
 
 import org.jivesoftware.smack.PacketListener;
@@ -162,12 +163,12 @@ public class ChatService extends Service {
                     AppContext.commonLog.i("chat login success");
                     AppContext.xmppConnectionManager.getConnection()
                             .addPacketListener(mPacketListener, null);
-                    new GetOfflineMessageTask().execute();
+                    AsyncTaskUtil.addTaskInPool(new GetOfflineMessageTask());
                     Presence presence = new Presence(Presence.Type.available);
                     AppContext.xmppConnectionManager.getConnection().sendPacket(presence);
                 }
             }else{
-                new ChatLoginTask().execute();
+                AsyncTaskUtil.addTaskInPool(new ChatLoginTask());
             }
         }
     }

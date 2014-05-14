@@ -3,6 +3,7 @@ package com.absurd.circle.ui.fragment.base;
 import android.os.AsyncTask;
 
 import com.absurd.circle.ui.adapter.base.BeanAdapter;
+import com.microsoft.windowsazure.mobileservices.AsyncTaskUtil;
 import com.microsoft.windowsazure.mobileservices.TableQueryCallback;
 
 import java.util.List;
@@ -33,13 +34,13 @@ public abstract class LocalRefreshableFragment<V> extends RefreshableFragment<V>
     public void refreshTranscation() {
         //mContentLv.smoothScrollToPosition(0);
         mCurrentPageIndex = 0;
-        new LoadLocalDataTask().execute();
+        AsyncTaskUtil.addTaskInPool(new LoadLocalDataTask());
     }
 
     @Override
     public void nextPageTransaction() {
         mCurrentPageIndex++;
-        new LoadLocalDataTask().execute();
+        AsyncTaskUtil.addTaskInPool(new LoadLocalDataTask());
     }
 
 

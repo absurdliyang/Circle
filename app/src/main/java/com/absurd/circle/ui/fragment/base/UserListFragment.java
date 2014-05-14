@@ -102,7 +102,7 @@ public abstract class UserListFragment<V> extends Fragment {
             if (result == null) {
                 if (exception != null) {
                     exception.printStackTrace();
-                    Toast.makeText(UserListFragment.this.getActivity(), "getNearMessage error!", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(UserListFragment.this.getActivity(), "getNearMessage error!", Toast.LENGTH_SHORT).show();
                 }
             } else {
                 List<User> userResult = handleResult(result);
@@ -119,7 +119,7 @@ public abstract class UserListFragment<V> extends Fragment {
             if (result == null) {
                 if (exception != null) {
                     exception.printStackTrace();
-                    Toast.makeText(UserListFragment.this.getActivity(), "Get Users error!", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(UserListFragment.this.getActivity(), "Get Users error!", Toast.LENGTH_SHORT).show();
                 }
             } else {
                 List<User> userResult = handleResult(result);

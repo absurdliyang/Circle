@@ -290,15 +290,16 @@ abstract class MobileServiceTableBase<E> {
 		delete = new ServiceFilterRequestImpl(new HttpDelete(uriBuilder.build().toString()), mClient.getAndroidHttpClientFactory());			
 
 		// Create AsyncTask to execute the request
-		new RequestAsyncTask(delete, mClient.createConnection()) {
-			@Override
-			protected void onPostExecute(ServiceFilterResponse result) {
-				if (callback != null) {
-					callback.onCompleted(mTaskException, result);
-				}
-			}
-		}.execute();
-	}
+		AsyncTaskUtil.addTaskInPool(
+                new RequestAsyncTask(delete, mClient.createConnection()) {
+                    @Override
+                    protected void onPostExecute(ServiceFilterResponse result) {
+                        if (callback != null) {
+                            callback.onCompleted(mTaskException, result);
+                        }
+                    }
+        });
+    }
 
 	/**
 	 * Patches the original entity with the one returned in the response after

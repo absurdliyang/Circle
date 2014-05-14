@@ -49,6 +49,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Pair;
 
+import com.absurd.circle.app.AppContext;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
@@ -749,6 +750,7 @@ public class MobileServiceClient {
 		
 		ServiceFilterRequest request;
 		String url = uriBuilder.build().toString();
+        AppContext.commonLog.i("api url --> " + url);
 		
 		if (httpMethod.equalsIgnoreCase(HttpGet.METHOD_NAME)) {
 			request = new ServiceFilterRequestImpl(new HttpGet(url), getAndroidHttpClientFactory());
@@ -787,14 +789,14 @@ public class MobileServiceClient {
 		MobileServiceConnection conn = createConnection();
 		
 		// Create AsyncTask to execute the request and parse the results
-		new RequestAsyncTask(request, conn) {
-			@Override
-			protected void onPostExecute(ServiceFilterResponse response) {
-				if (callback != null) {
-					callback.onResponse(response, mTaskException);
-				}
-			}
-		}.execute();	
+		AsyncTaskUtil.addTaskInPool((new RequestAsyncTask(request, conn) {
+            @Override
+            protected void onPostExecute(ServiceFilterResponse response) {
+                if (callback != null) {
+                    callback.onResponse(response, mTaskException);
+                }
+            }
+        }));
 	}
 
 	/**

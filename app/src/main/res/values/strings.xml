@@ -54,7 +54,7 @@
     <string name="copy_clip_board_success">复制成功</string>
 
     <string name="location_success">定位成功</string>
-    <string name="location_failed">定位失败</string>
+    <string name="location_failed">定位失败, 请检查网络连接</string>
 
     <string name="network_disconnected">亲~ 没有连接网络</string>
 
@@ -86,6 +86,7 @@
 
     <string name="picture_cant_download_or_sd_cant_read">图片下载失败</string>
     <string name="download_finished_but_cant_read_picture_file">下载完成，但是无法读取图片</string>
+
 
 
 

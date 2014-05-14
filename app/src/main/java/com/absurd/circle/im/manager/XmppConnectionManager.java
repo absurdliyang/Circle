@@ -151,18 +151,20 @@ public class XmppConnectionManager{
     }
 
     public void send(Chat chat, String content, String toUserId, String chatMessageType){
-        AppContext.commonLog.i(content);
-        Message message = new Message();
-        message.setBody(content);
-        message.setType(Message.Type.chat);
-        message.setSubject(chatMessageType);
-        message.setTo(toUserId + "@" + SERVICE_NAME);
-        message.setFrom(AppContext.auth.getId() + "@" + SERVICE_NAME);
-        AppContext.commonLog.i(message.toString());
-        try {
-            chat.sendMessage(message);
-        } catch (XMPPException e) {
-            e.printStackTrace();
+        if(AppContext.auth != null) {
+            AppContext.commonLog.i(content);
+            Message message = new Message();
+            message.setBody(content);
+            message.setType(Message.Type.chat);
+            message.setSubject(chatMessageType);
+            message.setTo(toUserId + "@" + SERVICE_NAME);
+            message.setFrom(AppContext.auth.getId() + "@" + SERVICE_NAME);
+            AppContext.commonLog.i(message.toString());
+            try {
+                chat.sendMessage(message);
+            } catch (XMPPException e) {
+                e.printStackTrace();
+            }
         }
     }
 

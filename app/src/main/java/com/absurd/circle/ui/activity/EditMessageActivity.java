@@ -9,6 +9,7 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.NetworkOnMainThreadException;
 import android.provider.MediaStore;
 import android.view.View;
@@ -50,6 +51,8 @@ public class EditMessageActivity extends BaseActivity implements AMapLocationLis
     private static final int  BROWSE_PIC = 200;
 
     private LocationManagerProxy mLocationManagerProxy;
+    private AMapLocation mAMapLocation;
+    private Handler mHandler = new Handler();
 
     private TextView mLocationTv;
     private ImageView mMediaIv;
@@ -115,6 +118,15 @@ public class EditMessageActivity extends BaseActivity implements AMapLocationLis
         // Get user's current location
         mLocationManagerProxy = LocationManagerProxy.getInstance(EditMessageActivity.this);
         updateLocation();
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (mAMapLocation == null) {
+                    warning(R.string.location_failed);
+                    stopLocation();// 销毁掉定位
+                }
+            }
+        }, 12000);
 
     }
 
@@ -483,9 +495,18 @@ public class EditMessageActivity extends BaseActivity implements AMapLocationLis
         }
     }
 
+    private void stopLocation() {
+        if (mLocationManagerProxy != null) {
+            mLocationManagerProxy.removeUpdates(this);
+            mLocationManagerProxy.destory();
+        }
+        mLocationManagerProxy = null;
+    }
+
     @Override
     public void onLocationChanged(AMapLocation aMapLocation) {
         AppContext.commonLog.i("Location changed");
+        this.mAMapLocation = aMapLocation;
         setBusy(false);
         if(aMapLocation == null){
             AppContext.commonLog.i("Get user's location error");
@@ -497,7 +518,7 @@ public class EditMessageActivity extends BaseActivity implements AMapLocationLis
         AppContext.lastPosition = new Position(aMapLocation.getLatitude(),aMapLocation.getLongitude());
         AppContext.sharedPreferenceUtil.setLastPosition(AppContext.lastPosition);
         // Cancel refresh location
-        mLocationManagerProxy.destory();
+        stopLocation();
     }
 
     @Override

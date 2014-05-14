@@ -4,6 +4,7 @@ package com.absurd.circle.ui.activity;
 import android.graphics.Rect;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
@@ -64,6 +65,8 @@ public class HomeActivity extends SlidingFragmentActivity
     private MapView mMapView;
     private AMap mAMap;
     private LocationManagerProxy mLocationManagerProxy;
+    private AMapLocation mAMapLocation;
+    private Handler mHandler = new Handler();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -93,7 +96,24 @@ public class HomeActivity extends SlidingFragmentActivity
         // Get user's current location
         mLocationManagerProxy = LocationManagerProxy.getInstance(HomeActivity.this);
         updateLocation();
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (mAMapLocation == null) {
+                    warning(R.string.location_failed);
+                    stopLocation();// 销毁掉定位
+                }
+            }
+        }, 12000);
 
+    }
+
+    private void stopLocation() {
+        if (mLocationManagerProxy != null) {
+            mLocationManagerProxy.removeUpdates(this);
+            mLocationManagerProxy.destory();
+        }
+        mLocationManagerProxy = null;
     }
 
 
@@ -373,6 +393,7 @@ public class HomeActivity extends SlidingFragmentActivity
     @Override
     public void onLocationChanged(AMapLocation aMapLocation) {
         AppContext.commonLog.i("Location changed");
+        this.mAMapLocation = aMapLocation;
         if(aMapLocation == null){
             AppContext.commonLog.i("Get location failed");
             warning(R.string.location_success);
