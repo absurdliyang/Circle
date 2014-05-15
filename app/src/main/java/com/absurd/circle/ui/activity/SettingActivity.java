@@ -51,7 +51,7 @@ public class SettingActivity extends BaseActivity {
     }
 
     private void cleanCache(){
-        AppContext.cacheService.clearAll();
+        //AppContext.cacheService.clearAll();
     }
 
     public void onClick(View view){
@@ -95,7 +95,6 @@ public class SettingActivity extends BaseActivity {
 
 
     private void navigateToWeb(String url){
-
         Intent intent = new Intent();
         intent.setAction("android.intent.action.VIEW");
         Uri content_url = Uri.parse(url);

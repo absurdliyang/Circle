@@ -1,7 +1,10 @@
 package com.absurd.circle.ui.activity;
 
 import android.app.Activity;
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -10,13 +13,13 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.NetworkOnMainThreadException;
 import android.provider.MediaStore;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.RemoteViews;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,7 +43,6 @@ import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationListener;
 import com.amap.api.location.LocationManagerProxy;
 import com.amap.api.location.LocationProviderProxy;
-import com.android.volley.Network;
 import com.microsoft.windowsazure.mobileservices.ServiceFilterResponse;
 import com.microsoft.windowsazure.mobileservices.TableOperationCallback;
 
@@ -254,6 +256,10 @@ public class EditMessageActivity extends BaseActivity implements AMapLocationLis
             warning(R.string.warinig_image_null);
             return false;
         }
+        if(mContent.length() <= 5){
+            warning(R.string.warning_message_length_limit);
+            return false;
+        }
         return true;
     }
 
@@ -278,24 +284,46 @@ public class EditMessageActivity extends BaseActivity implements AMapLocationLis
         }
     }
 
+
+
+    NotificationManager mNotificationManager = (NotificationManager)AppContext.getContext().getSystemService(Context.NOTIFICATION_SERVICE);
+    public static final int NOTIFICATION_ID = 100;
+
+    private void notificate(String title, String content){
+        Notification notification = new Notification(R.drawable.ic_launcher, title, System.currentTimeMillis());
+        notification.flags |= notification.FLAG_AUTO_CANCEL;
+        //notification.contentView = new RemoteViews(getPackageName(), R.layout.layout_notification_progressbar);
+        //notification.contentView.setProgressBar(R.id.pb_notification, 0, 0, true);
+        notification.setLatestEventInfo(AppContext.getContext(), title, content, null);
+        mNotificationManager.notify(NOTIFICATION_ID, notification);
+    }
+
+
     private void postTextMessage(){
         MessageService messageService = new MessageService();
+        String title = AppContext.getContext().getString(R.string.notification_sending_message);
+        notificate(title,mMessage.getContent());
         messageService.addMessage(mMessage, new TableOperationCallback<Message>() {
             @Override
             public void onCompleted(Message entity, Exception exception, ServiceFilterResponse response) {
-                EditMessageActivity.this.finish();
-                setBusy(false);
+                //EditMessageActivity.this.finish();
+                //setBusy(false);
+                mNotificationManager.cancel(NOTIFICATION_ID);
                 if (entity == null) {
                     if (exception != null) {
                         exception.printStackTrace();
-                        warning(R.string.send_message_failed);
+                        //warning(R.string.send_message_failed);
+                        Toast.makeText(AppContext.getContext(),R.string.send_message_failed,Toast.LENGTH_SHORT).show();
                     }
                 } else {
                     AppContext.commonLog.i(entity.getContent());
-                    warning(R.string.send_message_success);
+                    //warning(R.string.send_message_success);
+                    Toast.makeText(AppContext.getContext(),R.string.send_message_success,Toast.LENGTH_SHORT).show();
                 }
             }
         });
+        setBusy(false);
+        EditMessageActivity.this.finish();
     }
 
     private void postImageMessage(){
@@ -477,6 +505,14 @@ public class EditMessageActivity extends BaseActivity implements AMapLocationLis
 
     public class UploadImageTask extends AsyncTask<Void,Void,Void>{
 
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            String title = AppContext.getContext().getString(R.string.notificaiont_uploading_pic);
+            notificate(title, mMessage.getContent());
+        }
+
         @Override
         protected Void doInBackground(Void... voids) {
             if(mPicPath != null){
@@ -491,6 +527,7 @@ public class EditMessageActivity extends BaseActivity implements AMapLocationLis
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             mMessage.setMediaUrl(mImageUrl);
+            mNotificationManager.cancel(NOTIFICATION_ID);
             postTextMessage();
         }
     }

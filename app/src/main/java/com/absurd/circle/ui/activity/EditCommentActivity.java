@@ -1,5 +1,8 @@
 package com.absurd.circle.ui.activity;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
@@ -144,6 +147,18 @@ public class EditCommentActivity extends BaseActivity {
         }
     }
 
+    NotificationManager mNotificationManager = (NotificationManager)AppContext.getContext().getSystemService(Context.NOTIFICATION_SERVICE);
+    public static final int NOTIFICATION_ID = 101;
+
+    private void notificate(String title, String content){
+        Notification notification = new Notification(R.drawable.ic_launcher, title, System.currentTimeMillis());
+        notification.flags |= notification.FLAG_AUTO_CANCEL;
+        //notification.contentView = new RemoteViews(getPackageName(), R.layout.layout_notification_progressbar);
+        //notification.contentView.setProgressBar(R.id.pb_notification, 0, 0, true);
+        notification.setLatestEventInfo(AppContext.getContext(), title, content, null);
+        mNotificationManager.notify(NOTIFICATION_ID, notification);
+    }
+
     private void sendComment(){
         if(mChat == null){
             warning(R.string.chat_not_prepared_warning_send_failed);
@@ -174,15 +189,19 @@ public class EditCommentActivity extends BaseActivity {
 
             CommentService service = new CommentService();
 
+            String title = AppContext.getContext().getString(R.string.notification_sending_message);
+            notificate(title,comment.getContent());
+
             service.insertComment(comment, new TableOperationCallback<Comment>() {
                 @Override
                 public void onCompleted(Comment entity, Exception exception, ServiceFilterResponse response) {
+                    mNotificationManager.cancel(NOTIFICATION_ID);
                     if (entity == null) {
                         if (exception != null) {
                             exception.printStackTrace();
                         }
-                        EditCommentActivity.this.finish();
-                        warning(R.string.send_comment_failed);
+                        //warning(R.string.send_comment_failed);
+                        Toast.makeText(AppContext.getContext(), R.string.send_comment_failed, Toast.LENGTH_SHORT).show();
                         return;
                     }
                     AppContext.commonLog.i(entity.toString());
@@ -190,11 +209,12 @@ public class EditCommentActivity extends BaseActivity {
                     MessageDetailActivity.message.incCommentCount();
                     setBusy(false);
                     mIsbusy = false;
-                    warning(R.string.send_comment_success);
+                    //warning(R.string.send_comment_success);
+                    Toast.makeText(AppContext.getContext(), R.string.send_comment_success, Toast.LENGTH_SHORT).show();
                     AppContext.xmppConnectionManager.send(mChat, comment, MessageDetailActivity.message.getUser().getId() + "");
-                    EditCommentActivity.this.finish();
                 }
             });
+            EditCommentActivity.this.finish();
         }
     }
 

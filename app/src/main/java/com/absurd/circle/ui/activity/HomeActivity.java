@@ -71,6 +71,7 @@ public class HomeActivity extends SlidingFragmentActivity
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        AppContext.currentActivity = this;
 
         getAuth();
 
@@ -451,12 +452,8 @@ public class HomeActivity extends SlidingFragmentActivity
     public void onProviderDisabled(String s) {
     }
 
-
-
-
-
     public void warning(String content){
-        AppMsg.makeText(this, content, AppMsg.STYLE_ALERT).show();
+        AppMsg.makeText(AppContext.currentActivity, content, AppMsg.STYLE_ALERT).show();
     }
 
     public void warning(int resId){

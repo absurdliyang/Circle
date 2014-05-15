@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.support.v4.app.FragmentActivity;
 
 import com.absurd.circle.cache.CacheService;
 import com.absurd.circle.data.model.Position;
@@ -38,6 +39,8 @@ public class AppContext extends Application{
     public static Position lastPosition;
 
     public static int notificationNum;
+
+    public static FragmentActivity currentActivity;
 
 
 

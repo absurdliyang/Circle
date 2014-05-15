@@ -56,6 +56,7 @@ public class ChatService extends Service {
                 .setContentText(text)
                 .setDefaults(Notification.DEFAULT_SOUND)
                 .setDefaults(Notification.DEFAULT_VIBRATE)
+                .setAutoCancel(true)
                 .setSmallIcon(R.drawable.ic_launcher);
 
         PendingIntent pendIntent = PendingIntent.getActivity(this, 0, new Intent(this, NotificationActivity.class), 0);

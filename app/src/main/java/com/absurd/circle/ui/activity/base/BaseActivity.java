@@ -46,6 +46,7 @@ public abstract class BaseActivity extends SwipeBackActivity implements IProgres
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        AppContext.currentActivity = this;
 
         mActionBarView = LayoutInflater.from(this).inflate(R.layout.layout_custom_actionbar,null);
         mActionBarTitleTv = (TextView)mActionBarView.findViewById(R.id.tv_custom_actionbar_title);
@@ -165,7 +166,7 @@ public abstract class BaseActivity extends SwipeBackActivity implements IProgres
 
     public void warning(String content){
         
-        AppMsg.makeText(this,content,AppMsg.STYLE_ALERT).show();
+        AppMsg.makeText(AppContext.currentActivity,content,AppMsg.STYLE_ALERT).show();
     }
 
     public void warning(int resId){

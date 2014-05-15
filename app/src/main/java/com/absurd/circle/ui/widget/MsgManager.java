@@ -45,7 +45,7 @@ import static android.os.Build.VERSION_CODES.ICE_CREAM_SANDWICH;
 import static com.absurd.circle.ui.widget.AppMsg.LENGTH_STICKY;
 
 /**
- * @author Evgeny Shishkin
+ * @author
  */
 class MsgManager extends Handler implements Comparator<AppMsg> {
 
