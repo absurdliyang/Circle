@@ -28,91 +28,48 @@
     <string name="warning_message_length_limit">内容不能少于5个字符</string>
     <string name="warinig_image_null">请添加图片！</string>
     <string name="error_send_message">消息发送失败！</string>
-
     <string name="start_text">Hi,欢迎来到圈圈</string>
     <string name="share_text">圈圈是一个很有趣又实用的附近生活社区APP，推荐给大家。下载地址：http://url.cn/N3iPeV @圈圈官博</string>
     <string name="edit_comment_hint">回复是一种鼓励！</string>
-
     <string name="warning_comment_content_null">回复内容不能为空！</string>
     <string name="send_comment_failed">发送评论失败</string>
     <string name="send_comment_success">发送评论成功</string>
-
     <string name="chat_content_null">消息能容不能为空</string>
     <string name="send_message_success">发送消息成功</string>
     <string name="send_message_failed">发送消息失败</string>
-
     <string name="update_user_profile_success">更新资料成功</string>
     <string name="update_user_profile_failed">更新资料失败</string>
-
     <string name="add_black_list_success">添加黑名单成功</string>
     <string name="add_black_list_failed">添加黑名单失败</string>
     <string name="delete_black_list_success">取消黑名单成功</string>
     <string name="delete_black_list_failed">取消黑名单失败</string>
-
     <string name="report_user_success">举报成功，我们会尽快处理</string>
     <string name="report_message_success">举报成功，我们会尽快处理</string>
-
     <string name="copy_clip_board_success">复制成功</string>
-
     <string name="location_success">定位成功</string>
     <string name="location_failed">定位失败, 请检查网络连接</string>
-
     <string name="network_disconnected">亲~ 没有连接网络</string>
-
     <string name="login_failed">登录失败</string>
-
     <string name="add_follow_success">关注成功</string>
     <string name="cancel_follow_success">取消关注成功</string>
-
     <string name="dont_have_camera_app">该设备没有拍照应用</string>
     <string name="cant_insert_album">发生意外，无法写入相册</string>
-
     <string name="change_avatar_success">更改头像成功</string>
     <string name="change_avatar_failed">更改头像失败</string>
-
     <string name="change_background_success">更换背景成功</string>
     <string name="change_background_failed">更换背景失败</string>
-
     <string name="exit_mention">再次按返回键退出</string>
     <string name="chat_not_prepared_warning">网络不给力哦~</string>
     <string name="chat_not_prepared_warning_send_failed">网络不通畅，发送失败</string>
     <string name="net_disconnected_warning_upload_failed">网络不通畅，上传图片失败</string>
-
     <string name="praise_failed">赞失败</string>
-
     <string name="update_location">更新位置</string>
     <string name="update_location_failed">获取位置失败</string>
-
     <string name="image_downloading_failed">图片下载失败</string>
-
     <string name="picture_cant_download_or_sd_cant_read">图片下载失败</string>
     <string name="download_finished_but_cant_read_picture_file">下载完成，但是无法读取图片</string>
-
-
     <string name="notification_sending_message">正在发送</string>
     <string name="notificaiont_uploading_pic">正在上传图片</string>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     <!-- sina weibo -->
     <string name="com_sina_weibo_sdk_login_with_weibo_account">用微博登錄</string>
@@ -234,7 +191,6 @@
     <string name="title_activity_chat">ChatActivity</string>
     <string name="title_activity_browse_image">BrowseImageActivity</string>
 
-
     <!-- PullToRefresh -->
     <string name="pull_to_refresh_pull_label">Pull to refresh…</string>
     <string name="pull_to_refresh_release_label">Release to refresh…</string>
@@ -244,5 +200,9 @@
     <string name="pull_to_refresh_from_bottom_pull_label">@string/pull_to_refresh_pull_label</string>
     <string name="pull_to_refresh_from_bottom_release_label">@string/pull_to_refresh_release_label</string>
     <string name="pull_to_refresh_from_bottom_refreshing_label">@string/pull_to_refresh_refreshing_label</string>
+    <string name="title_activity_discovery">DiscoveryActivity</string>
+    <string name="title_activity_friend_messages">FriendMessagesActivity</string>
+    <string name="title_activity_near_people">NearPeopleActivity</string>
+    <string name="title_activity_near_talents">NearTalentsActivity</string>
 
 </resources>

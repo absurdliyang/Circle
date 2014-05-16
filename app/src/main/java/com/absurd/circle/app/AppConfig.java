@@ -5,7 +5,7 @@ package com.absurd.circle.app;
  */
 public class AppConfig {
 
-
+    public static final int NEARBY_PEOPLE_DISTANCE = 5000;
 
 
 }

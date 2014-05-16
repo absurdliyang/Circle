@@ -1,5 +1,6 @@
 package com.absurd.circle.ui.fragment.base;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.format.DateUtils;
@@ -39,6 +40,12 @@ public abstract class MessageListFragment extends RefreshableFragment<Message>{
     protected MessageService mMessageService = new MessageService();
 
     public static List<Message> messages;
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        view.findViewById(R.id.ptr_layout).setBackgroundColor(Color.TRANSPARENT);
+    }
 
     @Override
     protected void loadData(int pageIndex, TableQueryCallback<Message> callback) {

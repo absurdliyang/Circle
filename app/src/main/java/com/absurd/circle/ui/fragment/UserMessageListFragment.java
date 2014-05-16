@@ -11,6 +11,7 @@ import com.absurd.circle.data.model.Message;
 import com.absurd.circle.ui.activity.UserDynamicActivity;
 import com.absurd.circle.ui.adapter.MessageAdapter;
 import com.absurd.circle.ui.fragment.base.MessageListFragment;
+import com.absurd.circle.util.StringUtil;
 import com.microsoft.windowsazure.mobileservices.TableQueryCallback;
 
 /**
@@ -28,11 +29,16 @@ public class UserMessageListFragment extends MessageListFragment {
 
     @Override
     protected void loadData(int pageIndex, TableQueryCallback<Message> callback) {
-        if(AppContext.auth != null) {
-            mMessageService.getMessageByUser(pageIndex, mUserMessageActivity.userId,false, callback);
+        if(!StringUtil.isEmpty(mUserMessageActivity.userId)){
+            if (AppContext.auth != null) {
+                mMessageService.getMessageByUser(pageIndex, mUserMessageActivity.userId, false, callback);
+            } else {
+                AppContext.commonLog.i("AppContext auth is null!");
+            }
         }else{
-            AppContext.commonLog.i("AppContext auth is null!");
+            mMessageService.getMessagesOfFollowUsers(pageIndex,callback);
         }
+
     }
 
 }

@@ -48,7 +48,7 @@
                     android:clickable="true"
                     android:onClick="onBtnClick"
                     android:layout_marginLeft="5dp"
-                    android:src="@drawable/ic_face"/>
+                    android:src="@drawable/sel_face_btn"/>
                 <ImageView
                     android:id="@+id/iv_edit_msg_btn_galley"
                     android:layout_height="23dp"
@@ -57,7 +57,7 @@
                     android:layout_marginLeft="11dp"
                     android:clickable="true"
                     android:onClick="onBtnClick"
-                    android:src="@drawable/ic_gallery"/>
+                    android:src="@drawable/sel_gallery_btn"/>
                 <ImageView
                     android:id="@+id/iv_edit_msg_btn_photo"
                     android:layout_height="23dp"
@@ -66,7 +66,7 @@
                     android:layout_marginLeft="11dp"
                     android:clickable="true"
                     android:onClick="onBtnClick"
-                    android:src="@drawable/ic_photo"/>
+                    android:src="@drawable/sel_photo_btn"/>
             </RelativeLayout>
             <ImageView
                 android:id="@+id/iv_edit_msg_photo"

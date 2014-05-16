@@ -5,6 +5,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -21,6 +22,7 @@ import com.android.volley.toolbox.ImageLoader;
 import java.io.File;
 
 import uk.co.senab.photoview.PhotoView;
+import uk.co.senab.photoview.PhotoViewAttacher;
 
 /**
  * Created by absurd on 14-5-11.
@@ -59,6 +61,12 @@ public class LoadOriginImaegAcitivty extends BaseActivity {
             AppContext.commonLog.i("bitmap is null");
         }
 
+        mPhotoView.setOnViewTapListener(new PhotoViewAttacher.OnViewTapListener() {
+            @Override
+            public void onViewTap(View view, float x, float y) {
+                onBackPressed();
+            }
+        });
 
         if(mOriginalImageUrl == null){
             mLoadingPb.setVisibility(View.INVISIBLE);

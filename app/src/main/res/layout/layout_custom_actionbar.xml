@@ -13,7 +13,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:clickable="true"
-        android:src="@drawable/ic_back"/>
+        android:src="@drawable/sel_actionbar_back_btn"/>
 
     <LinearLayout
         android:id="@+id/llyt_cutom_actionbar_title"
@@ -50,19 +50,20 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:clickable="true"
-        android:src="@drawable/ic_more"/>
+        android:src="@drawable/sel_actionbar_more_btn"/>
     <TextView
         android:id="@+id/tv_custom_actionbar_right_btn"
         android:layout_centerVertical="true"
         android:layout_alignParentRight="true"
-        android:layout_marginRight="10dp"
+        android:paddingRight="10dp"
+        android:paddingLeft="10dp"
+        android:background="@drawable/sel_actionbar_home_btn"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical"
         android:clickable="true"
         android:textColor="#ffffffff"
+        android:text="fdjfkd"
         android:textSize="16sp"/>
-
-
-
 
 </RelativeLayout>

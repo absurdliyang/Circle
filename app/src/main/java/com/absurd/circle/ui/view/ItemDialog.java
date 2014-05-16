@@ -1,15 +1,21 @@
 package com.absurd.circle.ui.view;
 
+import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 
+import com.absurd.circle.app.AppConstant;
+import com.absurd.circle.app.AppContext;
 import com.absurd.circle.app.R;
+import com.absurd.circle.util.SystemUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,8 +49,10 @@ public class ItemDialog extends AlertDialog {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         LayoutInflater inflater = this.getLayoutInflater();
         View parent = inflater.inflate(R.layout.dia_items,null);
+
         mItemLv = (ListView)parent.findViewById(R.id.lv_dia_items);
         mItemLv.setAdapter(new ArrayAdapter<String>(getContext(), R.layout.item_dia, R.id.tv_dia_item, mItems));
         if(mListener != null)

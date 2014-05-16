@@ -1,6 +1,7 @@
 package com.absurd.circle.data.client.volley;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 
 import com.android.volley.AuthFailureError;
@@ -19,7 +20,7 @@ import java.util.Map;
  * Volley adapter for JSON requests that will be parsed into Java objects by Gson.
  */
 public class GsonRequest<T> extends Request<T> {
-    private final Gson gson = new Gson();
+    private final Gson gson;
     private final Class<T> clazz;
     private final Map<String, String> headers;
     private final Listener<T> listener;
@@ -34,6 +35,9 @@ public class GsonRequest<T> extends Request<T> {
     public GsonRequest(String url, Class<T> clazz, Map<String, String> headers,
                        Listener<T> listener, ErrorListener errorListener) {
         super(Method.GET, url, errorListener);
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.excludeFieldsWithoutExposeAnnotation().setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+        gson = gsonBuilder.create();
         this.clazz = clazz;
         this.headers = headers;
         this.listener = listener;

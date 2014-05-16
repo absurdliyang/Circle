@@ -103,9 +103,32 @@ public class FacesUtil {
         return tagList;
     }
 
-
     public static SpannableStringBuilder parseFaceByText(Context context,
                                                          String content) {
+        Pattern facePattern = Pattern
+                .compile("\\[{1}([\\s\\S&&[^\\[\\]]]{1,4})\\]{1}");
+        SpannableStringBuilder builder = new SpannableStringBuilder(content);
+        Matcher matcher = facePattern.matcher(content);
+        while (matcher.find()) {
+            String tag = matcher.group(1);
+            tag = "[" + tag + "]";
+            int resId = 0;
+            try {
+                resId = FacesAdapter.getImageIds()[FacesUtil.tags.indexOf(tag)];
+                Drawable d = context.getResources().getDrawable(resId);
+                d.setBounds(0, 0, SystemUtil.dip2px(18), SystemUtil.dip2px(18));// 设置表情图片的显示大小
+                ImageSpan span = new ImageSpan(d, ImageSpan.ALIGN_BASELINE);
+                builder.setSpan(span, matcher.start(), matcher.end(),
+                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return builder;
+    }
+
+    public static SpannableStringBuilder parseFaceByText(Context context,
+                                                         Spannable content) {
         Pattern facePattern = Pattern
                 .compile("\\[{1}([\\s\\S&&[^\\[\\]]]{1,4})\\]{1}");
         SpannableStringBuilder builder = new SpannableStringBuilder(content);

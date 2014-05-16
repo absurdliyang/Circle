@@ -153,7 +153,7 @@ public class MyProfileActivity extends BaseActivity implements IUploadImage{
             } else {
                 mUserBackGroundIv.setImageBitmap(mBackgroundDefaultBitmap);
             }
-            if (user.getSex() == "m") {
+            if (user.getSex().equals("m")) {
                 mSexIv.setImageBitmap(mFemailBitmap);
                 mSexTv.setText("女");
             } else {

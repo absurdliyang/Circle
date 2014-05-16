@@ -10,6 +10,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.sql.Date;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by absurd on 14-3-14.
@@ -19,6 +21,10 @@ public class User implements Serializable, Cloneable{
     @Expose
     @SerializedName("id")
     private int mId;
+
+    @Expose
+    @SerializedName("RowNumber")
+    private int mRowNumber;
 
     @Expose
     @SerializedName("userid")
@@ -144,6 +150,15 @@ public class User implements Serializable, Cloneable{
     public void setId(int id) {
         mId = id;
     }
+
+    public int getRowNumber() {
+        return mRowNumber;
+    }
+
+    public void setRowNumber(int rowNumber) {
+        mRowNumber = rowNumber;
+    }
+
 
     public String getUserId() {
         return mUserId;
@@ -423,5 +438,21 @@ public class User implements Serializable, Cloneable{
                 ", longitude=" + longitude +
                 ", latitude=" + latitude +
                 '}';
+    }
+
+
+    public static class GsonUser{
+        @Expose
+        @SerializedName("messagess")
+        private List<User> mUsers;
+
+        public List<User> getUsers() {
+            return mUsers;
+        }
+
+        public void setUsers(ArrayList<User> users) {
+            mUsers = users;
+        }
+
     }
 }

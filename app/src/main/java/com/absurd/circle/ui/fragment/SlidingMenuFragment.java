@@ -14,6 +14,7 @@ import com.absurd.circle.app.R;
 import com.absurd.circle.data.client.volley.BitmapFilter;
 import com.absurd.circle.data.client.volley.RequestManager;
 import com.absurd.circle.ui.activity.ContactActivity;
+import com.absurd.circle.ui.activity.DiscoveryActivity;
 import com.absurd.circle.ui.activity.HomeActivity;
 import com.absurd.circle.ui.activity.MyProfileActivity;
 import com.absurd.circle.ui.activity.NotificationActivity;
@@ -88,6 +89,13 @@ public class SlidingMenuFragment extends Fragment {
                 IntentUtil.startActivity(mHomeActivity, ContactActivity.class);
             }
         });
+        mRootView.findViewById(R.id.llyt_drawer_menu_discovery).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mHomeActivity.toggle();
+                IntentUtil.startActivity(mHomeActivity, DiscoveryActivity.class);
+            }
+        });
         mRootView.findViewById(R.id.llyt_drawer_menu_setting).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -95,6 +103,7 @@ public class SlidingMenuFragment extends Fragment {
                 IntentUtil.startActivity(mHomeActivity, SettingActivity.class);
             }
         });
+
 
         mNotificationTv = (TextView)mRootView.findViewById(R.id.tv_notification_num);
         if(AppContext.notificationNum == 0){

@@ -11,7 +11,9 @@ import android.support.v7.app.ActionBar;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -287,39 +289,39 @@ public class HomeActivity extends SlidingFragmentActivity
                 }
             }
         });
-        ImageView editTv = (ImageView)actionBarView.findViewById(R.id.iv_actionbar_edit);
-        editTv.setOnClickListener(new View.OnClickListener() {
+        LinearLayout editView = (LinearLayout)actionBarView.findViewById(R.id.llyt_actionbar_edit);
+        editView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 FragmentManager fm = getSupportFragmentManager();
                 CategoryFragment fragment = CategoryFragment.getInstance();
-                if(fm.getBackStackEntryCount() == 0){
+                if (fm.getBackStackEntryCount() == 0) {
                     FragmentTransaction ft = fm.beginTransaction();
                     ft.setCustomAnimations(R.anim.fragment_slide_bottom_in, R.anim.fragment_slide_bottom_out);
                     fragment.setStatus(1);
-                    ft.add(R.id.container,fragment)
+                    ft.add(R.id.container, fragment)
                             .addToBackStack("categoryFragment")
                             .commit();
-                }else{
+                } else {
                     FragmentTransaction ft = fm.beginTransaction();
                     ft.setCustomAnimations(R.anim.fragment_slide_bottom_in, R.anim.fragment_slide_bottom_out);
                     ft.remove(fragment).commit();
                     fm.popBackStack();
-                    if(fragment.getStatus() == 1){
+                    if (fragment.getStatus() == 1) {
 
-                    }else{
+                    } else {
                         FragmentTransaction ft1 = fm.beginTransaction();
                         ft1.setCustomAnimations(R.anim.fragment_slide_bottom_in, R.anim.fragment_slide_bottom_out);
                         fragment.setStatus(1);
-                        ft1.add(R.id.container,fragment)
+                        ft1.add(R.id.container, fragment)
                                 .addToBackStack("categoryFragment")
                                 .commit();
                     }
                 }
             }
         });
-        ImageView homeTv = (ImageView)actionBarView.findViewById(R.id.iv_actionbar_home);
-        homeTv.setOnClickListener(new View.OnClickListener() {
+        FrameLayout homeView = (FrameLayout)actionBarView.findViewById(R.id.flyt_actionbar_home);
+        homeView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 toggle();
@@ -411,26 +413,6 @@ public class HomeActivity extends SlidingFragmentActivity
             mContent.refreshTranscation();
             //deactivate();
         }
-
-        /**
-        if(mOnLocationChangedListener != null) {
-            AppContext.commonLog.i("Get location success!");
-            warning(R.string.update_location);
-            mOnLocationChangedListener.onLocationChanged(aMapLocation);
-            AppContext.lastPosition = new Position();
-            AppContext.lastPosition.setLatitude(aMapLocation.getLatitude());
-            AppContext.lastPosition.setLongitude(aMapLocation.getLongitude());
-            AppContext.sharedPreferenceUtil.setLastPosition(AppContext.lastPosition);
-
-            // Cancel refresh location
-            mLocationManagerProxy.destory();
-            //mContent.refreshTranscation();
-            deactivate();
-        }else{
-            AppContext.commonLog.i("Get location failed");
-            warning(R.string.update_location_failed);
-        }
-         **/
     }
 
 

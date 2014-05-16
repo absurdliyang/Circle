@@ -161,7 +161,11 @@ public class XmppConnectionManager{
             message.setFrom(AppContext.auth.getId() + "@" + SERVICE_NAME);
             AppContext.commonLog.i(message.toString());
             try {
-                chat.sendMessage(message);
+                if(mConnection.isConnected()) {
+                    chat.sendMessage(message);
+                }else{
+
+                }
             } catch (XMPPException e) {
                 e.printStackTrace();
             }

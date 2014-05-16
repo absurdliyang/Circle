@@ -108,7 +108,7 @@ public abstract class RefreshableFragment<V> extends Fragment {
             if (result == null) {
                 if (exception != null) {
                     exception.printStackTrace();
-                    AppContext.commonLog.i("Get NearMessage error!");
+                    AppContext.commonLog.i("Query get list error!");
                 }
             } else {
                 handleResult(result);
@@ -124,7 +124,7 @@ public abstract class RefreshableFragment<V> extends Fragment {
             if (result == null) {
                 if (exception != null) {
                     exception.printStackTrace();
-                    AppContext.commonLog.i("Get message error!");
+                    AppContext.commonLog.i("Query get list error!");
                 }
             } else {
                 AppContext.commonLog.i("result ---- > " + result);

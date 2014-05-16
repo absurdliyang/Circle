@@ -47,7 +47,7 @@
                     android:clickable="true"
                     android:onClick="onBtnClick"
                     android:layout_marginLeft="5dp"
-                    android:src="@drawable/ic_face"/>
+                    android:src="@drawable/sel_face_btn"/>
             </RelativeLayout>
         </RelativeLayout>
     </RelativeLayout>

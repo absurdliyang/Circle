@@ -3,6 +3,7 @@ package com.absurd.circle.ui.adapter;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.support.v4.app.FragmentActivity;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -97,17 +98,11 @@ public class CommentAdapter extends BeanAdapter<Comment> {
         }
         holder.commentCreatedTv.setText(TimeUtil.formatShowTime(comment.getDate()));
         String content = "";
-        if(comment.getParentId() != 0){
-            String name = "";
-            for(Comment c : getItems()){
-                if(c.getId() == comment.getParentId()){
-                    name = c.getUser().getName();
-                }
-            }
-            content = "回复 " + name + ": ";
+        if(comment.getParentId() != 0 && comment.getParentUserName() != null){
+            content = "回复 " + comment.getParentUserName() + ":";
         }
         content += comment.getContent();
-        holder.commentContentTv.setText(FacesUtil.parseFaceByText(mContext,content));
+        holder.commentContentTv.setText(FacesUtil.parseFaceByText(mContext, content));
         holder.replyIconIv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

@@ -323,7 +323,9 @@ public class EditMessageActivity extends BaseActivity implements AMapLocationLis
             }
         });
         setBusy(false);
-        EditMessageActivity.this.finish();
+        if(!this.isFinishing()) {
+            EditMessageActivity.this.finish();
+        }
     }
 
     private void postImageMessage(){
@@ -511,6 +513,8 @@ public class EditMessageActivity extends BaseActivity implements AMapLocationLis
             super.onPreExecute();
             String title = AppContext.getContext().getString(R.string.notificaiont_uploading_pic);
             notificate(title, mMessage.getContent());
+            setBusy(false);
+            EditMessageActivity.this.finish();
         }
 
         @Override

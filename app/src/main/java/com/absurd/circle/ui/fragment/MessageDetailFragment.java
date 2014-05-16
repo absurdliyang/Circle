@@ -82,6 +82,8 @@ public class MessageDetailFragment extends Fragment{
     private int mCurrentPageIndex = 0;
     private boolean mQueryOrder = true;
 
+    protected boolean mIsBusy = false;
+
     private Chat mChat;
 
     private Praise mPraise = new Praise(-1);
@@ -329,23 +331,27 @@ public class MessageDetailFragment extends Fragment{
     }
 
     public void nextPage(){
-        mCurrentPageIndex ++;
-        mCommentService.getComments(MessageDetailActivity.message.getId(),mCurrentPageIndex,10,mQueryOrder,new TableQueryCallback<Comment>(){
+        if(!mIsBusy) {
+            mCurrentPageIndex++;
+            mIsBusy = true;
+            mCommentService.getComments(MessageDetailActivity.message.getId(), mCurrentPageIndex, 10, mQueryOrder, new TableQueryCallback<Comment>() {
 
-            @Override
-            public void onCompleted(List<Comment> result, int count, Exception exception, ServiceFilterResponse response) {
-                mMessageDetailActivity.setBusy(false);
-                if(result == null){
-                    if(exception != null){
-                        exception.printStackTrace();
-                        //Toast.makeText(MessageDetailFragment.this.getActivity(),"get Comment failed!",Toast.LENGTH_SHORT).show();
+                @Override
+                public void onCompleted(List<Comment> result, int count, Exception exception, ServiceFilterResponse response) {
+                    mMessageDetailActivity.setBusy(false);
+                    mIsBusy = false;
+                    if (result == null) {
+                        if (exception != null) {
+                            exception.printStackTrace();
+                            //Toast.makeText(MessageDetailFragment.this.getActivity(),"get Comment failed!",Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        HeaderViewListAdapter headerAdapter = (HeaderViewListAdapter) mContentLv.getAdapter();
+                        ((CommentAdapter) headerAdapter.getWrappedAdapter()).addItems(result);
                     }
-                }else {
-                    HeaderViewListAdapter headerAdapter = (HeaderViewListAdapter) mContentLv.getAdapter();
-                    ((CommentAdapter)headerAdapter.getWrappedAdapter()).addItems(result);
                 }
-            }
-        });
+            });
+        }
     }
 
 

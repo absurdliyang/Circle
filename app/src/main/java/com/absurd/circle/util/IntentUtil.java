@@ -35,12 +35,20 @@ public class IntentUtil {
 
     }
 
+    public static void startActivity(FragmentActivity context, Class<?> cls,boolean b){
+        Intent intent = new Intent();
+        intent.setClass(context,cls);
+        context.startActivity(intent);
+        context.overridePendingTransition(R.anim.push_bottom_in, R.anim.push_bottom_in);
+    }
+
     public static void startActivity(FragmentActivity context, Class<?> cls){
         Intent intent = new Intent();
         intent.setClass(context,cls);
         context.startActivity(intent);
         context.overridePendingTransition(R.anim.push_left_in, R.anim.push_left_in);
     }
+
 
 
 

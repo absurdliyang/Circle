@@ -85,6 +85,27 @@
                 />
         </LinearLayout>
         <LinearLayout
+            android:id="@+id/llyt_drawer_menu_discovery"
+            android:layout_marginTop="10dp"
+            android:clickable="true"
+            android:layout_gravity="left"
+            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/icon_discovery"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="20dp"
+                android:textColor="#ffffffff"
+                android:textSize="20dp"
+                android:text="发现" />
+        </LinearLayout>
+        <LinearLayout
             android:id="@+id/llyt_drawer_menu_contact"
             android:layout_marginTop="10dp"
             android:clickable="true"
@@ -105,27 +126,22 @@
                 android:textColor="#ffffffff"
                 android:text="联系人" />
         </LinearLayout>
-        <LinearLayout
-            android:id="@+id/llyt_drawer_menu_setting"
-            android:layout_marginTop="10dp"
-            android:clickable="true"
-            android:layout_gravity="left"
-            android:layout_weight="1"
+
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/llyt_drawer_menu_setting"
+        android:clickable="true"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="20dp"
+        android:layout_marginBottom="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <ImageView
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/icon_setting"
-                />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="20dp"
-                android:textColor="#ffffffff"
-                android:textSize="20dp"
-                android:text="设置" />
-        </LinearLayout>
+            android:layout_height="wrap_content"
+            android:src="@drawable/icon_setting"
+            />
     </LinearLayout>
 </RelativeLayout>
 

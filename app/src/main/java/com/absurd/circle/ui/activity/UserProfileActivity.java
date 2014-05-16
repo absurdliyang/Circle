@@ -117,7 +117,7 @@ public class UserProfileActivity extends BaseActivity {
         }else{
             mUserBackGroundIv.setImageBitmap(mBackgroundDefaultBitmap);
         }
-        if(mUser.getSex() == "男"){
+        if(mUser.getSex().equals("f")){
             mSexIv.setImageBitmap(mFemailBitmap);
         }else{
             mSexIv.setImageBitmap(mMaleBitmap);

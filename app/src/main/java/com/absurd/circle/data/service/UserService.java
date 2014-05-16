@@ -100,5 +100,35 @@ public class UserService extends BaseService {
     }
 
 
+    /**
+     *
+     * @param longitude
+     * @param latitude
+     * @param around
+     * @param type -1 the charts 0 all people 1 female  2 male
+     * @param pageIndex
+     * @param responseListener
+     */
+    public void getNearPeople(double longitude, double latitude, double around, int type,
+                              int pageIndex, Response.Listener<User.GsonUser> responseListener){
+        String url = "https://incircle.azure-mobile.net/api/getnearpeople?longitude=" + Double.toString(longitude)
+                + "&latitude=" + Double.toString(latitude)
+                + "&around=" + Double.toString(around)
+                + "&page=" + pageIndex
+                + "&type=" + type;
+        AppContext.commonLog.i(url);
+        GsonRequest<User.GsonUser> gsonRequest = new GsonRequest<User.GsonUser>(url, User.GsonUser.class, null,
+                responseListener, new Response.ErrorListener(){
+
+            @Override
+            public void onErrorResponse(VolleyError volleyError) {
+                AppContext.commonLog.i("Get near people error");
+                volleyError.printStackTrace();
+            }
+        });
+        RequestManager.addRequest(gsonRequest,"getNearPeople");
+    }
+
+
 
 }

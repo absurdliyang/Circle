@@ -53,6 +53,14 @@ public class MessageService extends BaseService{
             .execute(callback);
     }
 
+    public void getMessagesOfFollowUsers(int pageIndex,TableQueryCallback<Message> callback){
+        getMessageTable().where()
+                .parameter("type","followuser")
+                .parameter("page",pageIndex + "")
+                .execute(callback);
+    }
+
+
     public void getMessageById(int messageId, TableQueryCallback<Message> callback){
         getMessageTable().where()
                 .parameter("type","id")

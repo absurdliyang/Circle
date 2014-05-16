@@ -6,76 +6,98 @@
     android:background="@color/theme_color"
     >
     <FrameLayout
+        android:id="@+id/flyt_actionbar_home"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
+        android:background="@drawable/sel_actionbar_home_btn"
+        android:paddingRight="5dp"
+        android:clickable="true"
         android:layout_alignParentLeft="true"
         android:layout_centerVertical="true">
-        <ImageView
-            android:id="@+id/iv_actionbar_home"
+        <FrameLayout
+            android:layout_gravity="center_vertical"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
-            android:clickable="true"
-            android:src="@drawable/actionbar_icon_home"/>
-        <TextView
-            android:id="@+id/tv_tv_ab_notification_num"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="right"
-            android:textColor="#ffffffff"
-            android:gravity="center"
-            android:paddingBottom="3dp"
-            android:background="@drawable/notification_num_bg"/>
+            android:layout_height="wrap_content">
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:src="@drawable/actionbar_icon_home"/>
+            <TextView
+                android:id="@+id/tv_tv_ab_notification_num"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:paddingLeft="8dp"
+                android:textColor="#ffffffff"
+                android:background="@drawable/notification_num_bg"/>
+        </FrameLayout>
     </FrameLayout>
 
     <LinearLayout
         android:id="@+id/llyt_cutom_actionbar_title"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:background="@drawable/sel_actionbar_home_btn"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-
-        <ProgressBar
-            android:id="@+id/pb_action_bar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginRight="5dp"
-            style="?android:attr/progressBarStyleSmall"
-            />
+        android:layout_height="match_parent">
 
         <LinearLayout
-            android:id="@+id/llyt_actionbar_title"
-            android:layout_centerInParent="true"
-            android:orientation="horizontal"
+            android:layout_gravity="center_vertical"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
-            <TextView
-                android:id="@+id/tv_actionbar_title"
+
+            <ProgressBar
+                android:id="@+id/pb_action_bar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="附近"
-                android:clickable="true"
-                android:textColor="#ffffffff"
-                android:textSize="20sp" />
-            <ImageView
-                android:id="@+id/iv_actionbar_title"
-                android:layout_marginLeft="3dp"
-                android:layout_marginTop="8dp"
-                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginRight="5dp"
+                style="?android:attr/progressBarStyleSmall"
+                />
+
+            <LinearLayout
+                android:id="@+id/llyt_actionbar_title"
+                android:layout_centerInParent="true"
+                android:orientation="horizontal"
                 android:layout_width="wrap_content"
-                android:src="@drawable/actionbar_icon_category"/>
+                android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/tv_actionbar_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="附近"
+                    android:clickable="true"
+                    android:textColor="#ffffffff"
+                    android:textSize="20sp" />
+                <ImageView
+                    android:id="@+id/iv_actionbar_title"
+                    android:layout_marginLeft="3dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:src="@drawable/actionbar_icon_category"/>
+            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
 
-    <ImageView
-        android:id="@+id/iv_actionbar_edit"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <LinearLayout
+        android:id="@+id/llyt_actionbar_edit"
+        android:background="@drawable/sel_actionbar_home_btn"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:layout_marginRight="5dp"
+        android:paddingRight="5dp"
+        android:paddingLeft="5dp"
         android:clickable="true"
-        android:src="@drawable/actionbar_icon_edit"/>
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent">
+        <ImageView
+            android:layout_gravity="center_vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/actionbar_icon_edit"/>
+    </LinearLayout>
 
 </RelativeLayout>

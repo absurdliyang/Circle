@@ -3,6 +3,7 @@ package com.absurd.circle.ui.adapter.base;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -10,6 +11,7 @@ import android.widget.BaseAdapter;
 import com.absurd.circle.app.AppContext;
 import com.absurd.circle.app.R;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -22,13 +24,14 @@ public class BeanAdapter<E> extends BaseAdapter {
 
 
     protected Context mContext;
-    protected List<E> mItems = Collections.emptyList();
+    protected List<E> mItems = new ArrayList<E>();
 
 
     public BeanAdapter(Context context,List<E> items){
         this(context);
         this.mItems = items;
     }
+
 
     public BeanAdapter(Context context){
         this.mContext = context;

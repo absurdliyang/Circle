@@ -96,6 +96,11 @@ public class Comment implements Serializable{
     private int mParentId;
 
     @Expose
+    @SerializedName("parentUserName")
+    private String mParentUserName;
+
+
+    @Expose
     @SerializedName("touserid")
     private String mToUserId;
 
@@ -301,6 +306,15 @@ public class Comment implements Serializable{
     public void setParentId(int parentId) {
         mParentId = parentId;
     }
+
+    public String getParentUserName() {
+        return mParentUserName;
+    }
+
+    public void setParentUserName(String parentUserName) {
+        mParentUserName = parentUserName;
+    }
+
 
     public String getToUserId() {
         return mToUserId;
