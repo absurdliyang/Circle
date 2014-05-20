@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -453,7 +454,7 @@ public class LoginActivity extends ActionBarActivity {
     }
 
 
-    // It shoeld be called when the uer firstly login
+    // It should be called when the uer firstly login
     private void getFollowers(String userId){
         AppContext.cacheService.followDBManager.deleteAll();
         if(AppContext.auth != null) {
@@ -472,6 +473,20 @@ public class LoginActivity extends ActionBarActivity {
                 }
             });
         }
+    }
+
+    /**
+     * Fix the fucking bug when menu key down
+     * @param keyCode
+     * @param event
+     * @return
+     */
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if(keyCode == KeyEvent.KEYCODE_MENU){
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 
     public class SharedQQ{

@@ -36,7 +36,7 @@ public class NearbyUserFragment extends RefreshableFragment<User> {
 
     @Override
     protected BeanAdapter<User> setAdapter() {
-        return new NearbyUserAdapter(this.getActivity());
+        return new NearbyUserAdapter(this.getActivity(),mType);
     }
 
     public NearbyUserFragment(){

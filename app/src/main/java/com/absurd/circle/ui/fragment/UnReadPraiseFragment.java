@@ -3,6 +3,7 @@ package com.absurd.circle.ui.fragment;
 import android.os.Bundle;
 import android.view.View;
 
+import com.absurd.circle.app.AppConfig;
 import com.absurd.circle.app.AppContext;
 import com.absurd.circle.data.model.Praise;
 import com.absurd.circle.data.service.NotificationService;
@@ -47,7 +48,7 @@ public class UnReadPraiseFragment extends LocalRefreshableFragment<Praise> {
         if(pageIndex == 0){
             AppContext.cacheService.praiseDBManager.updateAllRead();
         }
-        return AppContext.cacheService.praiseDBManager.getPage(mCurrentPageIndex, 20);
+        return AppContext.cacheService.praiseDBManager.getPage(mCurrentPageIndex, AppConfig.CUSTOM_PAGE_SIZE);
     }
 
     @Override

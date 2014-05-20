@@ -14,7 +14,7 @@ import java.util.Date;
 public class Comment implements Serializable{
 
     @Expose
-    @SerializedName("id")
+    @SerializedName("Id")
     protected int mId;
 
     @Expose

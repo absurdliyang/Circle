@@ -145,6 +145,7 @@ public abstract class UserListFragment<V> extends Fragment {
         getListView().smoothScrollToPosition(0);
         mCurrentPageIndex = 0;
         if (mMode == MODE_NET) {
+            AppContext.commonLog.i("MODE_NET");
             if(!mIsbusy) {
                 mIsbusy = true;
                 mActivity.setBusy(true);
@@ -159,7 +160,6 @@ public abstract class UserListFragment<V> extends Fragment {
 
     public void nextPageTransaction(){
         if(!mIsbusy) {
-            mIsbusy  = true;
             mCurrentPageIndex++;
             if (mMode == MODE_NET) {
                 if(!mIsbusy) {

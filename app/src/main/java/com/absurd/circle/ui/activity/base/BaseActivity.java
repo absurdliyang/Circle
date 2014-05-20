@@ -84,21 +84,6 @@ public abstract class BaseActivity extends SwipeBackActivity implements IProgres
         }
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch(item.getItemId()){
-            case android.R.id.home:
-                finish();
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-
-        return true;
-    }
 
     private void configureActionBar(){
         ActionBar actionBar = getSupportActionBar();

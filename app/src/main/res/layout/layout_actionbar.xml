@@ -25,12 +25,13 @@
                 android:src="@drawable/actionbar_icon_home"/>
             <TextView
                 android:id="@+id/tv_tv_ab_notification_num"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
                 android:layout_gravity="right"
-                android:paddingLeft="8dp"
+                android:gravity="center|center_vertical|center_horizontal"
+                android:text="12"
                 android:textColor="#ffffffff"
-                android:background="@drawable/notification_num_bg"/>
+                android:background="@drawable/notification_circle_bg"/>
         </FrameLayout>
     </FrameLayout>
 

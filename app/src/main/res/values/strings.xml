@@ -26,6 +26,7 @@
     <string name="friend_description">介绍展示自己，完善你的个人资料，并说出你的交友要求，快速找到心中的TA！</string>
     <string name="warning_message_null">亲，内容不能为空哦！</string>
     <string name="warning_message_length_limit">内容不能少于5个字符</string>
+    <string name="warning_message_title_length_limit">内容与标题一共不能少于10个字符</string>
     <string name="warinig_image_null">请添加图片！</string>
     <string name="error_send_message">消息发送失败！</string>
     <string name="start_text">Hi,欢迎来到圈圈</string>
@@ -70,6 +71,19 @@
     <string name="download_finished_but_cant_read_picture_file">下载完成，但是无法读取图片</string>
     <string name="notification_sending_message">正在发送</string>
     <string name="notificaiont_uploading_pic">正在上传图片</string>
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     <!-- sina weibo -->
     <string name="com_sina_weibo_sdk_login_with_weibo_account">用微博登錄</string>

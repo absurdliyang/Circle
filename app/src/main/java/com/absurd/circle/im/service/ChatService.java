@@ -43,8 +43,8 @@ public class ChatService extends Service {
         public void processPacket(Packet packet) {
             Message message = (Message)packet;
             AppContext.commonLog.i("Recieve a packet");
-            saveRecievedMessageBody(message);
             AppContext.commonLog.i("body " + message.getBody() + " to " + message.getTo() + " from " + message.getFrom());
+            saveRecievedMessageBody(message);
         }
     };
 

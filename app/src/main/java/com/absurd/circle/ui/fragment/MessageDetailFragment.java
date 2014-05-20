@@ -18,6 +18,7 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.absurd.circle.app.AppConfig;
 import com.absurd.circle.app.AppContext;
 import com.absurd.circle.app.R;
 import com.absurd.circle.data.client.volley.BitmapFilter;
@@ -80,7 +81,7 @@ public class MessageDetailFragment extends Fragment{
     private MessageService mMessageService;
 
     private int mCurrentPageIndex = 0;
-    private boolean mQueryOrder = true;
+    private boolean mQueryOrder = false;
 
     protected boolean mIsBusy = false;
 
@@ -312,7 +313,7 @@ public class MessageDetailFragment extends Fragment{
     public void refresh(){
         mMessageDetailActivity.setBusy(true);
         mCurrentPageIndex = 0;
-        mCommentService.getComments(MessageDetailActivity.message.getId(), mCurrentPageIndex,10,mQueryOrder,new TableQueryCallback<Comment>() {
+        mCommentService.getComments(MessageDetailActivity.message.getId(), mCurrentPageIndex, AppConfig.CUSTOM_PAGE_SIZE,mQueryOrder,new TableQueryCallback<Comment>() {
             @Override
             public void onCompleted(List<Comment> result, int count, Exception exception, ServiceFilterResponse response) {
                 mMessageDetailActivity.setBusy(false);

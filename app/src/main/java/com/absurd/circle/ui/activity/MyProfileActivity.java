@@ -28,7 +28,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.absurd.circle.app.AppConstant;
 import com.absurd.circle.app.AppContext;
 import com.absurd.circle.app.R;
 import com.absurd.circle.data.client.volley.BitmapFilter;
@@ -55,7 +54,7 @@ import com.microsoft.windowsazure.mobileservices.TableOperationCallback;
 public class MyProfileActivity extends BaseActivity implements IUploadImage{
     private Bitmap mAvatarDefaultBitmap = ((BitmapDrawable) AppContext.getContext().getResources().getDrawable(R.drawable.default_avatar)).getBitmap();
     private Bitmap mBackgroundDefaultBitmap = ((BitmapDrawable) AppContext.getContext().getResources().getDrawable(R.drawable.default_user_background)).getBitmap();
-    private Bitmap mFemailBitmap = ((BitmapDrawable)AppContext.getContext().getResources().getDrawable(R.drawable.user_profile_female)).getBitmap();
+    private Bitmap mFemaleBitmap = ((BitmapDrawable)AppContext.getContext().getResources().getDrawable(R.drawable.user_profile_female)).getBitmap();
     private Bitmap mMaleBitmap = ((BitmapDrawable)AppContext.getContext().getResources().getDrawable(R.drawable.user_profile_male)).getBitmap();
 
     private UserService mUserService = new UserService();
@@ -154,11 +153,11 @@ public class MyProfileActivity extends BaseActivity implements IUploadImage{
                 mUserBackGroundIv.setImageBitmap(mBackgroundDefaultBitmap);
             }
             if (user.getSex().equals("m")) {
-                mSexIv.setImageBitmap(mFemailBitmap);
-                mSexTv.setText("女");
-            } else {
                 mSexIv.setImageBitmap(mMaleBitmap);
                 mSexTv.setText("男");
+            } else {
+                mSexIv.setImageBitmap(mFemaleBitmap);
+                mSexTv.setText("女");
             }
             mUsernameTv.setText(user.getName());
             mLevelTv.setText("LV. " + user.getLevel());
@@ -198,12 +197,12 @@ public class MyProfileActivity extends BaseActivity implements IUploadImage{
 
     private void invalidateView(){
         if(user != null) {
-            if (user.getSex() == "m") {
-                mSexIv.setImageBitmap(mFemailBitmap);
-                mSexTv.setText("女");
-            } else {
+            if (user.getSex().equals("m")) {
                 mSexIv.setImageBitmap(mMaleBitmap);
                 mSexTv.setText("男");
+            } else {
+                mSexIv.setImageBitmap(mFemaleBitmap);
+                mSexTv.setText("女");
             }
             mUsernameTv.setText(user.getName());
             mLevelTv.setText("LV. " + user.getLevel());
@@ -272,9 +271,9 @@ public class MyProfileActivity extends BaseActivity implements IUploadImage{
                     @Override
                     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                         if(i == 0){
-                            user.setSex("f");
-                        }else{
                             user.setSex("m");
+                        }else{
+                            user.setSex("f");
                         }
                         sexsDialog.cancel();
                         invalidateView();

@@ -35,7 +35,7 @@ import java.util.List;
 public class UserProfileActivity extends BaseActivity {
     private Bitmap mAvatarDefaultBitmap = ((BitmapDrawable) AppContext.getContext().getResources().getDrawable(R.drawable.default_avatar)).getBitmap();
     private Bitmap mBackgroundDefaultBitmap = ((BitmapDrawable) AppContext.getContext().getResources().getDrawable(R.drawable.default_user_background)).getBitmap();
-    private Bitmap mFemailBitmap = ((BitmapDrawable)AppContext.getContext().getResources().getDrawable(R.drawable.user_profile_female)).getBitmap();
+    private Bitmap mFemaleBitmap = ((BitmapDrawable)AppContext.getContext().getResources().getDrawable(R.drawable.user_profile_female)).getBitmap();
     private Bitmap mMaleBitmap = ((BitmapDrawable)AppContext.getContext().getResources().getDrawable(R.drawable.user_profile_male)).getBitmap();
 
 
@@ -118,7 +118,7 @@ public class UserProfileActivity extends BaseActivity {
             mUserBackGroundIv.setImageBitmap(mBackgroundDefaultBitmap);
         }
         if(mUser.getSex().equals("f")){
-            mSexIv.setImageBitmap(mFemailBitmap);
+            mSexIv.setImageBitmap(mFemaleBitmap);
         }else{
             mSexIv.setImageBitmap(mMaleBitmap);
         }

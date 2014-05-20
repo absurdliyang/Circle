@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
 
+import com.absurd.circle.app.AppConfig;
 import com.absurd.circle.app.AppContext;
 import com.absurd.circle.data.model.Comment;
 import com.absurd.circle.data.service.NotificationService;
@@ -49,6 +50,6 @@ public class UnReadCommentFragment extends LocalRefreshableFragment<Comment>{
         if(pageIndex == 0) {
             AppContext.cacheService.commnetDBManager.updateAllRead();
         }
-        return AppContext.cacheService.commnetDBManager.getPage(mCurrentPageIndex, 20);
+        return AppContext.cacheService.commnetDBManager.getPage(mCurrentPageIndex, AppConfig.CUSTOM_PAGE_SIZE);
     }
 }

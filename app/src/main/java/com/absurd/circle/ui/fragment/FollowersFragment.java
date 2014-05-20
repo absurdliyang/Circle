@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
+import com.absurd.circle.app.AppConfig;
 import com.absurd.circle.app.AppContext;
 import com.absurd.circle.data.model.Follow;
 import com.absurd.circle.data.model.User;
@@ -77,7 +78,7 @@ public class FollowersFragment extends UserListFragment<Follow> {
 
     @Override
     protected List<Follow> loadDataFromLocal(int pageIndex) {
-        return AppContext.cacheService.followDBManager.getPage(pageIndex,10);
+        return AppContext.cacheService.followDBManager.getPage(pageIndex, AppConfig.CUSTOM_PAGE_SIZE);
     }
 
     @Override

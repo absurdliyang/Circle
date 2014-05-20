@@ -60,6 +60,7 @@ public class EditMessageActivity extends BaseActivity implements AMapLocationLis
     private ImageView mMediaIv;
     private CheckBox mIsAnonyCb;
     private KeyboardControlEditText mContentEt;
+    private KeyboardControlEditText mTitleEt;
     private SmileyPicker mSmiley;
     private RelativeLayout mContainer;
 
@@ -101,6 +102,13 @@ public class EditMessageActivity extends BaseActivity implements AMapLocationLis
             }
         });
         mIsAnonyCb = (CheckBox)findViewById(R.id.cb_edit_msg_is_anony);
+        mTitleEt = (KeyboardControlEditText)findViewById(R.id.et_edit_msg_title);
+        mTitleEt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                hideSmileyPicker(true);
+            }
+        });
         mContentEt = (KeyboardControlEditText)findViewById(R.id.et_edit_msg_content);
         mContentEt.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -198,23 +206,6 @@ public class EditMessageActivity extends BaseActivity implements AMapLocationLis
         }
     }
 
-    private void initFacesView(){
-        //mFacesAdapter = new FacesAdapter(this);
-        /*
-        mFacesGv.setAdapter(mFacesAdapter);
-        mFacesGv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                SpannableString ss = new SpannableString(view.getTag().toString());
-                Drawable drawable = getResources().getDrawable((int)mFacesAdapter.getItemId(i));
-                drawable.setBounds(0,0,35,35);
-                ImageSpan span = new ImageSpan(drawable, ImageSpan.ALIGN_BOTTOM);
-                ss.setSpan(span, 0, view.getTag().toString().length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                mContentEt.getText().insert(mContentEt.getSelectionStart(), ss);
-            }
-        });
-        **/
-    }
 
     private void initView(){
         switch(mContentType){
@@ -227,9 +218,11 @@ public class EditMessageActivity extends BaseActivity implements AMapLocationLis
                 break;
             case MessageType.MOOD:
                 mContentEt.setHint(R.string.mood_description);
+                setTitleVisibility(false);
                 break;
             case MessageType.SHOW:
                 mContentEt.setHint(R.string.show_description);
+                setTitleVisibility(false);
                 mIsAnonyCb.setVisibility(View.GONE);
                 break;
             case MessageType.PARTY:
@@ -242,6 +235,16 @@ public class EditMessageActivity extends BaseActivity implements AMapLocationLis
                 break;
         }
     }
+
+    private void setTitleVisibility(boolean b){
+        if(b) {
+            findViewById(R.id.rlyt_edit_msg_title).setVisibility(View.VISIBLE);
+        }else{
+            findViewById(R.id.rlyt_edit_msg_title).setVisibility(View.GONE);
+        }
+    }
+
+
 
     private boolean invalidateContent(){
         mContent = mContentEt.getText().toString();
@@ -256,9 +259,21 @@ public class EditMessageActivity extends BaseActivity implements AMapLocationLis
             warning(R.string.warinig_image_null);
             return false;
         }
-        if(mContent.length() <= 5){
-            warning(R.string.warning_message_length_limit);
-            return false;
+        if(mTitleEt.getVisibility() == View.VISIBLE){
+            String title = mTitleEt.getText().toString().trim();
+            if(!StringUtil.isEmpty(title)){
+                if(mContent.length() + title.length() <= 10){
+                    warning(R.string.warning_message_title_length_limit);
+                    return false;
+                }else{
+                    mContent = "#" + title + "#" + mContent;
+                }
+            }
+        }else {
+            if (mContent.length() <= 5) {
+                warning(R.string.warning_message_length_limit);
+                return false;
+            }
         }
         return true;
     }
@@ -553,7 +568,7 @@ public class EditMessageActivity extends BaseActivity implements AMapLocationLis
             AppContext.commonLog.i("Get user's location error");
             return;
         }
-        String locationDesc = aMapLocation.getProvince() + " " + aMapLocation.getCity() + aMapLocation.getDistrict();
+        String locationDesc = aMapLocation.getProvince() + " " + aMapLocation.getCity() + aMapLocation.getDistrict() + aMapLocation.getFloor();
         AppContext.commonLog.i(locationDesc + " " + aMapLocation.getLongitude() + " " + aMapLocation.getLatitude());
         mLocationTv.setText(locationDesc);
         AppContext.lastPosition = new Position(aMapLocation.getLatitude(),aMapLocation.getLongitude());

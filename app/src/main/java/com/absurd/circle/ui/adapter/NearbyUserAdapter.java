@@ -31,6 +31,7 @@ public class NearbyUserAdapter extends BeanAdapter<User> {
     private Bitmap mFemailBitmap = ((BitmapDrawable)AppContext.getContext().getResources().getDrawable(R.drawable.user_profile_female)).getBitmap();
     private Bitmap mMaleBitmap = ((BitmapDrawable)AppContext.getContext().getResources().getDrawable(R.drawable.user_profile_male)).getBitmap();
 
+    private int mType;
 
     private FragmentActivity mActivity;
 
@@ -42,10 +43,11 @@ public class NearbyUserAdapter extends BeanAdapter<User> {
         super(context);
     }
 
-    public NearbyUserAdapter(FragmentActivity activity){
+    public NearbyUserAdapter(FragmentActivity activity, int type){
         super(activity);
 
         this.mActivity = activity;
+        this.mType = type;
     }
 
     private class ViewHolder{
@@ -80,7 +82,11 @@ public class NearbyUserAdapter extends BeanAdapter<User> {
         if(holder.avatarLoader != null){
             holder.avatarLoader.cancelRequest();
         }
-        holder.numView.setText(user.getRowNumber() + "");
+        if(mType == -1) {
+            holder.numView.setText(user.getRowNumber() + "");
+        }else{
+            holder.numView.setVisibility(View.GONE);
+        }
         if(!StringUtil.isEmpty(user.getAvatar()) && StringUtil.isUrl(user.getAvatar())){
             holder.avatarLoader = RequestManager.loadImage(user.getAvatar(), RequestManager.getImageListener(holder.avatarView,
                     mAvatarDefaultBitmap, mAvatarDefaultBitmap, new BitmapFilter() {
@@ -94,9 +100,9 @@ public class NearbyUserAdapter extends BeanAdapter<User> {
         holder.usernameView.setText(user.getName());
         holder.descView.setText(user.getDescription());
         if (user.getSex().equals("m")) {
-            holder.sexView.setImageBitmap(mFemailBitmap);
-        } else {
             holder.sexView.setImageBitmap(mMaleBitmap);
+        } else {
+            holder.sexView.setImageBitmap(mFemailBitmap);
         }
         holder.levelView.setText("LV." + user.getLevel());
         if(AppContext.lastPosition != null) {

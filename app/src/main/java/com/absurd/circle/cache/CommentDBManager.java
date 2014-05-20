@@ -58,7 +58,7 @@ public class CommentDBManager extends BaseDBManager {
 
     public List<Comment> getPage(int pageIndex, int pageSize){
         List<Comment> resList = new ArrayList<Comment>();
-        String sql= "select * from " + CommentDBInfo.TABLE_NAME +
+        String sql= "select * from " + CommentDBInfo.TABLE_NAME + " order by _id desc" +
                 " Limit "+String.valueOf(pageSize)+ " Offset " +String.valueOf(pageIndex * pageSize);
         AppContext.commonLog.i(sql);
         Cursor cursor = mDatabase.rawQuery(sql, null);

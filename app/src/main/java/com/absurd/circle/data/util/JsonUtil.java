@@ -16,7 +16,7 @@ public class JsonUtil {
     static {
         if(gson == null){
             // able null object
-            gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS").serializeNulls().create();
+            gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS").serializeNulls().create();
         }
     }
 

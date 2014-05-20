@@ -25,4 +25,7 @@
     <!-- Gallery -->
     <color name="dark_gray">#1E2129</color>
 
+    <!-- notification_circle_red -->
+    <color name="notification_circle_red">#ffCC0000</color>
+
 </resources>

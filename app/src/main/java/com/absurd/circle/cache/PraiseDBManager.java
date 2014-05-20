@@ -37,7 +37,7 @@ public class PraiseDBManager extends BaseDBManager {
 
     public List<Praise> getPage(int pageIndex, int pageSize) {
         List<Praise> resList = new ArrayList<Praise>();
-        String sql = "select * from " + PraiseDBInfo.TABLE_NAME +
+        String sql = "select * from " + PraiseDBInfo.TABLE_NAME +  " order by _id desc" +
                 " Limit " + String.valueOf(pageSize) + " Offset " + String.valueOf(pageIndex * pageSize);
         AppContext.commonLog.i(sql);
         Cursor cursor = mDatabase.rawQuery(sql, null);
