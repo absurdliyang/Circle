@@ -119,7 +119,11 @@ public class ChatService extends Service {
                     AppContext.commonLog.i("sendBroadCast");
                 } else if (message.getSubject().equals(ChatMessageType.COMMENT)) {
                     AppContext.commonLog.i("New Comment Notification");
-                    Comment comment = JsonUtil.fromJson(body, Comment.class);
+                    // Fix the bug android can not recieve the commnet json package
+                    // from wp and ios platform
+                    String formatBody = body.replace("\"commentdate\": \"0001-01-01T00:00:00\"," ,"\"commentdate\": null,");
+                    AppContext.commonLog.i(formatBody);
+                    Comment comment = JsonUtil.fromJson(formatBody, Comment.class);
                     AppContext.commonLog.i(comment.toString());
                     comment.setState(0);
                     text = "动态有了新的评论";

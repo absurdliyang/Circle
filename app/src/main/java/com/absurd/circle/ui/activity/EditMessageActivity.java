@@ -568,7 +568,7 @@ public class EditMessageActivity extends BaseActivity implements AMapLocationLis
             AppContext.commonLog.i("Get user's location error");
             return;
         }
-        String locationDesc = aMapLocation.getProvince() + " " + aMapLocation.getCity() + aMapLocation.getDistrict() + aMapLocation.getFloor();
+        String locationDesc = aMapLocation.getProvince() + " " + aMapLocation.getCity() + aMapLocation.getDistrict();
         AppContext.commonLog.i(locationDesc + " " + aMapLocation.getLongitude() + " " + aMapLocation.getLatitude());
         mLocationTv.setText(locationDesc);
         AppContext.lastPosition = new Position(aMapLocation.getLatitude(),aMapLocation.getLongitude());

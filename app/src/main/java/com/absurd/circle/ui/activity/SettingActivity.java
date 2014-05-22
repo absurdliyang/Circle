@@ -13,6 +13,7 @@ import com.absurd.circle.app.R;
 import com.absurd.circle.ui.activity.base.BaseActivity;
 import com.absurd.circle.util.IntentUtil;
 import com.absurd.circle.util.SystemUtil;
+import com.umeng.update.UmengUpdateAgent;
 
 public class SettingActivity extends BaseActivity {
 
@@ -66,6 +67,7 @@ public class SettingActivity extends BaseActivity {
                 navigateToWeb("http://quanquanshequ.com?wp");
                 break;
             case R.id.btn_version:
+                UmengUpdateAgent.forceUpdate(this);
                 break;
             case R.id.btn_clean_cache:
                 cleanCache();

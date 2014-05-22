@@ -52,7 +52,10 @@ import com.tencent.connect.UserInfo;
 import com.tencent.tauth.IUiListener;
 import com.tencent.tauth.Tencent;
 import com.tencent.tauth.UiError;
+import com.umeng.analytics.MobclickAgent;
 import com.umeng.update.UmengUpdateAgent;
+import com.umeng.update.UmengUpdateListener;
+import com.umeng.update.UpdateResponse;
 
 public class LoginActivity extends ActionBarActivity {
 
@@ -74,8 +77,15 @@ public class LoginActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         com.umeng.common.Log.LOG = true;
-        UmengUpdateAgent.update(this);
+        MobclickAgent.setDebugMode(true);
+        MobclickAgent.openActivityDurationTrack(false);
+        MobclickAgent.updateOnlineConfig(this);
+        //getNewVersionFormUmeng();
+
+
+        UmengUpdateAgent.update(this);    //从服务器获取更新信息
 
         AppContext.userId = AppContext.sharedPreferenceUtil.getUserId();
         AppContext.commonLog.i(AppContext.userId);
@@ -475,6 +485,32 @@ public class LoginActivity extends ActionBarActivity {
         }
     }
 
+    private void getNewVersionFormUmeng(){
+        /** 开始调用自动更新函数 **/
+        UmengUpdateAgent.update(this);    //从服务器获取更新信息
+        UmengUpdateAgent.setUpdateOnlyWifi(false);    //是否在只在wifi下提示更新，默认为 true
+        UmengUpdateAgent.setUpdateAutoPopup(true);    //是否自动弹出更新对话框
+        UmengUpdateAgent.setDownloadListener(null);    //下载新版本过程事件监听，可设为 null
+        UmengUpdateAgent.setDialogListener(null);    //用户点击更新对话框按钮的回调事件，直接 null
+        //从服务器获取更新信息的回调函数
+        UmengUpdateAgent.setUpdateListener(new UmengUpdateListener() {
+            @Override
+            public void onUpdateReturned(int updateStatus,UpdateResponse updateInfo) {
+                switch (updateStatus) {
+                    case 0: // 有更新
+                        UmengUpdateAgent.showUpdateDialog(LoginActivity.this, updateInfo);
+                        break;
+                    case 1: // 无更新
+                        break;
+                    case 2: // 如果设置为wifi下更新且wifi无法打开时调用
+                        break;
+                    case 3: // 连接超时
+                        break;
+                }
+            }
+        });
+    }
+
     /**
      * Fix the fucking bug when menu key down
      * @param keyCode
@@ -518,6 +554,21 @@ public class LoginActivity extends ActionBarActivity {
                     ", msg='" + msg + '\'' +
                     '}';
         }
+    }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this);
+        MobclickAgent.onPageStart("BaseScreen");
+    }
+
+    @Override
+    protected void onPause(){
+        super.onPause();
+        MobclickAgent.onPause(this);
+        MobclickAgent.onPageEnd("BaseScreen");
     }
 
 }

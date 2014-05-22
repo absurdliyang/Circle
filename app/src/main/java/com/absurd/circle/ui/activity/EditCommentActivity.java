@@ -211,6 +211,7 @@ public class EditCommentActivity extends BaseActivity {
                     mIsbusy = false;
                     //warning(R.string.send_comment_success);
                     Toast.makeText(AppContext.getContext(), R.string.send_comment_success, Toast.LENGTH_SHORT).show();
+
                     AppContext.xmppConnectionManager.send(mChat, comment, MessageDetailActivity.message.getUser().getId() + "");
                 }
             });

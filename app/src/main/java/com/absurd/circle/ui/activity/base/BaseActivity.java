@@ -21,6 +21,7 @@ import com.absurd.circle.data.client.volley.RequestManager;
 import com.absurd.circle.ui.view.ItemDialog;
 import com.absurd.circle.ui.widget.AppMsg;
 import com.absurd.circle.util.NetworkUtil;
+import com.umeng.analytics.MobclickAgent;
 
 import me.imid.swipebacklayout.lib.app.SwipeBackActivity;
 
@@ -163,4 +164,20 @@ public abstract class BaseActivity extends SwipeBackActivity implements IProgres
         super.onBackPressed();
         overridePendingTransition(R.anim.push_right_out, R.anim.push_right_out);
     }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this);
+        MobclickAgent.onPageStart("BaseScreen");
+    }
+
+    @Override
+    protected void onPause(){
+        super.onPause();
+        MobclickAgent.onPause(this);
+        MobclickAgent.onPageEnd("BaseScreen");
+    }
+
 }

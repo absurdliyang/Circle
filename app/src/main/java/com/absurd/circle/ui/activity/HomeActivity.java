@@ -43,6 +43,7 @@ import com.jeremyfeinstein.slidingmenu.lib.app.SlidingFragmentActivity;
 import com.microsoft.windowsazure.mobileservices.ServiceFilterResponse;
 import com.microsoft.windowsazure.mobileservices.TableOperationCallback;
 import com.microsoft.windowsazure.mobileservices.TableQueryCallback;
+import com.umeng.analytics.MobclickAgent;
 import com.umeng.update.UmengUpdateAgent;
 
 import java.util.List;
@@ -255,7 +256,7 @@ public class HomeActivity extends SlidingFragmentActivity
         actionBar.setDisplayShowHomeEnabled(false);
         ActionBar.LayoutParams params = new ActionBar.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.MATCH_PARENT);
         View actionBarView = LayoutInflater.from(this).inflate(R.layout.layout_actionbar,null);
-        View titleV = actionBarView.findViewById(R.id.llyt_actionbar_title);
+        View titleV = actionBarView.findViewById(R.id.llyt_custom_actionbar_title);
         titleV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -372,6 +373,10 @@ public class HomeActivity extends SlidingFragmentActivity
     @Override
     public void onResume() {
         super.onResume();
+        MobclickAgent.onResume(this);
+        MobclickAgent.onPageStart("BaseScreen");
+
+
         // Invalidate the notification on the actionbar
         TextView notificationNumTv = (TextView)findViewById(R.id.tv_tv_ab_notification_num);
         if(AppContext.notificationNum == 0){
@@ -384,10 +389,11 @@ public class HomeActivity extends SlidingFragmentActivity
     }
 
     @Override
-    public void onPause() {
+    protected void onPause(){
         super.onPause();
+        MobclickAgent.onPause(this);
+        MobclickAgent.onPageEnd("BaseScreen");
     }
-
     @Override
     public void onDestroy() {
         super.onDestroy();

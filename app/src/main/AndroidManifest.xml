@@ -31,7 +31,7 @@
             android:value="536ce36156240b0a770916b2" />
         <meta-data
             android:name="UMENG_CHANNEL"
-            android:value="Channel ID" />
+            android:value="" />
 
         <service
             android:name="com.umeng.common.net.DownloadingService"

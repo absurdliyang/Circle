@@ -29,14 +29,13 @@
                 android:layout_height="20dp"
                 android:layout_gravity="right"
                 android:gravity="center|center_vertical|center_horizontal"
-                android:text="12"
                 android:textColor="#ffffffff"
                 android:background="@drawable/notification_circle_bg"/>
         </FrameLayout>
     </FrameLayout>
 
     <LinearLayout
-        android:id="@+id/llyt_cutom_actionbar_title"
+        android:id="@+id/llyt_custom_actionbar_title"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         android:paddingLeft="5dp"
