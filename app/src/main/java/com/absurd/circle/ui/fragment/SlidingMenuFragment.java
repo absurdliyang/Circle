@@ -58,22 +58,25 @@ public class SlidingMenuFragment extends Fragment {
     }
 
     public void invalidateView(){
-        if(AppContext.auth.getAvatar() != null) {
-            RequestManager.loadImage(AppContext.auth.getAvatar(),
-                    RequestManager.getImageListener(mAvatarIv, null, null,new BitmapFilter() {
-                        @Override
-                        public Bitmap filter(Bitmap bitmap) {
-                            return ImageUtil.roundBitmap(bitmap);
-                        }
-                    }));
-        }
-        mAvatarIv.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                IntentUtil.startActivity(SlidingMenuFragment.this.getActivity(), MyProfileActivity.class);
+        if(AppContext.auth != null) {
+            if (AppContext.auth.getAvatar() != null) {
+                RequestManager.loadImage(AppContext.auth.getAvatar(),
+                        RequestManager.getImageListener(mAvatarIv, null, null, new BitmapFilter() {
+                            @Override
+                            public Bitmap filter(Bitmap bitmap) {
+                                return ImageUtil.roundBitmap(bitmap);
+                            }
+                        })
+                );
             }
-        });
-        mUsernameTv.setText(AppContext.auth.getName());
+            mAvatarIv.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    IntentUtil.startActivity(SlidingMenuFragment.this.getActivity(), MyProfileActivity.class);
+                }
+            });
+            mUsernameTv.setText(AppContext.auth.getName());
+        }
 
         mRootView.findViewById(R.id.llyt_drawer_menu_notification).setOnClickListener(new View.OnClickListener() {
             @Override

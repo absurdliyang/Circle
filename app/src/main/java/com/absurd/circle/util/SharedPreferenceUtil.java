@@ -81,6 +81,24 @@ public class SharedPreferenceUtil {
         return mSharedPreferences.getInt("notificationNum",0);
     }
 
+    public void setUnReadCommentNum(int num){
+        mEditor.putInt("unReadCommentNum", num)
+                .commit();
+    }
+
+    public int getUnReadCommentNum(){
+        return mSharedPreferences.getInt("unReadCommentNum",0);
+    }
+
+    public int getUnReadPraiseNum(){
+        return mSharedPreferences.getInt("unReadPraiseNum",0);
+    }
+
+    public void setUnReadPraiseNum(int num){
+        mEditor.putInt("unReadPraiseNum", num)
+                .commit();
+    }
+
     public void clearAll(){
         mEditor.clear()
                 .commit();

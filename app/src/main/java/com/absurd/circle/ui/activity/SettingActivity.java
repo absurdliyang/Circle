@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.absurd.circle.app.AppContext;
 import com.absurd.circle.app.R;
+import com.absurd.circle.im.service.ChatService;
 import com.absurd.circle.ui.activity.base.BaseActivity;
 import com.absurd.circle.util.IntentUtil;
 import com.absurd.circle.util.SystemUtil;
@@ -49,6 +50,8 @@ public class SettingActivity extends BaseActivity {
         AppContext.lastPosition = null;
         AppContext.sharedPreferenceUtil.clearAll();
         AppContext.cacheService.clearAll();
+
+        ChatService.getInstance().stopSelf();
     }
 
     private void cleanCache(){

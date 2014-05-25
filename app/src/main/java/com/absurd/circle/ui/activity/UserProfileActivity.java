@@ -184,6 +184,7 @@ public class UserProfileActivity extends BaseActivity {
             final Follow follow = new Follow();
             follow.setUserId(AppContext.auth.getUserId());
             follow.setFollowUserId(mUser.getUserId());
+            follow.setUser(mUser);
             service.insertFollower(follow,new TableOperationCallback<Follow>() {
                 @Override
                 public void onCompleted(Follow entity, Exception exception, ServiceFilterResponse response) {
@@ -193,6 +194,7 @@ public class UserProfileActivity extends BaseActivity {
                             exception.printStackTrace();
                         }
                     }else{
+                        AppContext.commonLog.i(entity.toString());
                         AppContext.cacheService.followDBManager.insertFollow(entity);
                         mAddFollowTextTv.setText("取消关注");
                         mFollow = entity;

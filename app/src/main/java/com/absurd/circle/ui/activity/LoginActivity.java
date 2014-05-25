@@ -1,5 +1,7 @@
 package com.absurd.circle.ui.activity;
 
+import java.io.Serializable;
+import java.sql.Date;
 import java.util.List;
 
 import android.app.ProgressDialog;
@@ -22,7 +24,6 @@ import com.absurd.circle.data.client.AzureClient;
 import com.absurd.circle.data.client.volley.GsonRequest;
 import com.absurd.circle.data.client.volley.RequestManager;
 import com.absurd.circle.data.model.Follow;
-import com.absurd.circle.data.model.QQUser;
 import com.absurd.circle.data.model.SinaWeiboUser;
 import com.absurd.circle.data.model.User;
 import com.absurd.circle.data.service.UserService;
@@ -30,11 +31,8 @@ import com.absurd.circle.data.util.JsonUtil;
 import com.absurd.circle.util.IntentUtil;
 import com.absurd.circle.util.StringUtil;
 import com.absurd.circle.util.SystemUtil;
-import com.android.volley.NetworkResponse;
-import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.Volley;
 import com.google.gson.annotations.Expose;
 import com.microsoft.windowsazure.mobileservices.ServiceFilterResponse;
 import com.microsoft.windowsazure.mobileservices.TableOperationCallback;
@@ -48,16 +46,15 @@ import com.sina.weibo.sdk.openapi.StatusesAPI;
 import com.sina.weibo.sdk.openapi.UsersAPI;
 import com.sina.weibo.sdk.openapi.legacy.FriendshipsAPI;
 import com.sina.weibo.sdk.widget.LoginoutButton;
-import com.tencent.connect.UserInfo;
-import com.tencent.tauth.IUiListener;
 import com.tencent.tauth.Tencent;
-import com.tencent.tauth.UiError;
 import com.umeng.analytics.MobclickAgent;
 import com.umeng.update.UmengUpdateAgent;
-import com.umeng.update.UmengUpdateListener;
-import com.umeng.update.UpdateResponse;
+
+import java.util.Calendar;
 
 public class LoginActivity extends ActionBarActivity {
+
+    public static final int QQ_LOGIN_REQUEST_CODE = 124;
 
     private Button mCurrentBtn;
     private LoginoutButton mSinaLoginBtn;
@@ -71,6 +68,9 @@ public class LoginActivity extends ActionBarActivity {
     private UserService mUserService = new UserService();
 
     private AuthListener mLoginListener = new AuthListener();
+
+    private QQWeiboUser mQQUser;
+
 
 
 
@@ -127,7 +127,11 @@ public class LoginActivity extends ActionBarActivity {
             @Override
             public void onClick(View view) {
                 mLoginProgressDialog.show();
-                authQQUser();
+                //authQQUser();
+                //IntentUtil.startActivity(LoginActivity.this, QQLoginWebViewActivity.class);
+                Intent intent = new Intent(LoginActivity.this, QQLoginWebViewActivity.class);
+                startActivityForResult(intent, QQ_LOGIN_REQUEST_CODE);
+
             }
         });
 
@@ -194,7 +198,7 @@ public class LoginActivity extends ActionBarActivity {
         user.setLocation(sinaUser.getLocation());
         user.setAvatar(sinaUser.getAvatarLarge());
         user.setOsName(AppConstant.OS_NAME);
-        java.util.Calendar calendar = java.util.Calendar.getInstance();
+        Calendar calendar = Calendar.getInstance();
         user.setDate(new java.sql.Date(calendar.getTimeInMillis()));
         user.setAge(new java.sql.Date(calendar.getTimeInMillis()));
         user.setLastLoginDate(new java.sql.Date(calendar.getTimeInMillis()));
@@ -250,8 +254,13 @@ public class LoginActivity extends ActionBarActivity {
         });
     }
 
-    private void loginQQUser(final QQUser qqUser){
-        String userId = "qq:" + mTencent.getOpenId();
+    private void loginQQUser(){
+        if(mQQUser == null || mQQUser.getData() == null){
+            Toast.makeText(AppContext.getContext(), R.string.qq_auth_failed, Toast.LENGTH_SHORT).show();
+            mLoginProgressDialog.dismiss();
+            return;
+        }
+        String userId = "qq:" + mQQUser.getData().getOpenid();
         final User user = new User();
         user.setUserId(userId);
         user.setLoginType(1);
@@ -267,7 +276,7 @@ public class LoginActivity extends ActionBarActivity {
                 } else {
                     initConfig(entity);
                     if (entity.getId() != 0) {
-                        registerQQUser(entity, qqUser);
+                        registerQQUser(entity);
                     } else {
                         // mTencent.logout(AppContext.getContext());
                         getUserInfo(entity.getUserId());
@@ -278,25 +287,29 @@ public class LoginActivity extends ActionBarActivity {
         });
     }
 
-    private void registerQQUser(final User user,QQUser qqUser){
+    private void registerQQUser(final User user){
         user.setLoginType(1);
-        if(StringUtil.isEmpty(qqUser.getNickname())){
+        if(StringUtil.isEmpty(mQQUser.getData().getNick())){
             user.setName("圈圈用户");
         }else {
-            user.setName(qqUser.getNickname());
+            user.setName(mQQUser.getData().getNick());
         }
-        if(qqUser.getGender().equals("男")){
+        if(mQQUser.getData().getSex() == 1){
             user.setSex("m");
         }else{
             user.setSex("f");
         }
-        user.setUserId("qq:" + mTencent.getOpenId());
-        user.setAvatar(qqUser.getFigureUrl2());
+        user.setUserId("qq:" + mQQUser.getData().getOpenid());
+        user.setAvatar(mQQUser.getData().getHead() + "/100");
         user.setOsName(AppConstant.OS_NAME);
         user.setAppVer(SystemUtil.getAppVersion());
         java.util.Calendar calendar = java.util.Calendar.getInstance();
         user.setDate(new java.sql.Date(calendar.getTimeInMillis()));
-        user.setAge(new java.sql.Date(calendar.getTimeInMillis()));
+        if(mQQUser.getData().getBirth_year() > 0 && mQQUser.getData().getBirth_month() > 0 && mQQUser.getData().getBirth_day() > 0) {
+            Calendar ageCalendar = Calendar.getInstance();
+            ageCalendar.set(mQQUser.getData().getBirth_year(), mQQUser.getData().getBirth_month(), mQQUser.getData().getBirth_day());
+            user.setAge(new java.sql.Date(calendar.getTimeInMillis()));
+        }
         user.setLastLoginDate(new java.sql.Date(calendar.getTimeInMillis()));
 
         mUserService.updateUser(user, new TableOperationCallback<User>() {
@@ -341,12 +354,14 @@ public class LoginActivity extends ActionBarActivity {
         RequestManager.addRequest(gsonRequest, "shareToQQ");
     }
 
+    /**
     private void authQQUser(){
         if(!mTencent.isSessionValid()){
             mTencent.login(this, AppConstant.QQ_SCOPE, new IUiListener() {
                 @Override
                 public void onComplete(Object o) {
                     AppContext.commonLog.i("QQ login success");
+                    AppContext.commonLog.i("token --> " + mTencent.getQQToken());
                     final UserInfo userInfo = new UserInfo(LoginActivity.this, mTencent.getQQToken());
                     userInfo.getUserInfo(new IUiListener() {
                         @Override
@@ -384,7 +399,29 @@ public class LoginActivity extends ActionBarActivity {
         }
 
     }
+     **/
 
+    private void getQQUserInfo(String openId, String accessToken){
+        String url = String.format(AppConstant.QQ_USER_INFO_URL, accessToken,AppConstant.QQ_ID, openId );
+
+        GsonRequest<QQWeiboUser> request = new GsonRequest<QQWeiboUser>(url,QQWeiboUser.class,null,
+                new Response.Listener<QQWeiboUser>() {
+                    @Override
+                    public void onResponse(QQWeiboUser qqWeiboUser) {
+                        AppContext.commonLog.i(qqWeiboUser.toString());
+                        mQQUser = qqWeiboUser;
+                        loginQQUser();
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError volleyError) {
+
+                    }
+                }
+        );
+        RequestManager.addRequest(request, "getQQUserInfo");
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -393,6 +430,22 @@ public class LoginActivity extends ActionBarActivity {
         if(mCurrentBtn != null){
             if(mCurrentBtn instanceof LoginoutButton){
                 ((LoginoutButton)mCurrentBtn).onActivityResult(requestCode, resultCode, data);
+            }
+        }
+        if(requestCode == QQ_LOGIN_REQUEST_CODE){
+            if(data != null) {
+                String openId = data.getStringExtra("openId");
+                String accessToken = data.getStringExtra("accessToken");
+                if (StringUtil.isEmpty(openId) || StringUtil.isEmpty(accessToken)) {
+                    Toast.makeText(AppContext.getContext(), R.string.qq_auth_failed, Toast.LENGTH_SHORT).show();
+                    mLoginProgressDialog.dismiss();
+                } else {
+                    AppContext.commonLog.i("getExtrad --> " + openId + " " + accessToken);
+                    getQQUserInfo(openId, accessToken);
+                }
+            }else{
+                Toast.makeText(AppContext.getContext(), R.string.qq_auth_failed, Toast.LENGTH_SHORT).show();
+                mLoginProgressDialog.dismiss();
             }
         }
     }
@@ -485,31 +538,6 @@ public class LoginActivity extends ActionBarActivity {
         }
     }
 
-    private void getNewVersionFormUmeng(){
-        /** 开始调用自动更新函数 **/
-        UmengUpdateAgent.update(this);    //从服务器获取更新信息
-        UmengUpdateAgent.setUpdateOnlyWifi(false);    //是否在只在wifi下提示更新，默认为 true
-        UmengUpdateAgent.setUpdateAutoPopup(true);    //是否自动弹出更新对话框
-        UmengUpdateAgent.setDownloadListener(null);    //下载新版本过程事件监听，可设为 null
-        UmengUpdateAgent.setDialogListener(null);    //用户点击更新对话框按钮的回调事件，直接 null
-        //从服务器获取更新信息的回调函数
-        UmengUpdateAgent.setUpdateListener(new UmengUpdateListener() {
-            @Override
-            public void onUpdateReturned(int updateStatus,UpdateResponse updateInfo) {
-                switch (updateStatus) {
-                    case 0: // 有更新
-                        UmengUpdateAgent.showUpdateDialog(LoginActivity.this, updateInfo);
-                        break;
-                    case 1: // 无更新
-                        break;
-                    case 2: // 如果设置为wifi下更新且wifi无法打开时调用
-                        break;
-                    case 3: // 连接超时
-                        break;
-                }
-            }
-        });
-    }
 
     /**
      * Fix the fucking bug when menu key down
@@ -570,5 +598,251 @@ public class LoginActivity extends ActionBarActivity {
         MobclickAgent.onPause(this);
         MobclickAgent.onPageEnd("BaseScreen");
     }
+
+
+
+
+
+
+    public static class QQWeiboUser implements Serializable{
+
+        @Expose
+        public UserInfo data;
+
+        public UserInfo getData() {
+            return data;
+        }
+
+        public void setData(UserInfo data) {
+            this.data = data;
+        }
+
+        @Override
+        public String toString() {
+            return "QQWeiboUser{" +
+                    "data=" + data +
+                    '}';
+        }
+    }
+
+    public static class UserInfo{
+        @Expose
+        public String name ;
+        @Expose
+        public String openid ;
+        @Expose
+        public String nick ;
+        @Expose
+        public String head ;
+        @Expose
+        public String location ;
+        @Expose
+        public int isvip ;
+        @Expose
+        public int isent ;
+        @Expose
+        public String introduction ;
+        @Expose
+        public int birth_year ;
+        @Expose
+        public int birth_month ;
+        @Expose
+        public int birth_day ;
+        @Expose
+        public String country_code ;
+        @Expose
+        public String province_code ;
+        @Expose
+        public String city_code ;
+        @Expose
+        public int sex ;
+        @Expose
+        public int fansnum;
+        @Expose
+        public int idolnum ;
+        @Expose
+        public int tweetnum  ;
+        @Expose
+        public String email ;
+
+        public String getEmail() {
+            return email;
+        }
+
+        public void setEmail(String email) {
+            this.email = email;
+        }
+
+        public int getTweetnum() {
+            return tweetnum;
+        }
+
+        public void setTweetnum(int tweetnum) {
+            this.tweetnum = tweetnum;
+        }
+
+        public int getIdolnum() {
+            return idolnum;
+        }
+
+        public void setIdolnum(int idolnum) {
+            this.idolnum = idolnum;
+        }
+
+        public int getFansnum() {
+            return fansnum;
+        }
+
+        public void setFansnum(int fansnum) {
+            this.fansnum = fansnum;
+        }
+
+        public int getSex() {
+            return sex;
+        }
+
+        public void setSex(int sex) {
+            this.sex = sex;
+        }
+
+        public String getCity_code() {
+            return city_code;
+        }
+
+        public void setCity_code(String city_code) {
+            this.city_code = city_code;
+        }
+
+        public String getCountry_code() {
+            return country_code;
+        }
+
+        public void setCountry_code(String country_code) {
+            this.country_code = country_code;
+        }
+
+        public String getProvince_code() {
+            return province_code;
+        }
+
+        public void setProvince_code(String province_code) {
+            this.province_code = province_code;
+        }
+
+        public int getBirth_day() {
+            return birth_day;
+        }
+
+        public void setBirth_day(int birth_day) {
+            this.birth_day = birth_day;
+        }
+
+        public int getBirth_year() {
+            return birth_year;
+        }
+
+        public void setBirth_year(int birth_year) {
+            this.birth_year = birth_year;
+        }
+
+        public String getIntroduction() {
+            return introduction;
+        }
+
+        public void setIntroduction(String introduction) {
+            this.introduction = introduction;
+        }
+
+        public int getBirth_month() {
+            return birth_month;
+        }
+
+        public void setBirth_month(int birth_month) {
+            this.birth_month = birth_month;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getOpenid() {
+            return openid;
+        }
+
+        public void setOpenid(String openid) {
+            this.openid = openid;
+        }
+
+        public String getNick() {
+            return nick;
+        }
+
+        public void setNick(String nick) {
+            this.nick = nick;
+        }
+
+        public String getHead() {
+            return head;
+        }
+
+        public void setHead(String head) {
+            this.head = head;
+        }
+
+        public String getLocation() {
+            return location;
+        }
+
+        public void setLocation(String location) {
+            this.location = location;
+        }
+
+        public int getIsvip() {
+            return isvip;
+        }
+
+        public void setIsvip(int isvip) {
+            this.isvip = isvip;
+        }
+
+        public int getIsent() {
+            return isent;
+        }
+
+        public void setIsent(int isent) {
+            this.isent = isent;
+        }
+
+        @Override
+        public String toString() {
+            return "UserInfo{" +
+                    "name='" + name + '\'' +
+                    ", openid='" + openid + '\'' +
+                    ", nick='" + nick + '\'' +
+                    ", head='" + head + '\'' +
+                    ", location='" + location + '\'' +
+                    ", isvip=" + isvip +
+                    ", isent=" + isent +
+                    ", introduction='" + introduction + '\'' +
+                    ", birth_year=" + birth_year +
+                    ", birth_month=" + birth_month +
+                    ", birth_day=" + birth_day +
+                    ", country_code='" + country_code + '\'' +
+                    ", province_code='" + province_code + '\'' +
+                    ", city_code='" + city_code + '\'' +
+                    ", sex=" + sex +
+                    ", fansnum=" + fansnum +
+                    ", idolnum=" + idolnum +
+                    ", tweetnum=" + tweetnum +
+                    ", email='" + email + '\'' +
+                    '}';
+        }
+    }
+
+
 
 }

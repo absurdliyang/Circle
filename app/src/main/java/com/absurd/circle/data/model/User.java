@@ -22,10 +22,11 @@ public class User implements Serializable, Cloneable{
     @SerializedName("id")
     private int mId;
 
+    /**
     @Expose
     @SerializedName("RowNumber")
     private int mRowNumber;
-
+**/
     @Expose
     @SerializedName("userid")
     private String mUserId;
@@ -151,6 +152,7 @@ public class User implements Serializable, Cloneable{
         mId = id;
     }
 
+    /**
     public int getRowNumber() {
         return mRowNumber;
     }
@@ -158,6 +160,7 @@ public class User implements Serializable, Cloneable{
     public void setRowNumber(int rowNumber) {
         mRowNumber = rowNumber;
     }
+     **/
 
 
     public String getUserId() {

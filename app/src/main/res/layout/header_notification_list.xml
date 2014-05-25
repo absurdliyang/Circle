@@ -13,10 +13,14 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <ImageView
-            android:id="@+id/iv_header_comment"
-            android:layout_width="50dp"
-            android:layout_height="50dp"/>
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:id="@+id/iv_header_comment"
+                android:layout_width="50dp"
+                android:layout_height="50dp"/>
+        </FrameLayout>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -24,6 +28,16 @@
             android:layout_marginLeft="20dp"
             android:textSize="16dp"
             android:text="评论"/>
+
+        <TextView
+            android:id="@+id/tv_unread_comment_num"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginLeft="15dp"
+            android:layout_gravity="center_vertical"
+            android:gravity="center|center_vertical|center_horizontal"
+            android:textColor="#ffffffff"
+            android:background="@drawable/notification_circle_bg"/>
     </LinearLayout>
     <LinearLayout
         android:id="@+id/llyt_header_praise"
@@ -32,10 +46,14 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <ImageView
-            android:id="@+id/iv_header_praise"
-            android:layout_width="50dp"
-            android:layout_height="50dp"/>
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:id="@+id/iv_header_praise"
+                android:layout_width="50dp"
+                android:layout_height="50dp"/>
+        </FrameLayout>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -43,6 +61,15 @@
             android:layout_marginLeft="20dp"
             android:textSize="16dp"
             android:text="赞"/>
+        <TextView
+            android:id="@+id/tv_unread_praise_num"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginLeft="15dp"
+            android:layout_gravity="center_vertical"
+            android:gravity="center|center_vertical|center_horizontal"
+            android:textColor="#ffffffff"
+            android:background="@drawable/notification_circle_bg"/>
     </LinearLayout>
 
 </LinearLayout>

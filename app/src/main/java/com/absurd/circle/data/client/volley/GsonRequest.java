@@ -1,5 +1,6 @@
 package com.absurd.circle.data.client.volley;
 
+import com.absurd.circle.app.AppContext;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
@@ -58,6 +59,7 @@ public class GsonRequest<T> extends Request<T> {
         try {
             String json = new String(
                     response.data, HttpHeaderParser.parseCharset(response.headers));
+            AppContext.commonLog.i(json);
             return Response.success(
                     gson.fromJson(json, clazz), HttpHeaderParser.parseCacheHeaders(response));
         } catch (UnsupportedEncodingException e) {

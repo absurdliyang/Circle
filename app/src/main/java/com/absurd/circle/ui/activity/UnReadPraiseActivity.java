@@ -30,6 +30,10 @@ public class UnReadPraiseActivity extends BaseActivity {
         fm.beginTransaction().replace(R.id.container, mUnReadPraiseFragment)
                 .commit();
 
+
+        AppContext.unReadPraiseNum = 0;
+        AppContext.sharedPreferenceUtil.setUnReadPraiseNum(AppContext.unReadPraiseNum);
+
     }
 
     @Override

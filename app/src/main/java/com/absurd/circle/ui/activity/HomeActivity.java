@@ -5,6 +5,7 @@ import android.graphics.Rect;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
@@ -12,7 +13,6 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -24,6 +24,8 @@ import com.absurd.circle.data.client.AzureClient;
 import com.absurd.circle.data.model.Position;
 import com.absurd.circle.data.model.User;
 import com.absurd.circle.data.service.UserService;
+import com.absurd.circle.im.service.ChatService;
+import com.absurd.circle.ui.activity.base.INotificationChangedListener;
 import com.absurd.circle.ui.activity.base.IProgressBarActivity;
 import com.absurd.circle.ui.fragment.CategoryFragment;
 import com.absurd.circle.ui.fragment.HomeFragment;
@@ -44,13 +46,12 @@ import com.microsoft.windowsazure.mobileservices.ServiceFilterResponse;
 import com.microsoft.windowsazure.mobileservices.TableOperationCallback;
 import com.microsoft.windowsazure.mobileservices.TableQueryCallback;
 import com.umeng.analytics.MobclickAgent;
-import com.umeng.update.UmengUpdateAgent;
 
 import java.util.List;
 import java.util.Calendar;
 
 public class HomeActivity extends SlidingFragmentActivity
-        implements IProgressBarActivity, AMapLocationListener{
+        implements IProgressBarActivity, INotificationChangedListener, AMapLocationListener{
     private HomeFragment mContent;
     /**
      * false MessageListFragment
@@ -77,6 +78,12 @@ public class HomeActivity extends SlidingFragmentActivity
         AppContext.currentActivity = this;
 
         getAuth();
+
+
+        //Init the NotificationChangedListener in ChatService
+        if(ChatService.getInstance() != null) {
+            ChatService.getInstance().setNotificationChangedListener(this);
+        }
 
         // set the Above View
         if (savedInstanceState != null)
@@ -378,14 +385,41 @@ public class HomeActivity extends SlidingFragmentActivity
 
 
         // Invalidate the notification on the actionbar
-        TextView notificationNumTv = (TextView)findViewById(R.id.tv_tv_ab_notification_num);
-        if(AppContext.notificationNum == 0){
-            notificationNumTv.setVisibility(View.GONE);
-        }else{
-            notificationNumTv.setVisibility(View.VISIBLE);
-            notificationNumTv.setText(AppContext.notificationNum + "");
-        }
+        updateNotificationNum();
         //mMapView.onResume();
+    }
+
+    @Override
+    public void onNotificationChanged() {
+        updateNotificationNum();
+    }
+
+    public static final int UPDATE_NOTIFICATIO_NUM = 1;
+
+    private Handler mUpdateNotificationNumHandler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what){
+                case UPDATE_NOTIFICATIO_NUM:
+                    TextView notificationNumTv = (TextView)findViewById(R.id.tv_tv_ab_notification_num);
+                    if(AppContext.notificationNum == 0){
+                        notificationNumTv.setVisibility(View.GONE);
+                    }else{
+                        notificationNumTv.setVisibility(View.VISIBLE);
+                        notificationNumTv.setText(AppContext.notificationNum + "");
+                    }
+
+                    mSlidingMenuFragment.invalidateView();
+                    break;
+            }
+            super.handleMessage(msg);
+        }
+    };
+
+    private void updateNotificationNum(){
+        Message message = new Message();
+        message.what = UPDATE_NOTIFICATIO_NUM;
+        mUpdateNotificationNumHandler.sendMessage(message);
     }
 
     @Override
@@ -448,5 +482,6 @@ public class HomeActivity extends SlidingFragmentActivity
         String content = AppContext.getContext().getString(resId);
         warning(content);
     }
+
 
 }

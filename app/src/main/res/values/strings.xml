@@ -71,19 +71,7 @@
     <string name="download_finished_but_cant_read_picture_file">下载完成，但是无法读取图片</string>
     <string name="notification_sending_message">正在发送</string>
     <string name="notificaiont_uploading_pic">正在上传图片</string>
-
-
-
-
-
-
-
-
-
-
-
-
-
+    <string name="qq_auth_failed">QQ授权失败,请重新登录</string>
 
     <!-- sina weibo -->
     <string name="com_sina_weibo_sdk_login_with_weibo_account">用微博登錄</string>
@@ -218,5 +206,6 @@
     <string name="title_activity_friend_messages">FriendMessagesActivity</string>
     <string name="title_activity_near_people">NearPeopleActivity</string>
     <string name="title_activity_near_talents">NearTalentsActivity</string>
+    <string name="title_activity_web_view">WebViewActivity</string>
 
 </resources>

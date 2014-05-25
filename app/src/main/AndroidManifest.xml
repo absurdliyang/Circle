@@ -155,6 +155,10 @@
             android:name="com.absurd.circle.ui.activity.NearbyTalentsActivity"
             android:label="@string/title_activity_near_talents" >
         </activity>
+        <activity
+            android:name="com.absurd.circle.ui.activity.QQLoginWebViewActivity"
+            android:label="@string/title_activity_web_view" >
+        </activity>
     </application>
 
 </manifest>

@@ -39,6 +39,8 @@ public class AppContext extends Application{
     public static Position lastPosition;
 
     public static int notificationNum;
+    public static int unReadCommentNum;
+    public static int unReadPraiseNum;
 
     public static FragmentActivity currentActivity;
 
@@ -53,6 +55,10 @@ public class AppContext extends Application{
         xmppConnectionManager = XmppConnectionManager.getInstance();
 
         notificationNum = sharedPreferenceUtil.getNotificationNum();
+        unReadCommentNum = sharedPreferenceUtil.getUnReadCommentNum();
+        unReadPraiseNum = sharedPreferenceUtil.getUnReadPraiseNum();
+
+        AppContext.commonLog.i("notificationNum --> " + notificationNum + " unReadCommentNum --> " + unReadCommentNum + " unReadPraiseNum --> " + unReadPraiseNum);
 
         // Register ChatBroadcastReciever to let ChatService always running
         // on backgound

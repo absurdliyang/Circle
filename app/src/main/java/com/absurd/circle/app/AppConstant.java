@@ -57,6 +57,10 @@ public interface AppConstant {
     //public static final String QQ_SCOPE = "get_user_info,get_simple_userinfo,get_user_profile,get_app_friends,upload_photo,"
     //            + "add_share,add_topic,list_album,upload_pic,add_album,set_user_face,get_vip_info,get_vip_rich_info,get_intimate_friends_weibo,match_nick_tips_weibo";
     public static final String QQ_SCOPE = "all";
+    public static final String QQ_LOGIN_URL = "http://openmobile.qq.com/oauth2.0/m_show?which=Login&ucheck=1&fall_to_wv=1&sdkv=1.4&status_userip=fe80%3A%3Aec89%3Af5ff%3Afe15%3A4ee%25p2p0&response_type=token&scope=all&redirect_uri=auth%3A%2F%2Ftauth.qq.com%2F&cancel_display=1&status_machine=Lenovo+P770&switch=1&display=mobile&sdkp=a&client_id=100487816&status_version=16&status_os=4.1.1a";
+    public static final String QQ_AUTH_CALLBACK = "http://qzs.qq.com/open/mobile/login/proxy.htm";
+    public static final String QQ_USER_INFO_URL = "https://graph.qq.com/user/get_info?access_token=%s&oauth_consumer_key=%s&openid=%s&format=json";
+
     public static final String QQ_SHARE_URL = "https://graph.qq.com/share/add_share?oauth_consumer_key=%s&access_token=%s&openid=%s&format=json&title=圈圈&url=http://quanquanshequ.com/&site=http://quanquanshequ.com/&fromurl=http://quanquanshequ.com/&comment=%s&summary=你身边的生活社区&images=http://quanquanshequ.com/imgs/appicon_132px.png";
     public static final String QQ_SHARE_CONTENT = "圈圈是一个很有趣又实用的附近生活社区APP，推荐给大家。下载地址：http://url.cn/N3iPeV @圈圈官博";
 

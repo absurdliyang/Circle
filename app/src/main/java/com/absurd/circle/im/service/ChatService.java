@@ -17,6 +17,7 @@ import com.absurd.circle.data.model.Praise;
 import com.absurd.circle.data.model.UserMessage;
 import com.absurd.circle.data.util.JsonUtil;
 import com.absurd.circle.ui.activity.NotificationActivity;
+import com.absurd.circle.ui.activity.base.INotificationChangedListener;
 import com.absurd.circle.util.NetworkUtil;
 import com.absurd.circle.util.StringUtil;
 import com.microsoft.windowsazure.mobileservices.AsyncTaskUtil;
@@ -38,6 +39,38 @@ import java.util.Iterator;
 public class ChatService extends Service {
     public static final String NEW_MESSAGE_ACTION = "com.absurd.circle.im.chatReciever";
 
+    private static ChatService mChatService;
+
+    public static ChatService getInstance(){
+        if(mChatService != null) {
+            return mChatService;
+        }
+        return null;
+    }
+
+    @Override
+    public void onStart(Intent intent, int startId) {
+        super.onStart(intent, startId);
+        mChatService = this;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mChatService = null;
+    }
+
+    private INotificationChangedListener mNotificationChangedListener;
+    private INotificationChangedListener mUnreadItemChangedListener;
+
+    public void setNotificationChangedListener(INotificationChangedListener listener){
+        mNotificationChangedListener = listener;
+    }
+
+    public void setUnreadItemChangedListener(INotificationChangedListener listener){
+        mUnreadItemChangedListener = listener;
+    }
+
     PacketListener mPacketListener = new PacketListener() {
         @Override
         public void processPacket(Packet packet) {
@@ -46,6 +79,8 @@ public class ChatService extends Service {
             AppContext.commonLog.i("body " + message.getBody() + " to " + message.getTo() + " from " + message.getFrom());
             saveRecievedMessageBody(message);
         }
+
+
     };
 
     private void showNotification(String text){
@@ -106,6 +141,9 @@ public class ChatService extends Service {
                 AppContext.commonLog.i("Message subject --> " + message.getSubject());
                 AppContext.notificationNum ++;
                 AppContext.sharedPreferenceUtil.setNotificationNum(AppContext.notificationNum);
+                if(mNotificationChangedListener != null) {
+                    mNotificationChangedListener.onNotificationChanged();
+                }
                 String text = "";
                 if (message.getSubject().equals(ChatMessageType.USERMESSAGE)) {
                     UserMessage userMessage = JsonUtil.fromJson(body, UserMessage.class);
@@ -128,11 +166,23 @@ public class ChatService extends Service {
                     comment.setState(0);
                     text = "动态有了新的评论";
                     AppContext.cacheService.commnetDBManager.insertComment(comment);
+
+                    AppContext.unReadCommentNum ++;
+                    AppContext.sharedPreferenceUtil.setUnReadCommentNum(AppContext.unReadCommentNum);
+                    if(mUnreadItemChangedListener != null) {
+                        mUnreadItemChangedListener.onNotificationChanged();
+                    }
                 } else if (message.getSubject().equals(ChatMessageType.PRAISE)) {
                     Praise praise = JsonUtil.fromJson(body, Praise.class);
                     praise.setState(false);
                     text = "动态有了新的赞";
                     AppContext.cacheService.praiseDBManager.insertPraise(praise);
+
+                    AppContext.unReadPraiseNum ++;
+                    AppContext.sharedPreferenceUtil.setUnReadPraiseNum(AppContext.unReadPraiseNum);
+                    if(mUnreadItemChangedListener != null) {
+                        mUnreadItemChangedListener.onNotificationChanged();
+                    }
                 }
                 showNotification(text);
             }

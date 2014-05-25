@@ -83,7 +83,7 @@ public class NearbyUserAdapter extends BeanAdapter<User> {
             holder.avatarLoader.cancelRequest();
         }
         if(mType == -1) {
-            holder.numView.setText(user.getRowNumber() + "");
+            holder.numView.setText(i + 1 +  "");
         }else{
             holder.numView.setVisibility(View.GONE);
         }

@@ -28,6 +28,10 @@ public class UnReadCommentActivity extends BaseActivity {
         fm.beginTransaction().replace(R.id.container, mUnReadCommentFragment)
                 .commit();
 
+
+        AppContext.unReadCommentNum = 0;
+        AppContext.sharedPreferenceUtil.setUnReadCommentNum(AppContext.unReadCommentNum);
+
     }
     @Override
     protected String actionBarTitle() {
