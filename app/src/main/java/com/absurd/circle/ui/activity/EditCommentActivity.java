@@ -40,6 +40,8 @@ public class EditCommentActivity extends BaseActivity {
 
     private Chat mChat;
 
+    private boolean mFlagFromUnReadComment = false;
+
     public EditCommentActivity(){
         setRightBtnStatus(RIGHT_TEXT);
     }
@@ -48,8 +50,13 @@ public class EditCommentActivity extends BaseActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_comment);
-        if(getIntent().getExtras() != null)
-            mParentComment = (Comment)getIntent().getExtras().get("parentComment");
+        if(getIntent().getExtras() != null) {
+            mParentComment = (Comment) getIntent().getExtras().get("parentComment");
+            Boolean flag = (Boolean)getIntent().getExtras().get("flag");
+            if(flag != null){
+                mFlagFromUnReadComment = flag;
+            }
+        }
 
         // Set custom actionbar
         setRightBtnStatus(RIGHT_TEXT);
@@ -61,7 +68,11 @@ public class EditCommentActivity extends BaseActivity {
         mSmiley = (SmileyPicker)findViewById(R.id.edit_comment_smileypicker);
         mSmiley.setEditText(this, ((LinearLayout) findViewById(R.id.edit_comment_root_layout)), mContentEt);
         if(AppContext.xmppConnectionManager.getConnection() != null) {
-            mChat = AppContext.xmppConnectionManager.initChat(MessageDetailActivity.message.getUser().getId() + "");
+            if(mParentComment != null){
+                mChat = AppContext.xmppConnectionManager.initChat(mParentComment.getUser().getId()+ "");
+            }else {
+                mChat = AppContext.xmppConnectionManager.initChat(MessageDetailActivity.message.getUser().getId() + "");
+            }
         }
     }
 
@@ -69,14 +80,7 @@ public class EditCommentActivity extends BaseActivity {
     public void onBackPressed() {
         if (mSmiley.isShown()) {
             hideSmileyPicker(false);
-        }
-        /**
-         else if (!TextUtils.isEmpty(content.getText().toString()) && canShowSaveDraftDialog()) {
-         SaveDraftDialog dialog = new SaveDraftDialog();
-         dialog.show(getFragmentManager(), "");
-         }
-         */
-        else {
+        }else {
             super.onBackPressed();
         }
     }
@@ -172,16 +176,19 @@ public class EditCommentActivity extends BaseActivity {
                 comment.setLatitude(AppContext.lastPosition.getLatitude());
                 comment.setLongitude(AppContext.lastPosition.getLongitude());
             }
-            if(MessageDetailActivity.message != null){
-                comment.setMessageId(MessageDetailActivity.message.getId());
-                comment.setToUserId(MessageDetailActivity.message.getUserId());
-            }
-            comment.setContent(mContent);
-
             if(mParentComment != null){
                 comment.setParentId(mParentComment.getId());
                 comment.setParentText(mParentComment.getContent());
+                comment.setMessageId(mParentComment.getMessageId());
+                comment.setToUserId(mParentComment.getUserId());
+            }else {
+                if (MessageDetailActivity.message != null) {
+                    comment.setMessageId(MessageDetailActivity.message.getId());
+                    comment.setToUserId(MessageDetailActivity.message.getUserId());
+                }
             }
+
+            comment.setContent(mContent);
             comment.setDate(Calendar.getInstance().getTime());
             comment.setWeiboId("");
             comment.setMediaType(0);
@@ -206,13 +213,19 @@ public class EditCommentActivity extends BaseActivity {
                     }
                     AppContext.commonLog.i(entity.toString());
                     AppContext.commonLog.i("Add comment success!");
-                    MessageDetailActivity.message.incCommentCount();
+                    if(!mFlagFromUnReadComment) {
+                        MessageDetailActivity.message.incCommentCount();
+                    }
                     setBusy(false);
                     mIsbusy = false;
                     //warning(R.string.send_comment_success);
                     Toast.makeText(AppContext.getContext(), R.string.send_comment_success, Toast.LENGTH_SHORT).show();
 
-                    AppContext.xmppConnectionManager.send(mChat, comment, MessageDetailActivity.message.getUser().getId() + "");
+                    if(mParentComment == null) {
+                        AppContext.xmppConnectionManager.send(mChat, comment, MessageDetailActivity.message.getUser().getId() + "");
+                    }else{
+                        AppContext.xmppConnectionManager.send(mChat, comment, mParentComment.getUser().getId() + "");
+                    }
                 }
             });
             EditCommentActivity.this.finish();

@@ -2,15 +2,15 @@
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:orientation="vertical"
-              android:paddingTop="15dp"
-              android:paddingLeft="18dp"
-              android:paddingBottom="15dp"
               android:layout_width="match_parent"
               android:layout_height="match_parent">
     <LinearLayout
         android:id="@+id/llyt_header_comment"
         android:clickable="true"
+        android:background="@drawable/sel_notification_btn"
         android:orientation="horizontal"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <FrameLayout
@@ -29,20 +29,37 @@
             android:textSize="16dp"
             android:text="评论"/>
 
-        <TextView
-            android:id="@+id/tv_unread_comment_num"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_marginLeft="15dp"
-            android:layout_gravity="center_vertical"
-            android:gravity="center|center_vertical|center_horizontal"
-            android:textColor="#ffffffff"
-            android:background="@drawable/notification_circle_bg"/>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <TextView
+                android:id="@+id/tv_unread_comment_num"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="40dp"
+                android:gravity="center"
+                android:textColor="#ffffffff"
+                android:background="@drawable/notification_rectangle_bg"/>
+            <ImageView android:layout_height="wrap_content"
+                       android:layout_width="wrap_content"
+                       android:layout_alignParentRight="true"
+                       android:layout_marginRight="10dp"
+                       android:layout_centerVertical="true"
+                       android:background="@drawable/icon_more"/>
+        </RelativeLayout>
     </LinearLayout>
+    <ImageView
+        android:layout_height="0.2dp"
+        android:layout_width="match_parent"
+        android:background="@drawable/listview_divider"/>
     <LinearLayout
         android:id="@+id/llyt_header_praise"
-        android:layout_marginTop="15dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
         android:clickable="true"
+        android:background="@drawable/sel_notification_btn"
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -61,15 +78,26 @@
             android:layout_marginLeft="20dp"
             android:textSize="16dp"
             android:text="赞"/>
-        <TextView
-            android:id="@+id/tv_unread_praise_num"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_marginLeft="15dp"
-            android:layout_gravity="center_vertical"
-            android:gravity="center|center_vertical|center_horizontal"
-            android:textColor="#ffffffff"
-            android:background="@drawable/notification_circle_bg"/>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <TextView
+                android:id="@+id/tv_unread_praise_num"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="30dp"
+                android:gravity="center"
+                android:textColor="#ffffffff"
+                android:background="@drawable/notification_rectangle_bg"/>
+            <ImageView android:layout_height="wrap_content"
+                       android:layout_width="wrap_content"
+                       android:layout_alignParentRight="true"
+                       android:layout_marginRight="10dp"
+                       android:layout_centerVertical="true"
+                       android:background="@drawable/icon_more"/>
+        </RelativeLayout>
     </LinearLayout>
 
 </LinearLayout>

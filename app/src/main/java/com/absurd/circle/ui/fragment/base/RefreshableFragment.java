@@ -36,6 +36,10 @@ public abstract class RefreshableFragment<V> extends Fragment {
     protected int mCurrentPageIndex = 0;
 
 
+    public void configureContentLv(ListView listView){
+
+    }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -44,9 +48,12 @@ public abstract class RefreshableFragment<V> extends Fragment {
         mHeader = initHeader();
         mAdapter = setAdapter();
         configurePullToRefreshView(rootView);
+        ListView listView = mContentLv.getRefreshableView();
+        configureContentLv(listView);
         refreshTranscation();
         return rootView;
     }
+
 
     protected void configurePullToRefreshView(View view){
         mContentLv = (PullToRefreshListView)view.findViewById(R.id.lv_content);

@@ -99,10 +99,12 @@ public class NearbyUserAdapter extends BeanAdapter<User> {
         }
         holder.usernameView.setText(user.getName());
         holder.descView.setText(user.getDescription());
-        if (user.getSex().equals("m")) {
-            holder.sexView.setImageBitmap(mMaleBitmap);
-        } else {
-            holder.sexView.setImageBitmap(mFemailBitmap);
+        if(user.getSex() != null) {
+            if (user.getSex().equals("m")) {
+                holder.sexView.setImageBitmap(mMaleBitmap);
+            } else {
+                holder.sexView.setImageBitmap(mFemailBitmap);
+            }
         }
         holder.levelView.setText("LV." + user.getLevel());
         if(AppContext.lastPosition != null) {

@@ -44,6 +44,17 @@ public class UserMessageAdapter extends NotificationAdapter<UserMessage> {
         holder.timeView.setText(TimeUtil.formatShowTime(item.getDate()));
         holder.descView.setVisibility(View.GONE);
         holder.contentView.setText(item.getContent());
+        if(AppContext.unReadUserMessageNums.containsKey("userMessage " + item.getFromUserId())){
+            int num = AppContext.unReadUserMessageNums.get("userMessage " + item.getFromUserId());
+            if(num != 0) {
+                holder.notificationNumView.setVisibility(View.VISIBLE);
+                holder.notificationNumView.setText(AppContext.unReadUserMessageNums.get("userMessage " + item.getFromUserId()) + "");
+            }else{
+                holder.notificationNumView.setVisibility(View.GONE);
+            }
+        }else{
+            holder.notificationNumView.setVisibility(View.GONE);
+        }
 
         // Where coming a extra fucking space!???shit!!!
         User fromUser = AppContext.cacheService.userDBManager.getUser(userId);

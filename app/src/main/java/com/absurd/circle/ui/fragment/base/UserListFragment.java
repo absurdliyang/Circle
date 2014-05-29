@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -46,6 +47,16 @@ public abstract class UserListFragment<V> extends Fragment {
     private IProgressBarActivity mActivity;
     protected boolean mIsbusy = false;
 
+    public void configureContentLv(ListView listView) {
+        listView.setDivider(AppContext.getContext().getResources().getDrawable(R.drawable.listview_divider));
+        listView.setDividerHeight(1);
+
+        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT,FrameLayout.LayoutParams.MATCH_PARENT);
+        params.setMargins(28,0,28,0);
+        mContentLv.setLayoutParams(params);
+
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mActivity = (IProgressBarActivity)getActivity();
@@ -55,6 +66,8 @@ public abstract class UserListFragment<V> extends Fragment {
         mContentLv = (PullToRefreshListView)rootView.findViewById(R.id.lv_content);
         mAdapter = new UserAdapter(getActivity());
         mContentLv.setAdapter(mAdapter);
+        ListView listView = mContentLv.getRefreshableView();
+        configureContentLv(listView);
 
         mContentLv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

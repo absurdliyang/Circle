@@ -152,12 +152,16 @@ public class MyProfileActivity extends BaseActivity implements IUploadImage{
             } else {
                 mUserBackGroundIv.setImageBitmap(mBackgroundDefaultBitmap);
             }
-            if (user.getSex().equals("m")) {
-                mSexIv.setImageBitmap(mMaleBitmap);
-                mSexTv.setText("男");
-            } else {
-                mSexIv.setImageBitmap(mFemaleBitmap);
-                mSexTv.setText("女");
+            if(user.getSex() != null) {
+                if (user.getSex() != null) {
+                    if (user.getSex().equals("m")) {
+                        mSexIv.setImageBitmap(mMaleBitmap);
+                        mSexTv.setText("男");
+                    } else {
+                        mSexIv.setImageBitmap(mFemaleBitmap);
+                        mSexTv.setText("女");
+                    }
+                }
             }
             mUsernameTv.setText(user.getName());
             mLevelTv.setText("LV. " + user.getLevel());

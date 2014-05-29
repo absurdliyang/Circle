@@ -5,6 +5,7 @@
                 android:layout_marginBottom="20dp"
                 android:background="@drawable/sel_message_card_bg">
     <LinearLayout
+        android:id="@+id/llyt_message_detail_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginRight="20dp"
@@ -64,13 +65,47 @@
             android:layout_marginTop="5dp"
             android:clickable="true"
             android:id="@+id/iv_header_media"/>
-        <TextView android:id="@+id/tv_header_title_created"
-            android:layout_width="wrap_content"
+        <RelativeLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:textSize="10.0sp"
-            android:textColor="#ffa3a1a3"
-            android:ellipsize="end"
-            android:singleLine="true"/>
+            android:orientation="horizontal">
+            <TextView android:id="@+id/tv_header_title_created"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_alignParentLeft="true"
+                android:textSize="10.0sp"
+                android:textColor="#ffa3a1a3"
+                android:ellipsize="end"
+                android:singleLine="true"/>
+            <TextView android:id="@+id/tv_header_title_comment_info"
+                      android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:layout_marginTop="5dp"
+                      android:layout_alignParentRight="true"
+                      android:textSize="10.0sp"
+                      android:textColor="#ffa3a1a3"
+                      android:ellipsize="end"
+                      android:singleLine="true"/>
+        </RelativeLayout>
     </LinearLayout>
+    <RelativeLayout
+        android:layout_below="@+id/llyt_message_detail_content"
+        android:layout_width="match_parent"
+        android:layout_height="0.2dp">
+        <View
+            android:layout_width="5dp"
+            android:layout_height="0.2dp"
+            android:layout_marginTop="7dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentBottom="true"
+            android:background="@color/light_grey"/>
+        <View
+            android:layout_width="5dp"
+            android:layout_height="0.2dp"
+            android:layout_marginTop="7dp"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:background="@color/light_grey"/>
+    </RelativeLayout>
 </RelativeLayout>

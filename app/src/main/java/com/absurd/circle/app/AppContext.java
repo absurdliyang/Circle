@@ -16,12 +16,16 @@ import com.absurd.circle.util.CommonLog;
 import com.absurd.circle.util.LogFactory;
 import com.absurd.circle.util.SharedPreferenceUtil;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+
 /**
  * Created by absurd on 14-3-11.
  */
 public class AppContext extends Application{
 
-    public static final Boolean DEBUG = true;
 
     private static Context mContext;
 
@@ -41,6 +45,7 @@ public class AppContext extends Application{
     public static int notificationNum;
     public static int unReadCommentNum;
     public static int unReadPraiseNum;
+    public static HashMap<String, Integer> unReadUserMessageNums;
 
     public static FragmentActivity currentActivity;
 
@@ -57,6 +62,7 @@ public class AppContext extends Application{
         notificationNum = sharedPreferenceUtil.getNotificationNum();
         unReadCommentNum = sharedPreferenceUtil.getUnReadCommentNum();
         unReadPraiseNum = sharedPreferenceUtil.getUnReadPraiseNum();
+        unReadUserMessageNums = sharedPreferenceUtil.getUnReadUserMessages();
 
         AppContext.commonLog.i("notificationNum --> " + notificationNum + " unReadCommentNum --> " + unReadCommentNum + " unReadPraiseNum --> " + unReadPraiseNum);
 
@@ -71,6 +77,17 @@ public class AppContext extends Application{
         this.startService(chatServiceIntent);
     }
 
+    public static void logUnReadUserMessages(){
+        Set<String> key = unReadUserMessageNums.keySet();
+        for (Iterator it = key.iterator(); it.hasNext(); ) {
+            String s = (String) it.next();
+            if (s.contains("userMessage")) {
+                AppContext.commonLog.i(unReadUserMessageNums.get(s));
+            }
+        }
+
+    }
+
     public static Context getContext(){
         return mContext;
     }
@@ -81,4 +98,5 @@ public class AppContext extends Application{
         }
         return true;
     }
+
 }

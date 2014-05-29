@@ -12,10 +12,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.FrameLayout;
 import android.widget.HeaderViewListAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.absurd.circle.app.AppConfig;
@@ -110,6 +112,7 @@ public class MessageDetailFragment extends Fragment{
         View headerView = inflater.inflate(R.layout.header_message_detail,null);
         ((TextView)headerView.findViewById(R.id.tv_header_content)).setText(FacesUtil.parseFaceByText(mMessageDetailActivity,MessageDetailActivity.message.getContent()));
         ((TextView)headerView.findViewById(R.id.tv_header_title_created)).setText(TimeUtil.formatShowTime(MessageDetailActivity.message.getDate()));
+        ((TextView)headerView.findViewById(R.id.tv_header_title_comment_info)).setText("赞 " + MessageDetailActivity.message.getPraiseCount()  + " 评论 " + MessageDetailActivity.message.getCommentCount());
         ImageView headerAvaterView = (ImageView)headerView.findViewById(R.id.iv_header_title_avatar);
         ImageView headerMediaView = (ImageView)headerView.findViewById(R.id.iv_header_media);
         if(MessageDetailActivity.message != null && MessageDetailActivity.message.getUser() != null){
@@ -173,6 +176,7 @@ public class MessageDetailFragment extends Fragment{
         }
 
         mContentLv = (ListView)rootView.findViewById(R.id.lv_comment_content);
+        configureContentLv(mContentLv);
         CommentAdapter adapter = new CommentAdapter(getActivity());
         mContentLv.addHeaderView(headerView);
         mContentLv.setAdapter(adapter);
@@ -191,6 +195,13 @@ public class MessageDetailFragment extends Fragment{
 
             }
         });
+
+    }
+
+
+    public void configureContentLv(ListView listView) {
+        listView.setDivider(AppContext.getContext().getResources().getDrawable(R.drawable.listview_comment_divider));
+        listView.setDividerHeight(1);
 
     }
 
@@ -434,8 +445,10 @@ public class MessageDetailFragment extends Fragment{
                     return;
                 }
                 AppContext.commonLog.i("Delate message success");
-                if(MessageListFragment.messages != null)
-                    MessageListFragment.messages.remove(mMessageDetailActivity.mIndexId);
+                if(!mMessageDetailActivity.mFlagFromUnReadComment) {
+                    if (MessageListFragment.messages != null)
+                        MessageListFragment.messages.remove(mMessageDetailActivity.mIndexId);
+                }
                 mMessageDetailActivity.finish();
 
             }

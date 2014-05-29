@@ -63,9 +63,19 @@ public class ChatActivity extends BaseActivity {
             AppContext.commonLog.i("Recieve a chat message");
             if(ChatService.NEW_MESSAGE_ACTION.equals(action)){
                 UserMessage userMessage = (UserMessage)intent.getExtras().get("message");
-                if(userMessage.getToUserId().equals(mToUser.getUserId())) {
+                if(userMessage.getFromUserId().equals(mToUser.getUserId())) {
                     AppContext.commonLog.i("Receive a chat message");
+
+                    String key = "userMessage " + userMessage.getFromUserId();
+                    if(AppContext.unReadUserMessageNums.containsKey(key)) {
+                        int num = AppContext.unReadUserMessageNums.get(key);
+                        num--;
+                        AppContext.unReadUserMessageNums.put(key, num);
+                        AppContext.sharedPreferenceUtil.setUnReadUserMessageNum(userMessage.getFromUserId(),num);
+                    }
                     AppContext.notificationNum--;
+                    AppContext.sharedPreferenceUtil.setNotificationNum(AppContext.notificationNum);
+
                     userMessage.setState(1);
                     AppContext.cacheService.userMessageDBManager.updateUserMessageStateByUser(mToUser.getUserId());
                     AppContext.commonLog.i(userMessage.toString());
@@ -89,6 +99,14 @@ public class ChatActivity extends BaseActivity {
         mToUser = (User)getIntent().getExtras().get("touser");
         mActionBarTitleTv.setText(mToUser.getName());
 
+        String key = "userMessage " + mToUser.getUserId();
+        if(AppContext.unReadUserMessageNums.containsKey(key)){
+            int num = AppContext.unReadUserMessageNums.get(key);
+            AppContext.notificationNum -= num;
+            AppContext.unReadUserMessageNums.put(key,0);
+            AppContext.sharedPreferenceUtil.setUnReadUserMessageNum(mToUser.getUserId(),0);
+            AppContext.sharedPreferenceUtil.setNotificationNum(AppContext.notificationNum);
+        }
         initUI();
         initChat();
 

@@ -71,6 +71,7 @@ public class ChatService extends Service {
         mUnreadItemChangedListener = listener;
     }
 
+
     PacketListener mPacketListener = new PacketListener() {
         @Override
         public void processPacket(Packet packet) {
@@ -155,6 +156,16 @@ public class ChatService extends Service {
                     intent.putExtra("message", userMessage);
                     sendBroadcast(intent);
                     AppContext.commonLog.i("sendBroadCast");
+
+
+                    int num = AppContext.sharedPreferenceUtil.getUnReadUserMessageNum(userMessage.getFromUserId());
+                    String key = "userMessage " + userMessage.getFromUserId();
+                    num++;
+                    AppContext.unReadUserMessageNums.put(key,num);
+                    AppContext.logUnReadUserMessages();
+
+                    AppContext.sharedPreferenceUtil.setUnReadUserMessageNum(userMessage.getFromUserId(), AppContext.unReadUserMessageNums.get(key));
+                    mUnreadItemChangedListener.onNotificationChanged();
                 } else if (message.getSubject().equals(ChatMessageType.COMMENT)) {
                     AppContext.commonLog.i("New Comment Notification");
                     // Fix the bug android can not recieve the commnet json package

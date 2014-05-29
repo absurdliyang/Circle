@@ -3,6 +3,8 @@ package com.absurd.circle.ui.fragment;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.FrameLayout;
+import android.widget.ListView;
 
 import com.absurd.circle.app.AppConfig;
 import com.absurd.circle.app.AppContext;
@@ -27,6 +29,18 @@ import java.util.List;
 public class NearbyUserFragment extends RefreshableFragment<User> {
 
     private int mType = 0;
+
+
+    @Override
+    public void configureContentLv(ListView listView) {
+        listView.setDivider(AppContext.getContext().getResources().getDrawable(R.drawable.listview_divider));
+        listView.setDividerHeight(1);
+
+        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT,FrameLayout.LayoutParams.MATCH_PARENT);
+        params.setMargins(28,0,28,0);
+        mContentLv.setLayoutParams(params);
+
+    }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {

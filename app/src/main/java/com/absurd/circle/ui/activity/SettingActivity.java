@@ -16,12 +16,16 @@ import com.absurd.circle.util.IntentUtil;
 import com.absurd.circle.util.SystemUtil;
 import com.umeng.update.UmengUpdateAgent;
 
+import java.util.HashMap;
+
 public class SettingActivity extends BaseActivity {
 
     private Button mLogoutBtn;
 
     private CheckBox mPushNotificationCb;
     private TextView mVersionTv;
+
+    public static HomeActivity homeActivity;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -34,6 +38,7 @@ public class SettingActivity extends BaseActivity {
                 logout();
                 IntentUtil.startActivity(SettingActivity.this, LoginActivity.class);
                 SettingActivity.this.finish();
+                SettingActivity.homeActivity.finish();
             }
         });
         mPushNotificationCb = (CheckBox)findViewById(R.id.cb_push_notification);
@@ -48,6 +53,10 @@ public class SettingActivity extends BaseActivity {
         AppContext.userId = null;
         AppContext.token = null;
         AppContext.lastPosition = null;
+        AppContext.notificationNum = 0;
+        AppContext.unReadCommentNum = 0;
+        AppContext.unReadPraiseNum = 0;
+        AppContext.unReadUserMessageNums = new HashMap<String, Integer>();
         AppContext.sharedPreferenceUtil.clearAll();
         AppContext.cacheService.clearAll();
 

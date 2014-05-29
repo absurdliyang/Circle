@@ -3,6 +3,7 @@ package com.absurd.circle.ui.adapter;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.view.View;
+import android.widget.RelativeLayout;
 
 import com.absurd.circle.app.AppContext;
 import com.absurd.circle.data.client.volley.BitmapFilter;
@@ -28,6 +29,12 @@ public class UnReadPraiseAdapter extends NotificationAdapter<Praise> {
 
     @Override
     protected void handleView(final ViewHolder holder, final Praise item) {
+        holder.iconMoreView.setVisibility(View.GONE);
+
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,RelativeLayout.LayoutParams.WRAP_CONTENT);
+        params.setMargins(200,3,20, 0);
+        holder.contentLinearLayoutView.setLayoutParams(params);
+
         holder.timeView.setText(TimeUtil.formatShowTime(item.getDate()));
         holder.descView.setText("赞了我的微博:");
         holder.contentView.setText(item.getParentText());

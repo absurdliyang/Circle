@@ -8,6 +8,12 @@ import com.absurd.circle.app.AppConstant;
 import com.absurd.circle.app.AppContext;
 import com.absurd.circle.data.model.Position;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+
 public class SharedPreferenceUtil {
 
 	private static SharedPreferenceUtil mSharedPreferenceUtil;
@@ -97,6 +103,28 @@ public class SharedPreferenceUtil {
     public void setUnReadPraiseNum(int num){
         mEditor.putInt("unReadPraiseNum", num)
                 .commit();
+    }
+
+    public void setUnReadUserMessageNum(String userId, int num){
+        mEditor.putInt("userMessage " + userId, num)
+                .commit();
+    }
+
+    public int getUnReadUserMessageNum(String userId){
+        return mSharedPreferences.getInt("userMessage " + userId, 0);
+    }
+
+    public HashMap<String, Integer> getUnReadUserMessages() {
+        HashMap<String, Integer> result = new HashMap<String, Integer>();
+        Map<String, ?> all = mSharedPreferences.getAll();
+        Set<String> key = all.keySet();
+        for (Iterator it = key.iterator(); it.hasNext(); ) {
+            String s = (String) it.next();
+            if (s.contains("userMessage")) {
+                result.put(s, (Integer) all.get(s));
+            }
+        }
+        return result;
     }
 
     public void clearAll(){

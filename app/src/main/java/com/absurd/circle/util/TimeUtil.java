@@ -51,6 +51,9 @@ public class TimeUtil {
     }
 
     public static String toAge(Date birthday){
+        if(birthday == null){
+            return "0";
+        }
         Calendar birth = Calendar.getInstance();
         birth.setTime(birthday);
         Calendar now = Calendar.getInstance();

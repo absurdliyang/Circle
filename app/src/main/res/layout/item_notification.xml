@@ -1,21 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:paddingLeft="18dp"
-                android:paddingTop="5dp"
-                android:paddingBottom="5dp"
-                android:paddingRight="18dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="wrap_content">
     <ImageView
         android:id="@+id/iv_notify_item_avatar"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="4dp"
         android:layout_width="50dp"
         android:layout_height="50dp"
         />
     <LinearLayout
+        android:id="@+id/llyt_notification_content"
         android:orientation="vertical"
         android:layout_marginLeft="10dp"
         android:layout_marginTop="3dp"
+        android:layout_marginRight="30dp"
         android:layout_toRightOf="@id/iv_notify_item_avatar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -25,14 +27,14 @@
             <TextView android:id="@+id/tv_notify_item_username"
                       android:layout_height="wrap_content"
                       android:layout_width="wrap_content"
-                      android:textSize="15dp"
-                      android:textStyle="bold"/>
+                      android:textSize="15dp"/>
             <TextView
                 android:id="@+id/tv_notify_item_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:layout_marginRight="8dp"
+                android:textColor="@color/theme_color"
                 android:textSize="10dp"
                 android:textStyle="bold"/>
         </RelativeLayout>
@@ -42,13 +44,38 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:singleLine="true"
+            android:textColor="@color/light_grey"
             android:textSize="13dp"/>
-
-        <TextView android:id="@+id/tv_notify_item_content"
-                  android:layout_marginTop="6dp"
-                  android:layout_height="wrap_content"
-                  android:layout_width="wrap_content"
-                  android:singleLine="true"
-                  android:textSize="13dp"/>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView android:id="@+id/tv_notify_item_content"
+                      android:layout_marginRight="10dp"
+                      android:layout_marginTop="6dp"
+                      android:layout_height="wrap_content"
+                      android:layout_width="wrap_content"
+                      android:singleLine="true"
+                      android:textColor="@color/light_grey"
+                      android:textSize="13dp"/>
+            <TextView
+                android:id="@+id/tv_usermesssagee_notification_num"
+                android:visibility="gone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="10dp"
+                android:textColor="#ffffffff"
+                android:background="@drawable/notification_rectangle_bg"/>
+        </RelativeLayout>
     </LinearLayout>
+    <ImageView
+        android:id="@+id/iv_icon_more"
+        android:layout_height="wrap_content"
+               android:layout_width="wrap_content"
+               android:layout_alignParentRight="true"
+               android:layout_marginRight="10dp"
+               android:layout_centerVertical="true"
+               android:background="@drawable/icon_more"/>
+
 </RelativeLayout>

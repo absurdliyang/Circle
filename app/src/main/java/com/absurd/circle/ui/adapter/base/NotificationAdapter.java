@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.absurd.circle.app.R;
@@ -38,6 +39,9 @@ public abstract class NotificationAdapter<V> extends BeanAdapter<V> {
         public TextView timeView;
         public TextView descView;
         public TextView contentView;
+        public TextView notificationNumView;
+        public ImageView iconMoreView;
+        public LinearLayout contentLinearLayoutView;
         public ImageLoader.ImageContainer avatarLoader;
     }
 
@@ -53,6 +57,9 @@ public abstract class NotificationAdapter<V> extends BeanAdapter<V> {
             holder.timeView = (TextView)view.findViewById(R.id.tv_notify_item_time);
             holder.descView = (TextView)view.findViewById(R.id.tv_notify_item_desc);
             holder.contentView = (TextView)view.findViewById(R.id.tv_notify_item_content);
+            holder.notificationNumView = (TextView)view.findViewById(R.id.tv_usermesssagee_notification_num);
+            holder.iconMoreView = (ImageView)view.findViewById(R.id.iv_icon_more);
+            holder.contentLinearLayoutView = (LinearLayout)view.findViewById(R.id.llyt_notification_content);
             view.setTag(holder);
         }else{
             holder = (ViewHolder)view.getTag();

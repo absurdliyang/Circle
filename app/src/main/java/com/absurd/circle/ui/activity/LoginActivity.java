@@ -46,6 +46,7 @@ import com.sina.weibo.sdk.openapi.StatusesAPI;
 import com.sina.weibo.sdk.openapi.UsersAPI;
 import com.sina.weibo.sdk.openapi.legacy.FriendshipsAPI;
 import com.sina.weibo.sdk.widget.LoginoutButton;
+import com.tencent.connect.UserInfo;
 import com.tencent.tauth.Tencent;
 import com.umeng.analytics.MobclickAgent;
 import com.umeng.update.UmengUpdateAgent;
@@ -303,11 +304,13 @@ public class LoginActivity extends ActionBarActivity {
         user.setAvatar(mQQUser.getData().getHead() + "/100");
         user.setOsName(AppConstant.OS_NAME);
         user.setAppVer(SystemUtil.getAppVersion());
-        java.util.Calendar calendar = java.util.Calendar.getInstance();
+        Calendar calendar = Calendar.getInstance();
         user.setDate(new java.sql.Date(calendar.getTimeInMillis()));
         if(mQQUser.getData().getBirth_year() > 0 && mQQUser.getData().getBirth_month() > 0 && mQQUser.getData().getBirth_day() > 0) {
             Calendar ageCalendar = Calendar.getInstance();
             ageCalendar.set(mQQUser.getData().getBirth_year(), mQQUser.getData().getBirth_month(), mQQUser.getData().getBirth_day());
+            user.setAge(new java.sql.Date(ageCalendar.getTimeInMillis()));
+        }else{
             user.setAge(new java.sql.Date(calendar.getTimeInMillis()));
         }
         user.setLastLoginDate(new java.sql.Date(calendar.getTimeInMillis()));
@@ -401,7 +404,7 @@ public class LoginActivity extends ActionBarActivity {
     }
      **/
 
-    private void getQQUserInfo(String openId, String accessToken){
+    private void getQQUserInfo(final String openId, String accessToken){
         String url = String.format(AppConstant.QQ_USER_INFO_URL, accessToken,AppConstant.QQ_ID, openId );
 
         GsonRequest<QQWeiboUser> request = new GsonRequest<QQWeiboUser>(url,QQWeiboUser.class,null,
@@ -410,6 +413,18 @@ public class LoginActivity extends ActionBarActivity {
                     public void onResponse(QQWeiboUser qqWeiboUser) {
                         AppContext.commonLog.i(qqWeiboUser.toString());
                         mQQUser = qqWeiboUser;
+                        if(mQQUser == null){
+                            mQQUser = new QQWeiboUser();
+                        }
+                        if(mQQUser.getData() == null){
+                            UserInfo data = new UserInfo();
+                            data.setOpenid(openId);
+                            data.setName("圈圈用户");
+                            data.setNick("圈圈用户");
+                            data.setHead("http://noavatar");
+                            data.setSex(2);
+                            mQQUser.setData(data);
+                        }
                         loginQQUser();
                     }
                 },
@@ -463,6 +478,11 @@ public class LoginActivity extends ActionBarActivity {
                     public void onComplete(String s) {
                         SinaWeiboUser sinaUser = JsonUtil.fromJson(s, SinaWeiboUser.class);
                         AppContext.commonLog.i(sinaUser);
+                        if(sinaUser == null){
+                            mLoginProgressDialog.dismiss();
+                            Toast.makeText(LoginActivity.this ,R.string.login_failed, Toast.LENGTH_SHORT).show();
+                            return;
+                        }
                         loginSinaUser(sinaUser);
                         if(mIsSharedCb.isChecked()) {
                             StatusesAPI statusesAPI = new StatusesAPI(accessToken);

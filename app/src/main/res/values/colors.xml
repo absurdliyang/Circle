@@ -3,6 +3,8 @@
     <color name="transparent">#00000000</color>
     <color name="transparent_grey">#30000000</color>
 
+    <color name="white">#ffffffff</color>
+
 
     <color name="card_pressed">#7E0099CC</color>
 
@@ -24,6 +26,7 @@
 
     <!-- Gallery -->
     <color name="dark_gray">#1E2129</color>
+    <color name="light_grey">#ffa3a1a3</color>
 
     <!-- notification_circle_red -->
     <color name="notification_circle_red">#ffCC0000</color>

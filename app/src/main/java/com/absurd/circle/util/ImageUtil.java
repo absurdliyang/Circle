@@ -69,14 +69,14 @@ public class ImageUtil {
             return BitmapFactory.decodeFileDescriptor(file.getFD(), null,
                     options);
         } catch (IOException e) {
-            Log.d(TAG, e.getMessage(), e);
+            AppContext.commonLog.d(e);
             return null;
         } finally {
             if (file != null)
                 try {
                     file.close();
                 } catch (IOException e) {
-                    Log.d(TAG, e.getMessage(), e);
+                    AppContext.commonLog.d(e);
                 }
         }
     }
@@ -127,14 +127,14 @@ public class ImageUtil {
             BitmapFactory.decodeFileDescriptor(file.getFD(), null, options);
             return new Point(options.outWidth, options.outHeight);
         } catch (IOException e) {
-            Log.d(TAG, e.getMessage(), e);
+            AppContext.commonLog.d(e);
             return null;
         } finally {
             if (file != null)
                 try {
                     file.close();
                 } catch (IOException e) {
-                    Log.d(TAG, e.getMessage(), e);
+                    AppContext.commonLog.d(e);
                 }
         }
     }

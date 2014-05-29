@@ -3,6 +3,9 @@ package com.absurd.circle.ui.adapter;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.view.View;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 import com.absurd.circle.app.AppContext;
 import com.absurd.circle.data.client.volley.BitmapFilter;
@@ -13,6 +16,7 @@ import com.absurd.circle.data.service.UserService;
 import com.absurd.circle.ui.adapter.base.NotificationAdapter;
 import com.absurd.circle.util.ImageUtil;
 import com.absurd.circle.util.StringUtil;
+import com.absurd.circle.util.SystemUtil;
 import com.absurd.circle.util.TimeUtil;
 import com.microsoft.windowsazure.mobileservices.ServiceFilterResponse;
 import com.microsoft.windowsazure.mobileservices.TableQueryCallback;
@@ -29,16 +33,23 @@ public class UnReadCommentAdapter extends NotificationAdapter<Comment> {
     }
 
     @Override
-    protected void handleView(final ViewHolder holder, Comment item) {
+    protected void handleView(final ViewHolder holder, final Comment item) {
+        holder.iconMoreView.setVisibility(View.GONE);
+
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,RelativeLayout.LayoutParams.WRAP_CONTENT);
+        params.setMargins(200,3,20, 0);
+        holder.contentLinearLayoutView.setLayoutParams(params);
+
         holder.timeView.setText(TimeUtil.formatShowTime(item.getDate()));
         holder.descView.setText("评论了我的微博：");
         holder.contentView.setText(item.getContent());
 
         if(item.getUser() != null) {
-            bindUserInfo(holder,item.getUser());
+            bindUserInfo(holder, item.getUser());
         }else {
             User user = AppContext.cacheService.userDBManager.getUser(item.getUserId());
             if(user != null){
+                item.setUser(user);
                 bindUserInfo(holder, user);
             }else {
                 UserService service = new UserService();
@@ -51,6 +62,7 @@ public class UnReadCommentAdapter extends NotificationAdapter<Comment> {
                             }
                         } else {
                             AppContext.cacheService.userDBManager.insertUser(result.get(0));
+                            item.setUser(result.get(0));
                             bindUserInfo(holder, result.get(0));
                         }
                     }

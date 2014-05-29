@@ -2,7 +2,7 @@ package com.absurd.circle.util;
 
 import android.util.Log;
 
-import com.absurd.circle.app.AppContext;
+import com.absurd.circle.app.AppConfig;
 
 /**
  * Created by absurd on 14-3-11.
@@ -11,7 +11,7 @@ public class CommonLog {
 
     private String tag = "CommonLog";
     public static int logLevel = Log.VERBOSE;
-    public static boolean isDebug = AppContext.DEBUG;
+    public static boolean isDebug = AppConfig.DEBUG;
 
 
     public CommonLog(){

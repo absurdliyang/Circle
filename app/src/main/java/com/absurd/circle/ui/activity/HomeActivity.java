@@ -122,7 +122,7 @@ public class HomeActivity extends SlidingFragmentActivity
     private void stopLocation() {
         if (mLocationManagerProxy != null) {
             mLocationManagerProxy.removeUpdates(this);
-            mLocationManagerProxy.destory();
+            //mLocationManagerProxy.destory();
         }
         mLocationManagerProxy = null;
     }

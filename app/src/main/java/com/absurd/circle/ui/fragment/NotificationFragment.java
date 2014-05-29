@@ -6,8 +6,12 @@ import android.os.Handler;
 import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.absurd.circle.app.AppContext;
@@ -49,12 +53,22 @@ public class NotificationFragment extends LocalRefreshableFragment<UserMessage>
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mContentLv.setMode(PullToRefreshBase.Mode.DISABLED);
-        AppContext.notificationNum = 0;
-        AppContext.sharedPreferenceUtil.setNotificationNum(AppContext.notificationNum);
 
         if(ChatService.getInstance() != null) {
             ChatService.getInstance().setUnreadItemChangedListener(this);
         }
+    }
+
+    @Override
+    public void configureContentLv(ListView listView) {
+        super.configureContentLv(listView);
+        listView.setDivider(AppContext.getContext().getResources().getDrawable(R.drawable.listview_divider));
+        listView.setDividerHeight(1);
+
+        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT,FrameLayout.LayoutParams.MATCH_PARENT);
+        params.setMargins(28,0,28,0);
+        mContentLv.setLayoutParams(params);
+
     }
 
     @Override
@@ -132,6 +146,8 @@ public class NotificationFragment extends LocalRefreshableFragment<UserMessage>
                         mUnReadPraiseNumTv.setVisibility(View.VISIBLE);
                         mUnReadPraiseNumTv.setText(AppContext.unReadPraiseNum + "");
                     }
+                    mAdapter.notifyDataSetChanged();
+                    mContentLv.getRefreshableView().invalidateViews();
                     break;
             }
             super.handleMessage(msg);

@@ -19,6 +19,7 @@
             android:layout_toLeftOf="@id/iv_from_user_avatar"
             android:layout_centerVertical="true"
             android:layout_marginRight="20dp"
+            android:layout_marginLeft="80dp"
             android:background="@drawable/chat_from_item_bg"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
@@ -56,6 +57,7 @@
             android:layout_toRightOf="@id/iv_to_user_avatar"
             android:layout_centerVertical="true"
             android:layout_marginLeft="20dp"
+            android:layout_marginRight="80dp"
             android:background="@drawable/chat_to_item_bg"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
@@ -74,8 +76,6 @@
                 android:textSize="10dp"
                 android:textColor="#36A2EF"/>
         </LinearLayout>
-
     </RelativeLayout>
-
 </RelativeLayout>
 

@@ -1,6 +1,7 @@
 package com.absurd.circle.ui.fragment;
 
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -24,8 +25,11 @@ import com.absurd.circle.ui.activity.UserProfileActivity;
 import com.absurd.circle.ui.adapter.UserMessageAdapter;
 import com.absurd.circle.util.ImageUtil;
 import com.absurd.circle.util.IntentUtil;
+import com.absurd.circle.util.StringUtil;
 
 public class SlidingMenuFragment extends Fragment {
+    protected Bitmap mAvatarDefaultBitmap = ((BitmapDrawable) AppContext.getContext().getResources().getDrawable(R.drawable.default_avatar)).getBitmap();
+
     private HomeActivity mHomeActivity;
 
     private ImageView mAvatarIv;
@@ -59,9 +63,9 @@ public class SlidingMenuFragment extends Fragment {
 
     public void invalidateView(){
         if(AppContext.auth != null) {
-            if (AppContext.auth.getAvatar() != null) {
+            if (!StringUtil.isEmpty(AppContext.auth.getAvatar())) {
                 RequestManager.loadImage(AppContext.auth.getAvatar(),
-                        RequestManager.getImageListener(mAvatarIv, null, null, new BitmapFilter() {
+                        RequestManager.getImageListener(mAvatarIv, mAvatarDefaultBitmap, mAvatarDefaultBitmap, new BitmapFilter() {
                             @Override
                             public Bitmap filter(Bitmap bitmap) {
                                 return ImageUtil.roundBitmap(bitmap);
@@ -103,6 +107,7 @@ public class SlidingMenuFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 mHomeActivity.toggle();
+                SettingActivity.homeActivity = mHomeActivity;
                 IntentUtil.startActivity(mHomeActivity, SettingActivity.class);
             }
         });
