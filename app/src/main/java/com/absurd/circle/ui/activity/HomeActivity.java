@@ -12,7 +12,11 @@ import android.support.v7.app.ActionBar;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -31,6 +35,7 @@ import com.absurd.circle.ui.fragment.CategoryFragment;
 import com.absurd.circle.ui.fragment.HomeFragment;
 import com.absurd.circle.ui.fragment.SlidingMenuFragment;
 import com.absurd.circle.ui.widget.AppMsg;
+import com.absurd.circle.util.AnimationUtil;
 import com.absurd.circle.util.NetworkUtil;
 import com.absurd.circle.util.StringUtil;
 import com.absurd.circle.util.SystemUtil;
@@ -264,12 +269,17 @@ public class HomeActivity extends SlidingFragmentActivity
         ActionBar.LayoutParams params = new ActionBar.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.MATCH_PARENT);
         View actionBarView = LayoutInflater.from(this).inflate(R.layout.layout_actionbar,null);
         View titleV = actionBarView.findViewById(R.id.llyt_custom_actionbar_title);
+        final ImageView arrowIv = (ImageView)actionBarView.findViewById(R.id.iv_actionbar_title);
         titleV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 FragmentManager fm = getSupportFragmentManager();
                 CategoryFragment fragment = CategoryFragment.getInstance();
                 if(fm.getBackStackEntryCount() == 0){
+                    Animation rotateAnimation = AnimationUtils.loadAnimation(HomeActivity.this, R.anim.arrow_rotate);
+                    startAnimation(arrowIv, rotateAnimation);
+
                     FragmentTransaction ft = fm.beginTransaction();
                     ft.setCustomAnimations(R.anim.fragment_slide_bottom_in, R.anim.fragment_slide_bottom_out);
                     fragment.setStatus(0);
@@ -277,6 +287,9 @@ public class HomeActivity extends SlidingFragmentActivity
                             .addToBackStack("categoryFragment")
                             .commit();
                 }else{
+                    Animation rotateBackAnimation = AnimationUtils.loadAnimation(HomeActivity.this, R.anim.arrow_rotate_back);
+                    startAnimation(arrowIv,rotateBackAnimation);
+
                     FragmentTransaction ft = fm.beginTransaction();
                     ft.setCustomAnimations(R.anim.fragment_slide_bottom_in, R.anim.fragment_slide_bottom_out);
                     ft.remove(fragment).commit();
@@ -287,6 +300,9 @@ public class HomeActivity extends SlidingFragmentActivity
                             fragment.hasChanged = false;
                         }
                     }else{
+                        Animation rotateAnimation = AnimationUtils.loadAnimation(HomeActivity.this, R.anim.arrow_rotate);
+                        startAnimation(arrowIv, rotateAnimation);
+
                         FragmentTransaction ft1 = fm.beginTransaction();
                         ft1.setCustomAnimations(R.anim.fragment_slide_bottom_in, R.anim.fragment_slide_bottom_out);
                         fragment.setStatus(0);
@@ -304,6 +320,9 @@ public class HomeActivity extends SlidingFragmentActivity
                 FragmentManager fm = getSupportFragmentManager();
                 CategoryFragment fragment = CategoryFragment.getInstance();
                 if (fm.getBackStackEntryCount() == 0) {
+                    Animation rotateAnimation = AnimationUtils.loadAnimation(HomeActivity.this, R.anim.arrow_rotate);
+                    startAnimation(arrowIv, rotateAnimation);
+
                     FragmentTransaction ft = fm.beginTransaction();
                     ft.setCustomAnimations(R.anim.fragment_slide_bottom_in, R.anim.fragment_slide_bottom_out);
                     fragment.setStatus(1);
@@ -311,6 +330,9 @@ public class HomeActivity extends SlidingFragmentActivity
                             .addToBackStack("categoryFragment")
                             .commit();
                 } else {
+                    Animation rotateBackAnimation = AnimationUtils.loadAnimation(HomeActivity.this, R.anim.arrow_rotate_back);
+                    startAnimation(arrowIv,rotateBackAnimation);
+
                     FragmentTransaction ft = fm.beginTransaction();
                     ft.setCustomAnimations(R.anim.fragment_slide_bottom_in, R.anim.fragment_slide_bottom_out);
                     ft.remove(fragment).commit();
@@ -318,6 +340,9 @@ public class HomeActivity extends SlidingFragmentActivity
                     if (fragment.getStatus() == 1) {
 
                     } else {
+                        Animation rotateAnimation = AnimationUtils.loadAnimation(HomeActivity.this, R.anim.arrow_rotate);
+                        startAnimation(arrowIv, rotateAnimation);
+
                         FragmentTransaction ft1 = fm.beginTransaction();
                         ft1.setCustomAnimations(R.anim.fragment_slide_bottom_in, R.anim.fragment_slide_bottom_out);
                         fragment.setStatus(1);
@@ -338,6 +363,15 @@ public class HomeActivity extends SlidingFragmentActivity
         actionBar.setCustomView(actionBarView,params);
     }
 
+
+    private void startAnimation(View view, Animation animation){
+        animation.setFillAfter(true);
+        animation.setFillEnabled(true);
+        AccelerateInterpolator interpolator = new AccelerateInterpolator();
+        animation.setInterpolator(interpolator);
+        view.startAnimation(animation);
+
+    }
 
     @Override
     public void onBackPressed() {

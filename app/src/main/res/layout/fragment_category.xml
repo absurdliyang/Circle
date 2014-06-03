@@ -94,12 +94,14 @@
         </LinearLayout>
     </LinearLayout>
     <View
+        android:visibility="gone"
         android:id="@+id/v_cat_divider2"
         android:layout_marginTop="18dp"
         android:background="#ffffffff"
         android:layout_width="match_parent"
         android:layout_height="1.5dp"/>
     <LinearLayout
+        android:visibility="gone"
         android:id="@+id/llyt_cat_order"
         android:layout_marginTop="18dp"
         android:layout_marginLeft="20dp"

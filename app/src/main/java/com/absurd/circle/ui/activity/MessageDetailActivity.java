@@ -50,18 +50,19 @@ public class MessageDetailActivity extends BaseActivity {
                 @Override
                 public void onCompleted(List<Message> result, int count, Exception exception, ServiceFilterResponse response) {
                     setBusy(false);
-                    if(result == null){
+                    if(result == null || result.isEmpty()){
                         if(exception != null){
                             exception.printStackTrace();
                         }
                         MessageDetailActivity.this.warning(R.string.message_not_exit);
-                    }
-                    if(!MessageDetailActivity.this.isFinishing()) {
-                        MessageDetailActivity.message = result.get(0);
-                        mMessageDetailFragment = new MessageDetailFragment();
-                        getSupportFragmentManager().beginTransaction()
-                                .replace(R.id.flyt_comment_container, mMessageDetailFragment)
-                                .commit();
+                    }else {
+                        if (!MessageDetailActivity.this.isFinishing()) {
+                            MessageDetailActivity.message = result.get(0);
+                            mMessageDetailFragment = new MessageDetailFragment();
+                            getSupportFragmentManager().beginTransaction()
+                                    .replace(R.id.flyt_comment_container, mMessageDetailFragment)
+                                    .commit();
+                        }
                     }
                 }
             });
@@ -81,7 +82,9 @@ public class MessageDetailActivity extends BaseActivity {
     @Override
     public void onMoreClicked(View view) {
         super.onMoreClicked(view);
-        mMessageDetailFragment.onMoreClicked(view);
+        if(mMessageDetailFragment != null) {
+            mMessageDetailFragment.onMoreClicked(view);
+        }
 
     }
 

@@ -65,6 +65,8 @@ public abstract class RefreshableFragment<V> extends Fragment {
                         mContentLv.getLoadingLayoutProxy().setPullLabel("下拉刷新");
                         mContentLv.getLoadingLayoutProxy().setRefreshingLabel("正在载入");
                         mContentLv.getLoadingLayoutProxy().setReleaseLabel("下拉刷新");
+                        mContentLv.getLoadingLayoutProxy().setLastUpdatedLabel("fdjklsf");
+
                         String label = DateUtils.formatDateTime(RefreshableFragment.this.getActivity(),
                                 System.currentTimeMillis(),
                                 DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_ABBREV_ALL);

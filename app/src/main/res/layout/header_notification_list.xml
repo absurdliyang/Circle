@@ -87,7 +87,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
-                android:layout_marginRight="30dp"
+                android:layout_marginRight="40dp"
                 android:gravity="center"
                 android:textColor="#ffffffff"
                 android:background="@drawable/notification_rectangle_bg"/>

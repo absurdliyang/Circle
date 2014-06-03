@@ -40,6 +40,7 @@
         android:layout_centerVertical="true"
         android:paddingLeft="5dp"
         android:paddingRight="5dp"
+        android:clickable="true"
         android:background="@drawable/sel_actionbar_home_btn"
         android:layout_width="wrap_content"
         android:layout_height="match_parent">
@@ -69,7 +70,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="附近"
-                    android:clickable="true"
                     android:textColor="#ffffffff"
                     android:textSize="20sp" />
                 <ImageView
