@@ -406,7 +406,7 @@ public class HomeActivity extends SlidingFragmentActivity
         if(busy){
             mProgressBar.setVisibility(View.VISIBLE);
         }else{
-            mProgressBar.setVisibility(View.GONE);
+            mProgressBar.setVisibility(View.INVISIBLE);
         }
     }
 

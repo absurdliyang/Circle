@@ -55,7 +55,7 @@ public class UnReadCommentFragment extends LocalRefreshableFragment<Comment>{
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mContentLv.setMode(PullToRefreshBase.Mode.PULL_FROM_END);
+        mContentLv.setMode(PullToRefreshBase.Mode.DISABLED);
     }
 
     @Override

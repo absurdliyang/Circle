@@ -39,6 +39,7 @@ import com.absurd.circle.ui.activity.UserProfileActivity;
 import com.absurd.circle.ui.adapter.CommentAdapter;
 import com.absurd.circle.ui.fragment.base.MessageListFragment;
 import com.absurd.circle.ui.view.ItemDialog;
+import com.absurd.circle.ui.view.LoadingFooter;
 import com.absurd.circle.util.FacesUtil;
 import com.absurd.circle.util.ImageUtil;
 import com.absurd.circle.util.IntentUtil;
@@ -69,6 +70,7 @@ public class MessageDetailFragment extends Fragment{
 
 
     private ListView mContentLv;
+    protected LoadingFooter mLoadingFooter;
 
     private TextView mPraiseDescTv;
     private TextView mPraiseCountTv;
@@ -186,6 +188,11 @@ public class MessageDetailFragment extends Fragment{
             @Override
             public void onScrollStateChanged(AbsListView absListView, int i) {
                 if(absListView.getLastVisiblePosition() == absListView.getCount() - 1 && i == AbsListView.OnScrollListener.SCROLL_STATE_IDLE){
+                    /**
+                    if(mLoadingFooter != null) {
+                        mLoadingFooter.setState(LoadingFooter.State.Loading);
+                    }
+                     **/
                     nextPage();
                     mMessageDetailActivity.setBusy(true);
                 }
@@ -202,7 +209,10 @@ public class MessageDetailFragment extends Fragment{
     public void configureContentLv(ListView listView) {
         listView.setDivider(AppContext.getContext().getResources().getDrawable(R.drawable.listview_comment_divider));
         listView.setDividerHeight(1);
-
+        /**
+        mLoadingFooter = new LoadingFooter(this.getActivity());
+        listView.addFooterView(mLoadingFooter.getView());
+         **/
     }
 
 
@@ -358,6 +368,11 @@ public class MessageDetailFragment extends Fragment{
                             //Toast.makeText(MessageDetailFragment.this.getActivity(),"get Comment failed!",Toast.LENGTH_SHORT).show();
                         }
                     } else {
+                        /**
+                        if(mLoadingFooter != null && mLoadingFooter.getState() == LoadingFooter.State.Loading){
+                            mLoadingFooter.setState(LoadingFooter.State.TheEnd);
+                        }
+                         **/
                         HeaderViewListAdapter headerAdapter = (HeaderViewListAdapter) mContentLv.getAdapter();
                         ((CommentAdapter) headerAdapter.getWrappedAdapter()).addItems(result);
                     }

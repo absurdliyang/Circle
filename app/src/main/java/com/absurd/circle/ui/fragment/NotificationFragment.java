@@ -26,6 +26,7 @@ import com.absurd.circle.ui.activity.base.INotificationChangedListener;
 import com.absurd.circle.ui.adapter.UserMessageAdapter;
 import com.absurd.circle.ui.adapter.base.BeanAdapter;
 import com.absurd.circle.ui.fragment.base.LocalRefreshableFragment;
+import com.absurd.circle.ui.view.LoadingFooter;
 import com.absurd.circle.util.ImageUtil;
 import com.absurd.circle.util.IntentUtil;
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
@@ -69,6 +70,8 @@ public class NotificationFragment extends LocalRefreshableFragment<UserMessage>
         params.setMargins(28,0,28,0);
         mContentLv.setLayoutParams(params);
 
+        mContentLv.setOnLastItemVisibleListener(null);
+        mLoadingFooter.setState(LoadingFooter.State.TheEnd);
     }
 
     @Override

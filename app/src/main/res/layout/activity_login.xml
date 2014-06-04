@@ -10,6 +10,7 @@
     tools:context="com.absurd.circle.ui.activity.LoginActivity">
 
     <TextView
+        android:id="@+id/tv_start_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="100dp"
@@ -17,6 +18,14 @@
         android:text="@string/start_text"
         android:textColor="#ffffffff"
         android:textSize="40dp"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:layout_alignLeft="@id/tv_start_text"
+        android:text="@string/start_title"
+        android:textColor="#ffffffff"
+        android:textSize="20dp"/>
     <com.sina.weibo.sdk.widget.LoginoutButton
         android:layout_centerHorizontal="true"
         android:id="@+id/lbtn_weibo_login"
@@ -44,4 +53,12 @@
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="20dp"
         />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="100dp"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:text="@string/start_hint"
+        android:textColor="#ffffffff"/>
 </RelativeLayout>

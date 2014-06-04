@@ -15,6 +15,7 @@ import com.absurd.circle.data.client.volley.RequestManager;
 import com.absurd.circle.ui.activity.base.IProgressBarActivity;
 import com.absurd.circle.ui.adapter.base.BeanAdapter;
 
+import com.absurd.circle.ui.view.LoadingFooter;
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
 import com.microsoft.windowsazure.mobileservices.ServiceFilterResponse;
@@ -32,6 +33,7 @@ public abstract class RefreshableFragment<V> extends Fragment {
 
     protected IProgressBarActivity mActivity;
     protected boolean mIsBusy = false;
+    protected LoadingFooter mLoadingFooter;
 
     protected int mCurrentPageIndex = 0;
 
@@ -57,6 +59,7 @@ public abstract class RefreshableFragment<V> extends Fragment {
 
     protected void configurePullToRefreshView(View view){
         mContentLv = (PullToRefreshListView)view.findViewById(R.id.lv_content);
+        mContentLv.setMode(PullToRefreshBase.Mode.PULL_FROM_START);
         mContentLv.setOnPullEventListener(new PullToRefreshBase.OnPullEventListener<ListView>() {
             @Override
             public void onPullEvent(PullToRefreshBase<ListView> refreshView, PullToRefreshBase.State state, PullToRefreshBase.Mode direction) {
@@ -65,7 +68,6 @@ public abstract class RefreshableFragment<V> extends Fragment {
                         mContentLv.getLoadingLayoutProxy().setPullLabel("下拉刷新");
                         mContentLv.getLoadingLayoutProxy().setRefreshingLabel("正在载入");
                         mContentLv.getLoadingLayoutProxy().setReleaseLabel("下拉刷新");
-                        mContentLv.getLoadingLayoutProxy().setLastUpdatedLabel("fdjklsf");
 
                         String label = DateUtils.formatDateTime(RefreshableFragment.this.getActivity(),
                                 System.currentTimeMillis(),
@@ -73,7 +75,9 @@ public abstract class RefreshableFragment<V> extends Fragment {
                         mContentLv.getLoadingLayoutProxy().setLastUpdatedLabel(label);
                         refreshTranscation();
                     }
-                }else if(direction.equals(PullToRefreshBase.Mode.PULL_FROM_END)){
+                }
+                /*
+                else if(direction.equals(PullToRefreshBase.Mode.PULL_FROM_END)){
                     mContentLv.getLoadingLayoutProxy().setPullLabel("加载更多");
                     mContentLv.getLoadingLayoutProxy().setRefreshingLabel("正在载入");
                     mContentLv.getLoadingLayoutProxy().setReleaseLabel("加载更多");
@@ -81,12 +85,26 @@ public abstract class RefreshableFragment<V> extends Fragment {
                         nextPageTransaction();
                     }
                 }
+                **/
+            }
+        });
+        mContentLv.setOnLastItemVisibleListener(new PullToRefreshBase.OnLastItemVisibleListener() {
+            @Override
+            public void onLastItemVisible() {
+                AppContext.commonLog.i("On pull to last item");
+                if(mLoadingFooter != null) {
+                    mLoadingFooter.setState(LoadingFooter.State.Loading);
+                }
+                nextPageTransaction();
             }
         });
 
         mContentLv.setAdapter(mAdapter);
+        ListView listView = mContentLv.getRefreshableView();
+        listView.setFooterDividersEnabled(false);
+        mLoadingFooter = new LoadingFooter(this.getActivity());
+        listView.addFooterView(mLoadingFooter.getView());
         if(mHeader != null){
-            ListView listView = mContentLv.getRefreshableView();
             listView.addHeaderView(mHeader);
         }
         mContentLv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -175,6 +193,9 @@ public abstract class RefreshableFragment<V> extends Fragment {
     protected void onNextPageCallback(List<V> result){
         mActivity.setBusy(false);
         mIsBusy = false;
+        if(mLoadingFooter != null && mLoadingFooter.getState() != LoadingFooter.State.TheEnd){
+            mLoadingFooter.setState(LoadingFooter.State.TheEnd);
+        }
     }
 
     @Override

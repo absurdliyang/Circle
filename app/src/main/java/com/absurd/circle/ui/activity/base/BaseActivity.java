@@ -112,7 +112,7 @@ public abstract class BaseActivity extends SwipeBackActivity implements IProgres
         if(busy){
             mProgressBar.setVisibility(View.VISIBLE);
         }else{
-            mProgressBar.setVisibility(View.GONE);
+            mProgressBar.setVisibility(View.INVISIBLE);
         }
     }
 

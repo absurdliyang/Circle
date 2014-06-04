@@ -3,6 +3,7 @@ package com.absurd.circle.ui.fragment.base;
 import android.os.AsyncTask;
 
 import com.absurd.circle.ui.adapter.base.BeanAdapter;
+import com.absurd.circle.ui.view.LoadingFooter;
 import com.microsoft.windowsazure.mobileservices.AsyncTaskUtil;
 import com.microsoft.windowsazure.mobileservices.TableQueryCallback;
 
@@ -59,6 +60,9 @@ public abstract class LocalRefreshableFragment<V> extends RefreshableFragment<V>
         @Override
         protected void onPostExecute(List<V> vs) {
             super.onPostExecute(vs);
+            if(mLoadingFooter != null && mLoadingFooter.getState() != LoadingFooter.State.TheEnd){
+                mLoadingFooter.setState(LoadingFooter.State.TheEnd);
+            }
             if(mCurrentPageIndex == 0){
                 getAdapter().setItems(vs);
             }else{

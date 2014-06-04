@@ -1,5 +1,6 @@
 package com.absurd.circle.ui.fragment.base;
 
+import android.graphics.AvoidXfermode;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.format.DateUtils;
@@ -19,6 +20,7 @@ import com.absurd.circle.data.service.UserService;
 import com.absurd.circle.ui.activity.UserProfileActivity;
 import com.absurd.circle.ui.activity.base.IProgressBarActivity;
 import com.absurd.circle.ui.adapter.UserAdapter;
+import com.absurd.circle.ui.view.LoadingFooter;
 import com.absurd.circle.util.IntentUtil;
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
@@ -39,10 +41,11 @@ public abstract class UserListFragment<V> extends Fragment {
 
     private PullToRefreshListView mContentLv;
     private UserAdapter mAdapter;
+    protected LoadingFooter mLoadingFooter;
 
     protected UserService mUserService;
 
-    private int mCurrentPageIndex = 0;
+    protected int mCurrentPageIndex = 0;
 
     private IProgressBarActivity mActivity;
     protected boolean mIsbusy = false;
@@ -55,6 +58,10 @@ public abstract class UserListFragment<V> extends Fragment {
         params.setMargins(28,0,28,0);
         mContentLv.setLayoutParams(params);
 
+        listView.setFooterDividersEnabled(false);
+        mLoadingFooter = new LoadingFooter(this.getActivity());
+        listView.addFooterView(mLoadingFooter.getView());
+
     }
 
     @Override
@@ -64,10 +71,10 @@ public abstract class UserListFragment<V> extends Fragment {
         View rootView = inflater.inflate(R.layout.item_list, null);
         // Init UI
         mContentLv = (PullToRefreshListView)rootView.findViewById(R.id.lv_content);
-        mAdapter = new UserAdapter(getActivity());
-        mContentLv.setAdapter(mAdapter);
+
         ListView listView = mContentLv.getRefreshableView();
         configureContentLv(listView);
+
 
         mContentLv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -75,7 +82,7 @@ public abstract class UserListFragment<V> extends Fragment {
                 IntentUtil.startActivity(UserListFragment.this.getActivity(), UserProfileActivity.class, "user", (User)getAdapter().getItem(i-1));
             }
         });
-
+        mContentLv.setMode(PullToRefreshBase.Mode.PULL_FROM_START);
         mContentLv.setOnPullEventListener(new PullToRefreshBase.OnPullEventListener<ListView>() {
             @Override
             public void onPullEvent(PullToRefreshBase<ListView> refreshView, PullToRefreshBase.State state, PullToRefreshBase.Mode direction) {
@@ -91,7 +98,9 @@ public abstract class UserListFragment<V> extends Fragment {
                         mContentLv.getLoadingLayoutProxy().setLastUpdatedLabel(label);
                         refreshTranscation();
                     }
-                }else if(direction.equals(PullToRefreshBase.Mode.PULL_FROM_END)){
+                }
+                /**
+                else if(direction.equals(PullToRefreshBase.Mode.PULL_FROM_END)){
                     mContentLv.getLoadingLayoutProxy().setPullLabel("加载更多");
                     mContentLv.getLoadingLayoutProxy().setRefreshingLabel("正在载入");
                     mContentLv.getLoadingLayoutProxy().setReleaseLabel("加载更多");
@@ -99,8 +108,25 @@ public abstract class UserListFragment<V> extends Fragment {
                         nextPageTransaction();
                     }
                 }
+                 **/
             }
         });
+
+        mContentLv.setOnLastItemVisibleListener(new PullToRefreshBase.OnLastItemVisibleListener() {
+            @Override
+            public void onLastItemVisible() {
+                beforePullEvent();
+                AppContext.commonLog.i("On pull to last item");
+                if(mLoadingFooter != null) {
+                    mLoadingFooter.setState(LoadingFooter.State.Loading);
+                }
+                nextPageTransaction();
+            }
+        });
+
+        mAdapter = new UserAdapter(getActivity());
+        mContentLv.setAdapter(mAdapter);
+
         // Init loading footer status as end
         refreshTranscation();
         return rootView;
@@ -137,6 +163,9 @@ public abstract class UserListFragment<V> extends Fragment {
             } else {
                 List<User> userResult = handleResult(result);
                 getAdapter().addItems(userResult);
+                if(mLoadingFooter != null && mLoadingFooter.getState() != LoadingFooter.State.TheEnd){
+                    mLoadingFooter.setState(LoadingFooter.State.TheEnd);
+                }
             }
         }
     };
@@ -184,6 +213,9 @@ public abstract class UserListFragment<V> extends Fragment {
                 List<V> resList = loadDataFromLocal(mCurrentPageIndex);
                 List<User> userResult = handleResult(resList);
                 getAdapter().addItems(userResult);
+                if(mLoadingFooter != null && mLoadingFooter.getState() != LoadingFooter.State.TheEnd){
+                    mLoadingFooter.setState(LoadingFooter.State.TheEnd);
+                }
             }
         }
     }
@@ -203,4 +235,8 @@ public abstract class UserListFragment<V> extends Fragment {
     protected abstract List<V> loadDataFromLocal(int pageIndex);
 
     protected abstract void beforePullEvent(PullToRefreshBase<ListView> refreshView, PullToRefreshBase.State state, PullToRefreshBase.Mode direction);
+
+    protected void beforePullEvent(){
+        beforePullEvent(null, null, PullToRefreshBase.Mode.PULL_FROM_END);
+    }
 }

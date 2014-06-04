@@ -29,6 +29,8 @@ public class FunsFragment extends UserListFragment<Follow> {
         return super.onCreateView(inflater, container, savedInstanceState);
     }
 
+
+    int count = 0;
     @Override
     protected List<User> handleResult(List<Follow> result) {
         List<User> resList = new ArrayList<User>();
@@ -36,7 +38,12 @@ public class FunsFragment extends UserListFragment<Follow> {
             if(follow.getUser() != null){
                 resList.add(follow.getUser());
             }
-        }int count = resList.size();
+        }
+        if(mCurrentPageIndex == 0) {
+            count = resList.size();
+        }else{
+            count += resList.size();
+        }
         if(getActivity() != null) {
             ((BaseActivity) getActivity()).setActionBarTitle("粉丝 (" + count + ")");
         }
