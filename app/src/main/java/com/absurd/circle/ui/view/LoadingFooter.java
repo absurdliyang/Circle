@@ -17,7 +17,7 @@ public class LoadingFooter {
 
     protected TextView mLoadingText;
 
-    protected State mState = State.Idle;
+    protected State mState = State.TheEnd;
 
     private ProgressBar mProgress;
 

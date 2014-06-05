@@ -115,12 +115,14 @@ public abstract class UserListFragment<V> extends Fragment {
         mContentLv.setOnLastItemVisibleListener(new PullToRefreshBase.OnLastItemVisibleListener() {
             @Override
             public void onLastItemVisible() {
-                beforePullEvent();
-                AppContext.commonLog.i("On pull to last item");
-                if(mLoadingFooter != null) {
-                    mLoadingFooter.setState(LoadingFooter.State.Loading);
+                if(!mIsbusy) {
+                    beforePullEvent();
+                    AppContext.commonLog.i("On pull to last item");
+                    if (mLoadingFooter != null) {
+                        mLoadingFooter.setState(LoadingFooter.State.Loading);
+                    }
+                    nextPageTransaction();
                 }
-                nextPageTransaction();
             }
         });
 

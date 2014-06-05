@@ -109,7 +109,7 @@ public class ChatService extends Service {
     public void onCreate() {
         super.onCreate();
         if (NetworkUtil.isNetConnected()) {
-            new ChatLoginTask().execute();
+            AsyncTaskUtil.addTaskInPool(new ChatLoginTask());
         }
     }
 

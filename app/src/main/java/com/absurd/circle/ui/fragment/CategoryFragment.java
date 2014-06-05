@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.LinearLayout;
 
 import com.absurd.circle.app.AppContext;
 import com.absurd.circle.app.R;
@@ -31,6 +32,13 @@ public class CategoryFragment extends Fragment {
     private HomeActivity mHomeActivity;
 
     private GridView mCategoryGv;
+
+    private LinearLayout mContainer;
+    private View.OnTouchListener mOnTouchListener;
+
+    public void setOnTouchListener(View.OnTouchListener onTouchListener){
+        this.mOnTouchListener = onTouchListener;
+    }
 
     private static CategoryFragment mCategoryFragment;
     // 0 for category selected
@@ -73,6 +81,8 @@ public class CategoryFragment extends Fragment {
         //initDefaultFilter();
         mHomeActivity = (HomeActivity)getActivity();
         final View rootView = inflater.inflate(R.layout.fragment_category,null);
+        mContainer = (LinearLayout)rootView.findViewById(R.id.llyt_category_container);
+        mContainer.setOnTouchListener(mOnTouchListener);
         mCategoryGv = (GridView)rootView.findViewById(R.id.gv_category);
         Map<Integer,String> itemsMap = new HashMap<Integer, String>();
         itemsMap.put(1,"新鲜事");

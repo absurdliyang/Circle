@@ -5,7 +5,8 @@
     android:background="@color/theme_color"
     android:clickable="true"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:id="@+id/llyt_category_container">
     <GridView
         android:id="@+id/gv_category"
         android:listSelector="@color/theme_color"

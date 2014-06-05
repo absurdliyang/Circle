@@ -11,6 +11,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
@@ -58,15 +59,11 @@ import java.util.Calendar;
 public class HomeActivity extends SlidingFragmentActivity
         implements IProgressBarActivity, INotificationChangedListener, AMapLocationListener{
     private HomeFragment mContent;
-    /**
-     * false MessageListFragment
-     * true CategoryFragment
-     */
-    private boolean mStatus = false;
+
     private SlidingMenuFragment mSlidingMenuFragment;
     private ProgressBar mProgressBar;
 
-    private UserService mUserService;
+    private UserService mUserService = new UserService();
 
     private boolean mIsExitPressed = false;
 
@@ -81,6 +78,8 @@ public class HomeActivity extends SlidingFragmentActivity
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         AppContext.currentActivity = this;
+        // set the Above View
+        setContentView(R.layout.activity_home);
 
         getAuth();
 
@@ -96,8 +95,6 @@ public class HomeActivity extends SlidingFragmentActivity
         if (mContent == null)
             mContent = new HomeFragment();
 
-        // Init Data component
-        mUserService = new UserService();
         init();
         //getFollowers();
         // Configur some UI control
@@ -110,8 +107,10 @@ public class HomeActivity extends SlidingFragmentActivity
         updateUserInfo();
         //initAMap();
         // Get user's current location
+
         mLocationManagerProxy = LocationManagerProxy.getInstance(HomeActivity.this);
         updateLocation();
+
         mHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -121,6 +120,7 @@ public class HomeActivity extends SlidingFragmentActivity
                 }
             }
         }, 12000);
+
 
     }
 
@@ -157,8 +157,6 @@ public class HomeActivity extends SlidingFragmentActivity
         configureSlidingMenu();
         configureActionBar();
 
-        // set the Above View
-        setContentView(R.layout.activity_home);
         mProgressBar = (ProgressBar)findViewById(R.id.pb_action_bar);
         getSupportFragmentManager()
                 .beginTransaction()
@@ -270,6 +268,26 @@ public class HomeActivity extends SlidingFragmentActivity
         View actionBarView = LayoutInflater.from(this).inflate(R.layout.layout_actionbar,null);
         View titleV = actionBarView.findViewById(R.id.llyt_custom_actionbar_title);
         final ImageView arrowIv = (ImageView)actionBarView.findViewById(R.id.iv_actionbar_title);
+        CategoryFragment.getInstance().setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                FragmentManager fm = getSupportFragmentManager();
+                CategoryFragment fragment = CategoryFragment.getInstance();
+                Animation rotateBackAnimation = AnimationUtils.loadAnimation(HomeActivity.this, R.anim.arrow_rotate_back);
+                startAnimation(arrowIv,rotateBackAnimation);
+
+                FragmentTransaction ft = fm.beginTransaction();
+                ft.setCustomAnimations(R.anim.fragment_slide_bottom_in, R.anim.fragment_slide_bottom_out);
+                ft.remove(fragment).commit();
+                fm.popBackStack();
+
+                if(fragment.hasChanged) {
+                    mContent.refreshTranscation();
+                    fragment.hasChanged = false;
+                }
+                return true;
+            }
+        });
         titleV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
