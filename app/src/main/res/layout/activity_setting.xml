@@ -114,6 +114,28 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/btn_app_recommend"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="13dp"
+                android:onClick="onClick"
+                android:clickable="true"
+                android:background="@drawable/setting_item_sel_bg"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:textSize="17dp"
+                    android:text="应用推荐"
+                    />
+                <View android:layout_height="1dp"
+                      android:layout_width="match_parent"
+                      android:layout_marginTop="13dp"
+                      android:background="#ff999999"/>
+            </LinearLayout>
+
+            <LinearLayout
                 android:id="@+id/btn_play_circle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

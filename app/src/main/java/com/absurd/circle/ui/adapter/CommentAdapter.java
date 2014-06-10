@@ -1,7 +1,9 @@
 package com.absurd.circle.ui.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.support.v4.app.FragmentActivity;
 import android.text.Html;
 import android.view.LayoutInflater;
@@ -15,6 +17,7 @@ import com.absurd.circle.data.client.volley.BitmapFilter;
 import com.absurd.circle.data.client.volley.RequestManager;
 import com.absurd.circle.data.model.Comment;
 import com.absurd.circle.ui.activity.EditCommentActivity;
+import com.absurd.circle.ui.activity.LoadOriginImaegAcitivty;
 import com.absurd.circle.ui.activity.UserProfileActivity;
 import com.absurd.circle.ui.adapter.base.BeanAdapter;
 import com.absurd.circle.util.FacesUtil;
@@ -24,6 +27,7 @@ import com.absurd.circle.util.StringUtil;
 import com.absurd.circle.util.TimeUtil;
 import com.android.volley.toolbox.ImageLoader;
 
+import java.io.ByteArrayOutputStream;
 import java.util.List;
 
 /**
@@ -49,6 +53,7 @@ public class CommentAdapter extends BeanAdapter<Comment> {
         TextView commentCreatedTv;
         TextView commentContentTv;
         ImageView replyIconIv;
+        ImageView mediaIv;
         ImageLoader.ImageContainer avatarRequest;
         ImageLoader.ImageContainer mediaRequest;
     }
@@ -65,6 +70,7 @@ public class CommentAdapter extends BeanAdapter<Comment> {
             holder.usernameTv = (TextView)view.findViewById(R.id.tv_comment_username);
             holder.commentCreatedTv = (TextView)view.findViewById(R.id.tv_comment_created);
             holder.commentContentTv = (TextView)view.findViewById(R.id.tv_comment_content);
+            holder.mediaIv = (ImageView)view.findViewById(R.id.iv_comment_media);
             holder.replyIconIv = (ImageView)view.findViewById(R.id.iv_comment_reply_icon);
             view.setTag(holder);;
         }else{
@@ -109,6 +115,37 @@ public class CommentAdapter extends BeanAdapter<Comment> {
                 IntentUtil.startActivity(mActivity, EditCommentActivity.class, "parentComment", comment);
             }
         });
+        if(!StringUtil.isEmpty(comment.getMediaUrl())){
+            final String thumbnailUrl = ImageUtil.getThumbnailUrl(comment.getMediaUrl(), 200, true);
+            holder.mediaIv.setVisibility(View.VISIBLE);
+            holder.mediaIv.setTag("loading");
+            holder.mediaRequest = RequestManager.loadImage(thumbnailUrl,
+                    RequestManager.getImageListener(holder.mediaIv, mMediaDefaultBitmap, mMediaDefaultBitmap,null));
+
+            final Bitmap bitmap;
+            if(holder.mediaIv.getTag().equals("loading")){
+                bitmap = null;
+            }else{
+                bitmap = ((BitmapDrawable)holder.mediaIv.getDrawable()).getBitmap();
+            }
+            holder.mediaIv.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(mContext, LoadOriginImaegAcitivty.class);
+                    intent.putExtra("mediaUrl", comment.getMediaUrl());
+                    if(bitmap != null) {
+                        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                        bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                        byte[] bytes = stream.toByteArray();
+                        intent.putExtra("thumbnailBitmap", bytes);
+                    }
+                    mActivity.startActivity(intent);
+                    mActivity.overridePendingTransition(R.anim.push_left_in, R.anim.push_left_in);
+                }
+            });
+        }else{
+            holder.mediaIv.setVisibility(View.GONE);
+        }
         return view;
     }
 

@@ -10,5 +10,6 @@ public class AppConfig {
 
     public static final int CUSTOM_PAGE_SIZE = 20;
 
+    public static final int COMPRESS_PIC_QUALITY = 2;
 
 }

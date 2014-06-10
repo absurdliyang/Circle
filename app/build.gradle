@@ -32,5 +32,5 @@ dependencies {
     compile files('libs/mta-sdk-1.0.0.jar')
     compile files('libs/dom4j-1.6.1.jar')
     compile files('libs/asmack-android-17-0.8.2.jar')
-    compile files('libs/umeng-sdk-analytics_v5.2.2_fb_v4.3.1_update_v2.4.1.jar')
+    compile files('libs/umeng-sdk-analytics_v5.2.2_xp_v5.6_fb_v4.3.1_update_v2.4.1.jar')
 }

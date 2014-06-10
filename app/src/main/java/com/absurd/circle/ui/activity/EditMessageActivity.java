@@ -23,6 +23,7 @@ import android.widget.RemoteViews;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.absurd.circle.app.AppConfig;
 import com.absurd.circle.app.AppContext;
 import com.absurd.circle.app.R;
 import com.absurd.circle.data.model.Message;
@@ -535,7 +536,7 @@ public class EditMessageActivity extends BaseActivity implements AMapLocationLis
         @Override
         protected Void doInBackground(Void... voids) {
             if(mPicPath != null){
-                String loadPicPath = ImageUtil.compressPic(EditMessageActivity.this, mPicPath, 3);
+                String loadPicPath = ImageUtil.compressPic(EditMessageActivity.this, mPicPath, AppConfig.COMPRESS_PIC_QUALITY);
                 File f = new File(loadPicPath);
                 mImageUrl = BCSService.uploadImageByFile(f);
             }

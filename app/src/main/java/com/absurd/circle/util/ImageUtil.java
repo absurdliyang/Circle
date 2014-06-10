@@ -559,6 +559,7 @@ public class ImageUtil {
         options.inJustDecodeBounds = false;
         options.inSampleSize = 1;
 
+        /**
         switch (quality) {
             case 1:
                 return picPath;
@@ -576,6 +577,7 @@ public class ImageUtil {
                 }
                 break;
         }
+         **/
 
         Bitmap bitmap = BitmapFactory.decodeFile(picPath, options);
         int exifRotation = ImageUtil.getFileExifRotation(picPath);

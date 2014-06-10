@@ -157,6 +157,7 @@ public class MessageAdapter extends BeanAdapter<Message> {
                         intent.putExtra("thumbnailBitmap", bytes);
                     }
                     mActivity.startActivity(intent);
+                    mActivity.overridePendingTransition(R.anim.push_left_in, R.anim.push_left_in);
                 }
             });
         }else{

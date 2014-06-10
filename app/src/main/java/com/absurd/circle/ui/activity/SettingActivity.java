@@ -14,7 +14,11 @@ import com.absurd.circle.im.service.ChatService;
 import com.absurd.circle.ui.activity.base.BaseActivity;
 import com.absurd.circle.util.IntentUtil;
 import com.absurd.circle.util.SystemUtil;
+import com.umeng.newxp.common.ExchangeConstants;
+import com.umeng.newxp.controller.ExchangeDataService;
+import com.umeng.newxp.view.ExchangeViewManager;
 import com.umeng.update.UmengUpdateAgent;
+
 
 import java.util.HashMap;
 
@@ -59,8 +63,8 @@ public class SettingActivity extends BaseActivity {
         AppContext.unReadUserMessageNums = new HashMap<String, Integer>();
         AppContext.sharedPreferenceUtil.clearAll();
         AppContext.cacheService.clearAll();
-
-        ChatService.getInstance().stopSelf();
+        if(ChatService.getInstance() != null)
+            ChatService.getInstance().stopSelf();
     }
 
     private void cleanCache(){
@@ -69,6 +73,11 @@ public class SettingActivity extends BaseActivity {
 
     public void onClick(View view){
         switch(view.getId()){
+            case R.id.btn_app_recommend:
+                ExchangeDataService service = new ExchangeDataService();
+                new ExchangeViewManager(this,service)
+                        .addView(ExchangeConstants.type_list_curtain, null);
+                break;
             case R.id.btn_play_circle:
                 navigateToWeb("http://quanquanshequ.com/play.html");
                 break;
