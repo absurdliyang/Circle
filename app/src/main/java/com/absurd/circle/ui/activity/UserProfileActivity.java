@@ -5,6 +5,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -15,11 +16,13 @@ import com.absurd.circle.data.client.volley.RequestManager;
 import com.absurd.circle.data.model.BlackList;
 import com.absurd.circle.data.model.Follow;
 import com.absurd.circle.data.model.FunsCount;
+import com.absurd.circle.data.model.Photo;
 import com.absurd.circle.data.model.ReportMessage;
 import com.absurd.circle.data.model.User;
 import com.absurd.circle.data.service.NotificationService;
 import com.absurd.circle.data.service.UserService;
 import com.absurd.circle.ui.activity.base.BaseActivity;
+import com.absurd.circle.ui.adapter.PhotoAdapter;
 import com.absurd.circle.ui.view.ItemDialog;
 import com.absurd.circle.util.ImageUtil;
 import com.absurd.circle.util.IntentUtil;
@@ -28,6 +31,7 @@ import com.android.volley.Response;
 import com.microsoft.windowsazure.mobileservices.ServiceFilterResponse;
 import com.microsoft.windowsazure.mobileservices.TableDeleteCallback;
 import com.microsoft.windowsazure.mobileservices.TableOperationCallback;
+import com.microsoft.windowsazure.mobileservices.TableQueryCallback;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +46,7 @@ public class UserProfileActivity extends BaseActivity {
     private User mUser;
     private Follow mFollow;
     private BlackList mBlackList;
+    private List<Photo> mUserPhotos;
 
     private ImageView mUserBackGroundIv;
     private ImageView mAvatarIv;
@@ -49,6 +54,7 @@ public class UserProfileActivity extends BaseActivity {
     private TextView mAgeTv;
     private ImageView mSexIv;
     private TextView mLevelTv;
+    private GridView mPhotoGv;
 
     private TextView mIdTv;
     private TextView mDescTv;
@@ -56,6 +62,7 @@ public class UserProfileActivity extends BaseActivity {
     private TextView mJobTv;
     private TextView mBadRecordTv;
     private TextView mFunsCountTv;
+    private PhotoAdapter mPhotoAdapter;
 
     private View mBottomBar;
     private View mAddFollowBtn;
@@ -81,6 +88,9 @@ public class UserProfileActivity extends BaseActivity {
         mAgeTv = (TextView)findViewById(R.id.tv_user_profile_age);
         mUsernameTv = (TextView)findViewById(R.id.tv_user_profile_username);
         mLevelTv = (TextView)findViewById(R.id.tv_user_profile_level);
+        mPhotoGv = (GridView)findViewById(R.id.gv_photo);
+        mPhotoAdapter = new PhotoAdapter(this);
+        mPhotoGv.setAdapter(mPhotoAdapter);
 
 
         mIdTv = (TextView)findViewById(R.id.tv_user_profile_id);
@@ -102,6 +112,23 @@ public class UserProfileActivity extends BaseActivity {
                         funsCount.getFollowCount(),
                         funsCount.getFunsCount(),
                         funsCount.getMessageCount()));
+            }
+        });
+        userService.getPhotoes(mUser.getUserId(), new TableQueryCallback<Photo>() {
+            @Override
+            public void onCompleted(List<Photo> result, int count, Exception exception, ServiceFilterResponse response) {
+                if(result == null || result.isEmpty()){
+                    if(exception != null){
+                        exception.printStackTrace();
+                    }
+                    AppContext.commonLog.i("User photos is null");
+                }else {
+                    for(Photo photo : result){
+                        AppContext.commonLog.i("Photo --> " + photo.getUrl());
+                    }
+                    mUserPhotos = result;
+                    mPhotoAdapter.setItems(mUserPhotos);
+                }
             }
         });
         RequestManager.loadImage(mUser.getAvatar(),RequestManager.getImageListener(mAvatarIv,

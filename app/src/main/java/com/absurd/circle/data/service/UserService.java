@@ -8,6 +8,7 @@ import com.absurd.circle.data.client.volley.RequestManager;
 import com.absurd.circle.data.model.BlackList;
 import com.absurd.circle.data.model.Follow;
 import com.absurd.circle.data.model.FunsCount;
+import com.absurd.circle.data.model.Photo;
 import com.absurd.circle.data.model.User;
 import com.absurd.circle.util.CommonLog;
 import com.absurd.circle.util.LogFactory;
@@ -129,6 +130,12 @@ public class UserService extends BaseService {
         RequestManager.addRequest(gsonRequest,"getNearPeople");
     }
 
+
+    public void getPhotoes(String userId, TableQueryCallback<Photo> callback){
+        getPhotoTable().where()
+                .field("userId")
+                .eq(userId).execute(callback);
+    }
 
 
 }

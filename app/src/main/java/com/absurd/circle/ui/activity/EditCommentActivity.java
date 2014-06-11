@@ -88,6 +88,16 @@ public class EditCommentActivity extends BaseActivity {
 
         mContainer = (RelativeLayout)findViewById(R.id.edit_comment_container);
         mMediaIv = (ImageView)findViewById(R.id.iv_edit_comment_photo);
+        mMediaIv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(!StringUtil.isEmpty(mPicPath)){
+                    Intent intent = new Intent(EditCommentActivity.this, BrowseImageActivity.class);
+                    intent.putExtra("path",mPicPath);
+                    startActivityForResult(intent,BROWSE_PIC);
+                }
+            }
+        });
 
         mSmiley = (SmileyPicker)findViewById(R.id.edit_comment_smileypicker);
         mSmiley.setEditText(this, ((LinearLayout) findViewById(R.id.edit_comment_root_layout)), mContentEt);
@@ -224,6 +234,7 @@ public class EditCommentActivity extends BaseActivity {
             }
         }
 
+        mComment.setCommentDate(Calendar.getInstance().getTime());
         mComment.setContent(mContent);
         mComment.setDate(Calendar.getInstance().getTime());
         mComment.setWeiboId("");
@@ -234,6 +245,8 @@ public class EditCommentActivity extends BaseActivity {
         String title = AppContext.getContext().getString(R.string.notification_sending_message);
         notificate(title, mComment.getContent());
 
+
+        AppContext.commonLog.i("fuck commentDate --> " + mComment);
         service.insertComment(mComment, new TableOperationCallback<Comment>() {
             @Override
             public void onCompleted(Comment entity, Exception exception, ServiceFilterResponse response) {

@@ -115,6 +115,7 @@
 
             <LinearLayout
                 android:id="@+id/btn_app_recommend"
+                android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingTop="13dp"

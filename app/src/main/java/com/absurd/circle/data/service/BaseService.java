@@ -9,6 +9,7 @@ import com.absurd.circle.data.model.BlackList;
 import com.absurd.circle.data.model.Comment;
 import com.absurd.circle.data.model.Follow;
 import com.absurd.circle.data.model.Message;
+import com.absurd.circle.data.model.Photo;
 import com.absurd.circle.data.model.Praise;
 import com.absurd.circle.data.model.ReportMessage;
 import com.absurd.circle.data.model.Score;
@@ -35,9 +36,9 @@ public class BaseService{
     public static final String TABLE_REPORT_MESSAGE = "Report";
     public static final String TABLE_SCORE = "Score";
     public static final String TABLE_USER_LOCATION = "UserLocation";
+    public static final String TABLE_PHOTO = "Photo";
 
 
-    protected CommonLog mLog = LogFactory.createLog(AppConstant.TAG);
     protected MobileServiceClient mClient = AzureClient.getInstance(AppContext.getContext());
 
 
@@ -89,6 +90,10 @@ public class BaseService{
 
     protected MobileServiceTable<Score> getScoreTable(){
         return mClient.getTable(TABLE_SCORE, Score.class);
+    }
+
+    protected MobileServiceTable<Photo> getPhotoTable(){
+        return mClient.getTable(TABLE_PHOTO, Photo.class);
     }
 
 
