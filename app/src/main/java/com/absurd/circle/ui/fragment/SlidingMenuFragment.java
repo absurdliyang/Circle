@@ -17,6 +17,7 @@ import com.absurd.circle.data.client.volley.RequestManager;
 import com.absurd.circle.ui.activity.ContactActivity;
 import com.absurd.circle.ui.activity.DiscoveryActivity;
 import com.absurd.circle.ui.activity.HomeActivity;
+import com.absurd.circle.ui.activity.IndicatorContactActivity;
 import com.absurd.circle.ui.activity.MyProfileActivity;
 import com.absurd.circle.ui.activity.NotificationActivity;
 import com.absurd.circle.ui.activity.SettingActivity;

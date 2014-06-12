@@ -62,8 +62,12 @@
             android:label="@string/title_activity_contact" >
         </activity>
         <activity
-            android:name="com.absurd.circle.ui.activity.SettingActivity"
-            android:label="@string/title_activity_setting" >
+            android:name="com.absurd.circle.ui.activity.QQLoginWebViewActivity"
+            android:label="@string/title_activity_web_view" >
+        </activity>
+        <activity
+            android:name="com.absurd.circle.ui.activity.IndicatorContactActivity"
+            android:label="@string/title_activity_contact" >
         </activity>
         <activity
             android:name="com.absurd.circle.ui.activity.MessageDetailActivity"
