@@ -94,7 +94,7 @@ public class SlidingMenuFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 mHomeActivity.toggle();
-                IntentUtil.startActivity(mHomeActivity, ContactActivity.class);
+                IntentUtil.startActivity(mHomeActivity, IndicatorContactActivity.class);
             }
         });
         mRootView.findViewById(R.id.llyt_drawer_menu_discovery).setOnClickListener(new View.OnClickListener() {

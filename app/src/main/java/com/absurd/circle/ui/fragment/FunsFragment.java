@@ -25,7 +25,7 @@ public class FunsFragment extends UserListFragment<Follow> {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         setMode(UserListFragment.MODE_NET);
-        ((BaseActivity) getActivity()).setActionBarTitle("粉丝");
+        //((BaseActivity) getActivity()).setActionBarTitle("粉丝");
         return super.onCreateView(inflater, container, savedInstanceState);
     }
 
@@ -45,7 +45,7 @@ public class FunsFragment extends UserListFragment<Follow> {
             count += resList.size();
         }
         if(getActivity() != null) {
-            ((BaseActivity) getActivity()).setActionBarTitle("粉丝 (" + count + ")");
+            //((BaseActivity) getActivity()).setActionBarTitle("粉丝 (" + count + ")");
         }
         return resList;
     }

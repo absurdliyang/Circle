@@ -26,7 +26,7 @@ public class FollowersFragment extends UserListFragment<Follow> {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         setMode(MODE_LOCAL);
-        ((BaseActivity) getActivity()).setActionBarTitle("关注");
+        //((BaseActivity) getActivity()).setActionBarTitle("关注");
         return super.onCreateView(inflater, container, savedInstanceState);
     }
 
@@ -42,13 +42,13 @@ public class FollowersFragment extends UserListFragment<Follow> {
             if (getMode() == UserListFragment.MODE_LOCAL) {
                 if(getActivity() != null) {
                     int count = AppContext.cacheService.followDBManager.getCount();
-                    ((BaseActivity) getActivity()).setActionBarTitle("关注 (" + count + ")");
+                    //((BaseActivity) getActivity()).setActionBarTitle("关注 (" + count + ")");
                 }
             } else if (getMode() == UserListFragment.MODE_NET) {
                 // Change the title
                 int count = resList.size();
                 if(getActivity() != null) {
-                    ((BaseActivity) getActivity()).setActionBarTitle("关注 (" + count + ")");
+                    //((BaseActivity) getActivity()).setActionBarTitle("关注 (" + count + ")");
                 }
                 // Refresh the cache
                 AppContext.cacheService.followDBManager.deleteAll();

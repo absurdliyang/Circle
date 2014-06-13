@@ -6,6 +6,7 @@
 
     <com.absurd.circle.ui.indicator.TabPageIndicator
         android:id="@+id/tpi_contact"
+        android:background="@drawable/custom_tab_indicator_divider"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
         />

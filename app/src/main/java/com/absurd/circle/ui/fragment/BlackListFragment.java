@@ -25,7 +25,7 @@ public class BlackListFragment extends UserListFragment<BlackList> {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         setMode(MODE_LOCAL);
-        ((BaseActivity) getActivity()).setActionBarTitle("黑名单");
+        //((BaseActivity) getActivity()).setActionBarTitle("黑名单");
         return super.onCreateView(inflater, container, savedInstanceState);
     }
 
@@ -41,13 +41,13 @@ public class BlackListFragment extends UserListFragment<BlackList> {
             if (getMode() == UserListFragment.MODE_LOCAL) {
                 if(getActivity() != null) {
                     int count = AppContext.cacheService.blackListDBManager.getCount();
-                    ((BaseActivity) getActivity()).setActionBarTitle("黑名单 (" + count + ")");
+                    //((BaseActivity) getActivity()).setActionBarTitle("黑名单 (" + count + ")");
                 }
             } else if (getMode() == UserListFragment.MODE_NET) {
                 // Change the title
                 if(getActivity() != null) {
                     int count = resList.size();
-                    ((BaseActivity) getActivity()).setActionBarTitle("黑名单 (" + count + ")");
+                    //((BaseActivity) getActivity()).setActionBarTitle("黑名单 (" + count + ")");
                 }
                 // Refresh the cache
                 AppContext.cacheService.blackListDBManager.deleteAll();
