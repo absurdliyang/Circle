@@ -208,6 +208,7 @@
     <string name="title_activity_discovery">DiscoveryActivity</string>
     <string name="title_activity_friend_messages">FriendMessagesActivity</string>
     <string name="title_activity_near_people">NearPeopleActivity</string>
+    <string name="title_activity_gallery">GalleryActivity</string>
     <string name="title_activity_near_talents">NearTalentsActivity</string>
     <string name="title_activity_web_view">WebViewActivity</string>
 
