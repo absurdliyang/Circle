@@ -1,9 +1,7 @@
 package com.absurd.circle.ui.activity;
 
-import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
@@ -13,6 +11,7 @@ import android.provider.MediaStore;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.DatePicker;
+import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -28,6 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.absurd.circle.app.AppConfig;
 import com.absurd.circle.app.AppContext;
 import com.absurd.circle.app.R;
 import com.absurd.circle.data.client.volley.BitmapFilter;
@@ -37,14 +37,17 @@ import com.absurd.circle.data.model.User;
 import com.absurd.circle.data.service.BCSService;
 import com.absurd.circle.data.service.UserService;
 import com.absurd.circle.ui.activity.base.BaseActivity;
+import com.absurd.circle.ui.adapter.PhotoAdapter;
 import com.absurd.circle.ui.view.IUploadImage;
 import com.absurd.circle.ui.view.ItemDialog;
 import com.absurd.circle.ui.view.PhotoFragment;
+import com.absurd.circle.util.FileUtil;
 import com.absurd.circle.util.ImageUtil;
 import com.absurd.circle.util.IntentUtil;
 import com.absurd.circle.util.NetworkUtil;
 import com.absurd.circle.util.TimeUtil;
 import com.android.volley.Response;
+import com.microsoft.windowsazure.mobileservices.AsyncTaskUtil;
 import com.microsoft.windowsazure.mobileservices.ServiceFilterResponse;
 import com.microsoft.windowsazure.mobileservices.TableOperationCallback;
 
@@ -76,9 +79,13 @@ public class MyProfileActivity extends BaseActivity implements IUploadImage{
     private TextView mPhoneTv;
     private TextView mInterestTv;
     private TextView mJobTv;
+    private GridView mPhotoGv;
+    private PhotoAdapter mPhotoAdapter;
 
     private PhotoFragment mPhotoFragment;
-    private boolean mPhotoSelectedStatus;
+    private PhotoFragment mMediaFragment;
+    private boolean  mPhotoSelectedStatus;
+    private boolean mIsMediaFragment = false;
     private String mPicPath;
     private Uri mImageUri;
     private String mImageUrl;
@@ -121,8 +128,12 @@ public class MyProfileActivity extends BaseActivity implements IUploadImage{
         mBirthdayTv = (TextView)findViewById(R.id.tv_my_profile_birthday);
         mSexTv = (TextView)findViewById(R.id.tv_my_profile_sex);
         mPhoneTv = (TextView)findViewById(R.id.tv_my_profile_phone);
+        mPhotoGv = (GridView)findViewById(R.id.gv_photo_edit);
+        mPhotoAdapter = new PhotoAdapter(this,true);
+        mPhotoGv.setAdapter(mPhotoAdapter);
 
         mPhotoFragment = new PhotoFragment();
+        mMediaFragment = new PhotoFragment(2);
     }
 
     private void bindData(){
@@ -179,10 +190,10 @@ public class MyProfileActivity extends BaseActivity implements IUploadImage{
                 @Override
                 public void onClick(View view) {
                     mPhotoFragment.setTitle("更换头像");
+                    mIsMediaFragment = false;
                     mPhotoSelectedStatus = true;
                     mPhotoFragment.setIUploadImage(MyProfileActivity.this);
                     mPhotoFragment.show(getSupportFragmentManager(),null);
-
                 }
             });
 
@@ -190,6 +201,7 @@ public class MyProfileActivity extends BaseActivity implements IUploadImage{
                 @Override
                 public void onClick(View view) {
                     mPhotoFragment.setTitle("更换背景");
+                    mIsMediaFragment = false;
                     mPhotoSelectedStatus = false;
                     mPhotoFragment.setIUploadImage(MyProfileActivity.this);
                     mPhotoFragment.show(getSupportFragmentManager(),null);
@@ -373,7 +385,7 @@ public class MyProfileActivity extends BaseActivity implements IUploadImage{
     @Override
     public void onResultByCrop(Intent data) {
         // TODO Auto-generated method stub
-        mPicPath = getPicPathFromUri(mImageUri, this);
+        mPicPath = FileUtil.getPicPathFromUri(mImageUri, this);
         Bundle extras = data.getExtras();
         if (extras != null){
             Bitmap photo = extras.getParcelable("data");
@@ -386,7 +398,7 @@ public class MyProfileActivity extends BaseActivity implements IUploadImage{
                     mUserBackGroundIv.setImageBitmap(photo);
                 }
                 if(NetworkUtil.isNetConnected()) {
-                    new ImageUploadTask().execute();
+                    AsyncTaskUtil.addTaskInPool(new ImageUploadTask());
                 }else{
                     warning(R.string.net_disconnected_warning_upload_failed);
                 }
@@ -425,7 +437,11 @@ public class MyProfileActivity extends BaseActivity implements IUploadImage{
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        mPhotoFragment.onActivityResult(requestCode, resultCode, data);
+        if(mIsMediaFragment){
+            mMediaFragment.onActivityResult(requestCode, resultCode, data);
+        }else {
+            mPhotoFragment.onActivityResult(requestCode, resultCode, data);
+        }
     }
 
 
@@ -446,28 +462,52 @@ public class MyProfileActivity extends BaseActivity implements IUploadImage{
         protected void onPostExecute(Boolean result) {
             // TODO Auto-generated method stub
             super.onPostExecute(result);
-            if(mPhotoSelectedStatus) {
-                AppContext.auth.setAvatar(mImageUrl);
-                AppContext.cacheService.userDBManager.updateUser(AppContext.auth);
-                warning(R.string.change_avatar_success);
-            }else{
-                AppContext.auth.setBackgroundImage(mImageUrl);
-                AppContext.cacheService.userDBManager.updateUser(AppContext.auth);
-                warning(R.string.change_background_success);
+            if(mIsMediaFragment){
+                warning(R.string.upload_gallery_success);
+            }else {
+                if (mPhotoSelectedStatus) {
+                    AppContext.auth.setAvatar(mImageUrl);
+                    AppContext.cacheService.userDBManager.updateUser(AppContext.auth);
+                    warning(R.string.change_avatar_success);
+                } else {
+                    AppContext.auth.setBackgroundImage(mImageUrl);
+                    AppContext.cacheService.userDBManager.updateUser(AppContext.auth);
+                    warning(R.string.change_background_success);
+                }
             }
         }
     }
 
-    public  String getPicPathFromUri(Uri uri, Activity activity) {
-        String value = uri.getPath();
-        if (value.startsWith("/external")) {
-            String[] proj = {MediaStore.Images.Media.DATA};
-            Cursor cursor = activity.managedQuery(uri, proj, null, null, null);
-            int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-            cursor.moveToFirst();
-            return cursor.getString(column_index);
-        } else {
-            return value;
-        }
+    public void uploadGalleryPhoto(){
+        mIsMediaFragment = true;
+        mMediaFragment.setTitle("上传相册图片");
+        mMediaFragment.setIUploadImage(new IUploadImage() {
+            @Override
+            public void onResultByAlbum(Intent data) {
+                String picPath = FileUtil.getPicPathFromUri(data.getData(), MyProfileActivity.this);
+                Bitmap bitmap = ImageUtil.getWriteWeiboPictureThumblr(picPath);
+                if (bitmap != null) {
+                    mPicPath = picPath;
+                }
+                if(NetworkUtil.isNetConnected()) {
+                    AsyncTaskUtil.addTaskInPool(new ImageUploadTask());
+                }else{
+                    warning(R.string.net_disconnected_warning_upload_failed);
+                }
+            }
+
+            @Override
+            public void onResultByTake(Intent data) {
+
+            }
+
+            @Override
+            public void onResultByCrop(Intent data) {
+
+            }
+        });
+        mMediaFragment.show(getSupportFragmentManager(),null);
     }
+
+
 }

@@ -33,6 +33,7 @@ import com.microsoft.windowsazure.mobileservices.TableDeleteCallback;
 import com.microsoft.windowsazure.mobileservices.TableOperationCallback;
 import com.microsoft.windowsazure.mobileservices.TableQueryCallback;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,7 +47,7 @@ public class UserProfileActivity extends BaseActivity {
     private User mUser;
     private Follow mFollow;
     private BlackList mBlackList;
-    private List<Photo> mUserPhotos;
+    private ArrayList<Photo> mUserPhotos;
 
     private ImageView mUserBackGroundIv;
     private ImageView mAvatarIv;
@@ -89,7 +90,7 @@ public class UserProfileActivity extends BaseActivity {
         mUsernameTv = (TextView)findViewById(R.id.tv_user_profile_username);
         mLevelTv = (TextView)findViewById(R.id.tv_user_profile_level);
         mPhotoGv = (GridView)findViewById(R.id.gv_photo);
-        mPhotoAdapter = new PhotoAdapter(this);
+        mPhotoAdapter = new PhotoAdapter(this,false);
         mPhotoGv.setAdapter(mPhotoAdapter);
 
 
@@ -126,7 +127,7 @@ public class UserProfileActivity extends BaseActivity {
                     for(Photo photo : result){
                         AppContext.commonLog.i("Photo --> " + photo.getUrl());
                     }
-                    mUserPhotos = result;
+                    mUserPhotos = (ArrayList<Photo>)result;
                     mPhotoAdapter.setItems(mUserPhotos);
                 }
             }

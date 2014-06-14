@@ -38,18 +38,24 @@ public class BeanAdapter<E> extends BaseAdapter {
     }
 
     public void setItems(final List<E> items) {
-        this.mItems = items;
-        notifyDataSetChanged();
+        if(items != null) {
+            this.mItems = items;
+            notifyDataSetChanged();
+        }
     }
 
     public void addItems(final List<E> addItems){
-        this.mItems.addAll(addItems);
-        notifyDataSetChanged();
+        if(addItems != null) {
+            this.mItems.addAll(addItems);
+            notifyDataSetChanged();
+        }
     }
 
     public void addItem(final E item){
-        this.mItems.add(item);
-        notifyDataSetChanged();
+        if(item != null) {
+            this.mItems.add(item);
+            notifyDataSetChanged();
+        }
     }
 
     public void deleteAllItems(){

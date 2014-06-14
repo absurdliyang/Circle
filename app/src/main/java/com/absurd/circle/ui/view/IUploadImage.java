@@ -27,4 +27,5 @@ public interface IUploadImage {
 	 * On result fro croping the selected photo
 	 */
 	public void onResultByCrop(Intent data);
+
 }

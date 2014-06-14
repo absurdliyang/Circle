@@ -29,10 +29,28 @@ public class PhotoFragment extends DialogFragment{
 
     private String mTitle;
 
+    /**
+     * 1 for photo
+     * 2 fro media
+     */
+    private int mMode;
+
+    public PhotoFragment(){
+        mMode = 1;
+    }
+
+    public PhotoFragment(int mode){
+        mMode = mode;
+    }
+
+    public void setMode(int mode){
+        mMode = mode;
+    }
+
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
         // TODO Auto-generated method stub
-        mDialog = new PhotoDialog(this.getActivity());
+        mDialog = new PhotoDialog(this.getActivity(), mMode);
         mDialog.setTitle(mTitle);
         mDialog.setOnGallaryClickListener(new View.OnClickListener() {
             @Override
@@ -45,6 +63,14 @@ public class PhotoFragment extends DialogFragment{
             @Override
             public void onClick(View view) {
                 onTake();
+                PhotoFragment.this.dismiss();
+            }
+        });
+        mDialog.setOnRecordVedioClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View view) {
+                onRecord();
                 PhotoFragment.this.dismiss();
             }
         });
@@ -134,7 +160,15 @@ public class PhotoFragment extends DialogFragment{
 		intent.setAction(Intent.ACTION_GET_CONTENT);
 		getActivity().startActivityForResult(intent,IUploadImage.SELECT_BY_ALBUM);
 	}
-	
+
+
+    /**
+     * on selecgt record vedio
+     */
+    private void onRecord(){
+
+    }
+
 	
 	public static boolean hasImageCaptureBug() {
 	    // list of known devices that have the bug

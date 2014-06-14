@@ -59,6 +59,8 @@
     <string name="cant_insert_album">发生意外，无法写入相册</string>
     <string name="change_avatar_success">更改头像成功</string>
     <string name="change_avatar_failed">更改头像失败</string>
+    <string name="upload_gallery_success">上传相册成功</string>
+    <string name="upload_gallery_failed">上传相册失败</string>
     <string name="change_background_success">更换背景成功</string>
     <string name="change_background_failed">更换背景失败</string>
     <string name="exit_mention">再次按返回键退出</string>
@@ -75,6 +77,8 @@
     <string name="notificaiont_uploading_pic">正在上传图片</string>
     <string name="qq_auth_failed">QQ授权失败,请重新登录</string>
     <string name="message_not_exit">你查看的消息不存在</string>
+    <string name="save_pic_success">保存图片成功</string>
+    <string name="save_pic_failed">保存图片失败</string>
 
     <!-- sina weibo -->
     <string name="com_sina_weibo_sdk_login_with_weibo_account">用微博登錄</string>
@@ -211,5 +215,6 @@
     <string name="title_activity_gallery">GalleryActivity</string>
     <string name="title_activity_near_talents">NearTalentsActivity</string>
     <string name="title_activity_web_view">WebViewActivity</string>
+    <string name="title_activity_vedio">VedioActivity</string>
 
 </resources>

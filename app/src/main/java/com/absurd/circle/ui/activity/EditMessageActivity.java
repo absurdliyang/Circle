@@ -36,6 +36,7 @@ import com.absurd.circle.ui.view.IUploadImage;
 import com.absurd.circle.ui.view.KeyboardControlEditText;
 import com.absurd.circle.ui.widget.smileypicker.SmileyPicker;
 import com.absurd.circle.ui.widget.smileypicker.SmileyPickerUtility;
+import com.absurd.circle.util.FileUtil;
 import com.absurd.circle.util.ImageUtil;
 import com.absurd.circle.util.IntentUtil;
 import com.absurd.circle.util.NetworkUtil;
@@ -487,7 +488,7 @@ public class EditMessageActivity extends BaseActivity implements AMapLocationLis
 
     public void onResultByGallary(Intent intent) {
         // TODO Auto-generated method stub
-        String picPath = getPicPathFromUri(intent.getData(), this);
+        String picPath = FileUtil.getPicPathFromUri(intent.getData(), this);
         enablePicture(picPath);
     }
 
@@ -495,23 +496,10 @@ public class EditMessageActivity extends BaseActivity implements AMapLocationLis
 
     public void onResultByTake(Intent data) {
         // TODO Auto-generated method stub
-        mPicPath = getPicPathFromUri(mImageFileUri, this);
+        mPicPath = FileUtil.getPicPathFromUri(mImageFileUri, this);
         enablePicture(mPicPath);
     }
 
-    public  String getPicPathFromUri(Uri uri, Activity activity) {
-        String value = uri.getPath();
-
-        if (value.startsWith("/external")) {
-            String[] proj = {MediaStore.Images.Media.DATA};
-            Cursor cursor = activity.managedQuery(uri, proj, null, null, null);
-            int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-            cursor.moveToFirst();
-            return cursor.getString(column_index);
-        } else {
-            return value;
-        }
-    }
 
     private void enablePicture(String picPath) {
         Bitmap bitmap = ImageUtil.getWriteWeiboPictureThumblr(picPath);

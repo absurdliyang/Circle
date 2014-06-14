@@ -3,10 +3,12 @@ package com.absurd.circle.data.model;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
+
 /**
  * Created by absurd on 14-6-10.
  */
-public class Photo {
+public class Photo implements Serializable{
 
     @Expose
     @SerializedName("id")

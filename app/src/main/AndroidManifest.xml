@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.absurd.circle.app">
+    package="com.absurd.circle.app" >
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
@@ -17,10 +17,10 @@
     <application
         android:name="com.absurd.circle.app.AppContext"
         android:allowBackup="true"
+        android:debuggable="false"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme"
-        android:debuggable="false">
+        android:theme="@style/AppTheme" >
         <meta-data
             android:name="com.amap.api.v2.apikey"
             android:value="80837d6d2302e9567a379416f49bee46" />
@@ -163,6 +163,10 @@
         <activity
             android:name="com.absurd.circle.ui.activity.GalleryActivity"
             android:label="@string/title_activity_gallery" >
+        </activity>
+        <activity
+            android:name="com.absurd.circle.ui.activity.VedioActivity"
+            android:label="@string/title_activity_vedio" >
         </activity>
     </application>
 

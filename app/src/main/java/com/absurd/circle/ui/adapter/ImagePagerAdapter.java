@@ -4,6 +4,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
+import com.absurd.circle.data.model.Photo;
 import com.absurd.circle.ui.fragment.LoadingOriginImageFragment;
 
 import java.util.List;
@@ -14,26 +15,25 @@ import java.util.List;
 public class ImagePagerAdapter extends FragmentPagerAdapter {
 
 
-    private List<String> mUrls;
-    private LoadingOriginImageFragment mFragment = new LoadingOriginImageFragment();
-
+    private List<Photo> mPhotos;
     public ImagePagerAdapter(FragmentManager fm) {
         super(fm);
     }
 
-    public ImagePagerAdapter(FragmentManager fm, List<String> urls){
+    public ImagePagerAdapter(FragmentManager fm, List<Photo> urls){
         super(fm);
-        this.mUrls = urls;
+        this.mPhotos = urls;
     }
 
     @Override
     public Fragment getItem(int position) {
-        mFragment.setImageUrl(mUrls.get(position));
-        return mFragment;
+        LoadingOriginImageFragment fragment = new LoadingOriginImageFragment();
+        fragment.setImageUrl(mPhotos.get(position).getUrl());
+        return fragment;
     }
 
     @Override
     public int getCount() {
-        return mUrls.size();
+        return mPhotos.size();
     }
 }

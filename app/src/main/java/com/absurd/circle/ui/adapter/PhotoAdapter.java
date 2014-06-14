@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,13 +17,19 @@ import com.absurd.circle.app.AppContext;
 import com.absurd.circle.app.R;
 import com.absurd.circle.data.client.volley.RequestManager;
 import com.absurd.circle.data.model.Photo;
+import com.absurd.circle.ui.activity.GalleryActivity;
 import com.absurd.circle.ui.activity.LoadOriginImaegAcitivty;
+import com.absurd.circle.ui.activity.MyProfileActivity;
 import com.absurd.circle.ui.adapter.base.BeanAdapter;
+import com.absurd.circle.ui.bean.PhotosBean;
 import com.absurd.circle.util.ImageUtil;
+import com.absurd.circle.util.IntentUtil;
 import com.absurd.circle.util.StringUtil;
 import com.android.volley.toolbox.ImageLoader;
 
 import java.io.ByteArrayOutputStream;
+import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -30,14 +37,30 @@ import java.util.List;
  */
 public class PhotoAdapter extends BeanAdapter<Photo> {
 
+    private static final String GALLERY_PHOTO_EDIT = "GALLERY_PHOTO_EDIT";
+
     private FragmentActivity mActivity;
+
+    /**'
+     * true for owner
+     * false for guest
+     */
+    private boolean mPermission;
 
     public PhotoAdapter(Context context, List<Photo> items) {
         super(context, items);
     }
 
-    public PhotoAdapter(Context context) {
-        super(context);
+    public PhotoAdapter(FragmentActivity activity, boolean permission) {
+        super(activity);
+        mActivity = activity;
+        this.mPermission = permission;
+        if(mPermission){
+            Photo photo = new Photo();
+            photo.setUrl(GALLERY_PHOTO_EDIT);
+            mItems.add(photo);
+            notifyDataSetChanged();
+        }
     }
 
     public PhotoAdapter(FragmentActivity activity){
@@ -47,7 +70,10 @@ public class PhotoAdapter extends BeanAdapter<Photo> {
 
     @Override
     public void setItems(List<Photo> items) {
-        super.setItems(items);
+        if(mItems != null) {
+            this.mItems = items;
+            notifyDataSetChanged();
+        }
     }
 
     private class ViewHolder{
@@ -56,7 +82,7 @@ public class PhotoAdapter extends BeanAdapter<Photo> {
     }
 
     @Override
-    public View getView(int i, View view, ViewGroup viewGroup) {
+    public View getView(final int i, View view, ViewGroup viewGroup) {
         final Photo photo = (Photo)getItem(i);
         ViewHolder holder = null;
         if(view == null){
@@ -71,9 +97,16 @@ public class PhotoAdapter extends BeanAdapter<Photo> {
             }
         }
         if(!StringUtil.isEmpty(photo.getUrl())) {
-            if(photo.getUrl().equals("add")) {
+            if(photo.getUrl().equals(GALLERY_PHOTO_EDIT)) {
                 holder.imageView.setImageDrawable(AppContext.getContext().getResources().getDrawable(R.drawable.ic_add));
-                holder.imageView.setScaleType(ImageView.ScaleType.CENTER);
+                holder.imageView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if(mActivity instanceof MyProfileActivity){
+                            ((MyProfileActivity)mActivity).uploadGalleryPhoto();
+                        }
+                    }
+                });
             }else {
                 final String thumbnailUrl = ImageUtil.getThumbnailUrl(photo.getUrl(), 200, true);
                 holder.imageView.setVisibility(View.VISIBLE);
@@ -90,21 +123,21 @@ public class PhotoAdapter extends BeanAdapter<Photo> {
                 holder.imageView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        Intent intent = new Intent(mContext, LoadOriginImaegAcitivty.class);
-                        intent.putExtra("mediaUrl", photo.getUrl());
-                        if(bitmap != null) {
-                            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                            bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-                            byte[] bytes = stream.toByteArray();
-                            intent.putExtra("thumbnailBitmap", bytes);
-                        }
-                        mActivity.startActivity(intent);
-                        mActivity.overridePendingTransition(R.anim.push_left_in, R.anim.push_left_in);
+                        HashMap<String, Serializable> params = new HashMap<String, Serializable>();
+                        PhotosBean photos = new PhotosBean();
+                        photos.setPhotos(mItems);
+                        params.put("photos", photos);
+                        params.put("position",i);
+                        IntentUtil.startActivity(mActivity,GalleryActivity.class, params);
                     }
                 });
+
             }
         }
 
         return view;
     }
+
+
+
 }
