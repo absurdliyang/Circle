@@ -60,7 +60,7 @@ public class GalleryActivity extends BaseActivity{
         mCurrengViewPosition = (Integer)intent.getSerializableExtra("position");
 
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setBackgroundDrawable(AppContext.getContext().getResources().getDrawable(R.drawable.actionbar_bg));
+        actionBar.hide();
 
         mViewPager = (ViewPager)findViewById(R.id.vp_gallery);
         ImagePagerAdapter adapter = new ImagePagerAdapter(getSupportFragmentManager(), mPhotos);

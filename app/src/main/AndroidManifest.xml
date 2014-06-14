@@ -14,6 +14,12 @@
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_CONFIGURATION" />
 
+
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
+
+
     <application
         android:name="com.absurd.circle.app.AppContext"
         android:allowBackup="true"
@@ -160,14 +166,7 @@
             android:name="com.absurd.circle.ui.activity.NearbyTalentsActivity"
             android:label="@string/title_activity_near_talents" >
         </activity>
-        <activity
-            android:name="com.absurd.circle.ui.activity.GalleryActivity"
-            android:label="@string/title_activity_gallery" >
-        </activity>
-        <activity
-            android:name="com.absurd.circle.ui.activity.VedioActivity"
-            android:label="@string/title_activity_vedio" >
-        </activity>
+
     </application>
 
 </manifest>

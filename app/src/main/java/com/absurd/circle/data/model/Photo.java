@@ -28,7 +28,7 @@ public class Photo implements Serializable{
 
     @Expose
     @SerializedName("type")
-    private String mType;
+    private int mType;
 
 
     public String getId() {
@@ -63,11 +63,11 @@ public class Photo implements Serializable{
         mUserId = userId;
     }
 
-    public String getType() {
+    public int getType() {
         return mType;
     }
 
-    public void setType(String type) {
+    public void setType(int type) {
         mType = type;
     }
 

@@ -33,6 +33,7 @@ import com.absurd.circle.app.R;
 import com.absurd.circle.data.client.volley.BitmapFilter;
 import com.absurd.circle.data.client.volley.RequestManager;
 import com.absurd.circle.data.model.FunsCount;
+import com.absurd.circle.data.model.Photo;
 import com.absurd.circle.data.model.User;
 import com.absurd.circle.data.service.BCSService;
 import com.absurd.circle.data.service.UserService;
@@ -49,7 +50,9 @@ import com.absurd.circle.util.TimeUtil;
 import com.android.volley.Response;
 import com.microsoft.windowsazure.mobileservices.AsyncTaskUtil;
 import com.microsoft.windowsazure.mobileservices.ServiceFilterResponse;
+import com.microsoft.windowsazure.mobileservices.TableDeleteCallback;
 import com.microsoft.windowsazure.mobileservices.TableOperationCallback;
+import com.microsoft.windowsazure.mobileservices.TableQueryCallback;
 
 /**
  * Created by absurd on 14-3-29.
@@ -84,6 +87,8 @@ public class MyProfileActivity extends BaseActivity implements IUploadImage{
 
     private PhotoFragment mPhotoFragment;
     private PhotoFragment mMediaFragment;
+    private ArrayList<Photo> mUserPhotos;
+
     private boolean  mPhotoSelectedStatus;
     private boolean mIsMediaFragment = false;
     private String mPicPath;
@@ -147,6 +152,24 @@ public class MyProfileActivity extends BaseActivity implements IUploadImage{
                             funsCount.getFollowCount(),
                             funsCount.getFunsCount(),
                             funsCount.getMessageCount()));
+                }
+            });
+
+            mUserService.getPhotoes(user.getUserId(), new TableQueryCallback<Photo>() {
+                @Override
+                public void onCompleted(List<Photo> result, int count, Exception exception, ServiceFilterResponse response) {
+                    if(result == null || result.isEmpty()){
+                        if(exception != null){
+                            exception.printStackTrace();
+                        }
+                        AppContext.commonLog.i("User photos is null");
+                    }else {
+                        for(Photo photo : result){
+                            AppContext.commonLog.i("Photo --> " + photo.getUrl());
+                        }
+                        mUserPhotos = (ArrayList<Photo>)result;
+                        mPhotoAdapter.setItems(mUserPhotos);
+                    }
                 }
             });
             RequestManager.loadImage(user.getAvatar(), RequestManager.getImageListener(mAvatarIv,
@@ -449,21 +472,50 @@ public class MyProfileActivity extends BaseActivity implements IUploadImage{
         @Override
         protected Boolean doInBackground(String... params) {
             // TODO Auto-generated method stub
-            AppContext.commonLog.i(mPicPath);
+            AppContext.commonLog.i("Pic path --> " + mPicPath);
             if(mPicPath != null){
                 String loadPicPath = ImageUtil.compressPic(MyProfileActivity.this, mPicPath, 1);
+                if(loadPicPath == null) {
+                    return false;
+                }
                 File f = new File(loadPicPath);
                 mImageUrl = BCSService.uploadImageByFile(f);
             }
-            return null;
+            return true;
         }
 
         @Override
         protected void onPostExecute(Boolean result) {
             // TODO Auto-generated method stub
             super.onPostExecute(result);
+            if(result == false){
+                AppContext.commonLog.i("Add photo failed");
+                if (mPhotoSelectedStatus) {
+                    warning(R.string.change_avatar_failed);
+                } else {
+                    warning(R.string.change_background_failed);
+                }
+                return;
+            }
             if(mIsMediaFragment){
                 warning(R.string.upload_gallery_success);
+                Photo photo = new Photo();
+                photo.setType(0);
+                photo.setUrl(mImageUrl);
+                photo.setUserId(AppContext.auth.getUserId());
+                mUserService.insertPhoto(photo, new TableOperationCallback<Photo>() {
+                    @Override
+                    public void onCompleted(Photo entity, Exception exception, ServiceFilterResponse response) {
+                        if(entity == null){
+                            if(exception != null){
+                                exception.printStackTrace();
+                            }
+                            return;
+                        }
+                        AppContext.commonLog.i("Add photo success");
+                        mPhotoAdapter.addItem(entity);
+                    }
+                });
             }else {
                 if (mPhotoSelectedStatus) {
                     AppContext.auth.setAvatar(mImageUrl);
@@ -507,6 +559,19 @@ public class MyProfileActivity extends BaseActivity implements IUploadImage{
             }
         });
         mMediaFragment.show(getSupportFragmentManager(),null);
+    }
+
+    public void deleteGalleryPhoto(int position){
+        mUserService.deletePhoto(mUserPhotos.get(position),new TableDeleteCallback() {
+            @Override
+            public void onCompleted(Exception exception, ServiceFilterResponse response) {
+                if(exception != null){
+                    exception.printStackTrace();
+                    return;
+                }
+                warning(R.string.delete_gallery_photo_success);
+            }
+        });
     }
 
 

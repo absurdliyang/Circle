@@ -10,6 +10,7 @@ import com.absurd.circle.data.model.Follow;
 import com.absurd.circle.data.model.FunsCount;
 import com.absurd.circle.data.model.Photo;
 import com.absurd.circle.data.model.User;
+import com.absurd.circle.ui.adapter.PhotoAdapter;
 import com.absurd.circle.util.CommonLog;
 import com.absurd.circle.util.LogFactory;
 import com.android.volley.Response;
@@ -137,5 +138,11 @@ public class UserService extends BaseService {
                 .eq(userId).execute(callback);
     }
 
+    public void insertPhoto(Photo photo, TableOperationCallback<Photo> callback){
+        getPhotoTable().insert(photo, callback);
+    }
 
+    public void deletePhoto(Photo photo, TableDeleteCallback callback){
+        getPhotoTable().delete(photo,callback);
+    }
 }

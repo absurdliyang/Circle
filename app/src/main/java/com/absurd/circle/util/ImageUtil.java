@@ -580,6 +580,9 @@ public class ImageUtil {
          **/
 
         Bitmap bitmap = BitmapFactory.decodeFile(picPath, options);
+        if(bitmap == null){
+            return null;
+        }
         int exifRotation = ImageUtil.getFileExifRotation(picPath);
         if (exifRotation != 0) {
             //TODO write EXIF instead of rotating bitmap.

@@ -61,6 +61,7 @@
     <string name="change_avatar_failed">更改头像失败</string>
     <string name="upload_gallery_success">上传相册成功</string>
     <string name="upload_gallery_failed">上传相册失败</string>
+    <string name="delete_gallery_photo_success">删除相册照片成功</string>
     <string name="change_background_success">更换背景成功</string>
     <string name="change_background_failed">更换背景失败</string>
     <string name="exit_mention">再次按返回键退出</string>
@@ -216,5 +217,7 @@
     <string name="title_activity_near_talents">NearTalentsActivity</string>
     <string name="title_activity_web_view">WebViewActivity</string>
     <string name="title_activity_vedio">VedioActivity</string>
+    <string name="title_activity_ffmpeg_recorder">FFmpegRecorderActivity</string>
+    <string name="title_activity_ffmpeg_preview">FFmpegPreviewActivity</string>
 
 </resources>

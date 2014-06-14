@@ -29,6 +29,7 @@ import com.android.volley.toolbox.ImageLoader;
 
 import java.io.ByteArrayOutputStream;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -72,8 +73,23 @@ public class PhotoAdapter extends BeanAdapter<Photo> {
     public void setItems(List<Photo> items) {
         if(mItems != null) {
             this.mItems = items;
-            notifyDataSetChanged();
         }
+        if(mPermission){
+            Photo photo = new Photo();
+            photo.setUrl(GALLERY_PHOTO_EDIT);
+            this.mItems.add(photo);
+        }
+        notifyDataSetChanged();
+    }
+
+    @Override
+    public void addItem(Photo item) {
+        if(mPermission) {
+            this.mItems.add(mItems.size() - 1, item);
+        }else{
+            this.mItems.add(item);
+        }
+        notifyDataSetChanged();
     }
 
     private class ViewHolder{
@@ -125,10 +141,26 @@ public class PhotoAdapter extends BeanAdapter<Photo> {
                     public void onClick(View view) {
                         HashMap<String, Serializable> params = new HashMap<String, Serializable>();
                         PhotosBean photos = new PhotosBean();
-                        photos.setPhotos(mItems);
+                        List<Photo> photoList = new ArrayList<Photo>();
+                        for(Photo p : mItems){
+                            if(!p.getUrl().equals(GALLERY_PHOTO_EDIT)) {
+                                photoList.add(p);
+                            }
+                        }
+                        photos.setPhotos(photoList);
                         params.put("photos", photos);
                         params.put("position",i);
                         IntentUtil.startActivity(mActivity,GalleryActivity.class, params);
+                    }
+                });
+
+                holder.imageView.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View view) {
+                        if(mActivity instanceof MyProfileActivity){
+                            ((MyProfileActivity)mActivity).deleteGalleryPhoto(i);
+                        }
+                        return true;
                     }
                 });
 
