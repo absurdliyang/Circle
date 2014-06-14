@@ -6,7 +6,9 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import com.absurd.circle.app.AppConstant;
+import com.absurd.circle.util.IntentUtil;
 import com.absurd.circle.util.StringUtil;
+import com.absurd.circle.video.RecorderActivity;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -166,7 +168,7 @@ public class PhotoFragment extends DialogFragment{
      * on selecgt record vedio
      */
     private void onRecord(){
-
+        IntentUtil.startActivity(this.getActivity(), RecorderActivity.class);
     }
 
 	
