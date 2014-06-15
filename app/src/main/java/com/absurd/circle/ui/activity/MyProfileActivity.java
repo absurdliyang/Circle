@@ -47,6 +47,7 @@ import com.absurd.circle.util.ImageUtil;
 import com.absurd.circle.util.IntentUtil;
 import com.absurd.circle.util.NetworkUtil;
 import com.absurd.circle.util.TimeUtil;
+import com.absurd.circle.video.Config;
 import com.android.volley.Response;
 import com.microsoft.windowsazure.mobileservices.AsyncTaskUtil;
 import com.microsoft.windowsazure.mobileservices.ServiceFilterResponse;
@@ -429,6 +430,11 @@ public class MyProfileActivity extends BaseActivity implements IUploadImage{
         }
     }
 
+    @Override
+    public void onResultByRecorder(Intent data) {
+
+    }
+
     /**
      * picture zooming
      *
@@ -556,6 +562,14 @@ public class MyProfileActivity extends BaseActivity implements IUploadImage{
             @Override
             public void onResultByCrop(Intent data) {
 
+            }
+
+            @Override
+            public void onResultByRecorder(Intent data) {
+                File file = (File)data.getSerializableExtra(Config.VIDEO_RESULT_DATA);
+                if(file != null) {
+                    AppContext.commonLog.i("Video absolute file paht --> " + file.getAbsolutePath());
+                }
             }
         });
         mMediaFragment.show(getSupportFragmentManager(),null);

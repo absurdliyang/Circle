@@ -26,18 +26,19 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.v7.app.ActionBarActivity;
 import android.widget.Toast;
 
 /**
  * 作用：
  * @author yinglovezhuzhu@gmail.com
  */
-public class BaseActivity extends Activity {
-	
+public class BaseActivity extends ActionBarActivity {
+
 	protected static final int RESULT_ERROR = 0x00000001;
-	
+
 	protected Intent mIntent;
-	
+
 	//=================  ====================
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -60,69 +61,8 @@ public class BaseActivity extends Activity {
 		super.onNewIntent(intent);
 		mIntent = intent;
 	}
-	//=================  ====================
-	
-	
-	
-	//================= Intent start ====================
-	protected boolean hasExtra(String name) {
-		if(mIntent == null) {
-			return false;
-		}
-		return mIntent.hasExtra(name);
-	}
-	
-	protected String getStringExtra(String name) {
-		if(mIntent == null) {
-			return null;
-		}
-		return mIntent.getStringExtra(name);
-	}
-	
-	protected int getIntExtra(String name) {
-		if(mIntent == null) {
-			return -1;
-		}
-		return mIntent.getIntExtra(name, -1);
-	}
-	
-	protected boolean getBooleanExtra(String name) {
-		if(mIntent == null) {
-			return false;
-		}
-		return mIntent.getBooleanExtra(name, false);
-	}
-	
-	protected Parcelable getParcelableExtra(String name) {
-		if(mIntent == null) {
-			return null;
-		}
-		return mIntent.getParcelableExtra(name);
-	}
-	
-	protected Serializable getSerializableExtra(String name) {
-		if(mIntent == null) {
-			return null;
-		}
-		return mIntent.getSerializableExtra(name);
-	}
-	//======== Intent end =================
-	
-	//======== Shot toast =================
-	protected void showShortToast(int resId) {
-		Toast.makeText(this, resId, Toast.LENGTH_SHORT).show();
-	}
-	
+
 	protected void showShortToast(String text) {
 		Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
 	}
-	
-	protected void showLongToast(int resId) {
-		Toast.makeText(this, resId, Toast.LENGTH_LONG).show();
-	}
-	
-	protected void showLongToast(String text) {
-		Toast.makeText(this, text, Toast.LENGTH_LONG).show();
-	}
-	//======== Shot toast end =================
 }

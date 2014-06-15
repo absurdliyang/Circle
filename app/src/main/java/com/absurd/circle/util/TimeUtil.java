@@ -5,6 +5,7 @@ import android.provider.CalendarContract;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Calendar;
+import java.util.Locale;
 import java.util.TimeZone;
 
 /**
@@ -58,5 +59,10 @@ public class TimeUtil {
         birth.setTime(birthday);
         Calendar now = Calendar.getInstance();
         return now.get(Calendar.YEAR) - birth.get(Calendar.YEAR) + "";
+    }
+
+    public static String getSystemDate(String pattern) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat(pattern, Locale.getDefault());
+        return dateFormat.format(new Date(System.currentTimeMillis()));
     }
 }

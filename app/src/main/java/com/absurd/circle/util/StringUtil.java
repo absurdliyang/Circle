@@ -18,10 +18,7 @@ public class StringUtil {
     }
 
     public static boolean isEmpty(String str){
-        if(str == null || str.equals("")){
-            return true;
-        }
-        return false;
+        return str == null || "".equals(str.trim());
     }
 
     public static String parseDistance(double distance){

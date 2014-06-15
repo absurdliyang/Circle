@@ -109,6 +109,20 @@ public class FileUtil {
 
     }
 
+    public static String getSrcSavePath(String path){
+        String storageState = Environment.getExternalStorageState();
+        if(storageState.equals(Environment.MEDIA_MOUNTED)){
+            String savePath = Environment.getExternalStorageDirectory().getAbsolutePath() + path;
+            File saveDir = new File(savePath);
+            if (!saveDir.exists()) {
+                saveDir.mkdirs();
+            }
+            return savePath;
+        }else{
+            return null;
+        }
+    }
+
     public  static String getPicPathFromUri(Uri uri, Activity activity) {
         String value = uri.getPath();
         if (value.startsWith("/external")) {

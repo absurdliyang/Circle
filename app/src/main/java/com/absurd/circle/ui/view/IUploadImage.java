@@ -15,6 +15,10 @@ public interface IUploadImage {
 	 * Action croping the selected image
 	 */
 	int IMAGE_CROP =102;
+    /***
+     * Action selcting a video
+     */
+    int SELECT_BY_VIDEO = 103;
 	/**
 	 * On result for after select a image from album
 	 */
@@ -27,5 +31,9 @@ public interface IUploadImage {
 	 * On result fro croping the selected photo
 	 */
 	public void onResultByCrop(Intent data);
+    /**
+     * On result for rocordering a video
+     */
+    public void onResultByRecorder(Intent data);
 
 }

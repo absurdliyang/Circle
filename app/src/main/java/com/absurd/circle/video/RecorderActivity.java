@@ -1,30 +1,12 @@
-/*
- * Copyright (C) 2013年12月31日 The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- * Auther：yinglovezhuzhu@gmail.com
- * FileName:RecorderActivity.java
- * Date：2013年12月31日
- * Version：v1.0
- */	
 package com.absurd.circle.video;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 import android.annotation.SuppressLint;
@@ -32,14 +14,12 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.hardware.Camera;
 import android.hardware.Camera.Size;
 import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
@@ -52,9 +32,11 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import com.absurd.circle.video.utils.DateUtil;
-import com.absurd.circle.video.utils.LogUtil;
-import com.absurd.circle.video.utils.StringUtil;
+import com.absurd.circle.app.AppConstant;
+import com.absurd.circle.app.AppContext;
+import com.absurd.circle.app.R;
+import com.absurd.circle.util.FileUtil;
+import com.absurd.circle.util.StringUtil;
 
 /**
  * 作用：
@@ -62,10 +44,10 @@ import com.absurd.circle.video.utils.StringUtil;
  * @author yinglovezhuzhu@gmail.com
  */
 public class RecorderActivity extends BaseActivity implements SurfaceHolder.Callback {
-	
-	private static final String TAG = RecorderActivity.class.getSimpleName();
-	
-	private SurfaceView mSurfaceView;
+
+
+
+    private SurfaceView mSurfaceView;
 	private ImageButton mIbtnCancel;
 	private ImageButton mIbtnOk;
 	private Button mButton;
@@ -79,42 +61,33 @@ public class RecorderActivity extends BaseActivity implements SurfaceHolder.Call
 	
 	private boolean mIsRecording = false;
 	
-
-	private Resources mResources;
-	private String mPackageName;
-	
 	private List<Size> mSupportVideoSizes;
 	
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
-		mResources = getResources();
-		mPackageName = getPackageName();
-		
-		
-		int layoutId = mResources.getIdentifier("yuninfo_activity_video_recorder", "layout", mPackageName);
-		setContentView(layoutId);
+        getSupportActionBar().hide();
+
+		setContentView(R.layout.activity_recorder);
 		
 		initView();
 	}
-	
-	@SuppressWarnings("deprecation")
+
 	private void initView() {
 		
-		mSurfaceView = (SurfaceView) findViewById(mResources.getIdentifier("yuninfo_sv_recorder_preview", "id", mPackageName));
-		mButton = (Button) findViewById(mResources.getIdentifier("yuninfo_btn_video_record", "id", mPackageName));
-		mIbtnCancel = (ImageButton) findViewById(mResources.getIdentifier("yuninfo_ibtn_video_cancel", "id", mPackageName));
-		mIbtnOk = (ImageButton) findViewById(mResources.getIdentifier("yuninfo_ibtn_video_ok", "id", mPackageName));
+		mSurfaceView = (SurfaceView) findViewById(R.id.sv_recorder_preview);
+		mButton = (Button) findViewById(R.id.btn_video_record);
+		mIbtnCancel = (ImageButton) findViewById(R.id.ibtn_video_cancel);
+		mIbtnOk = (ImageButton) findViewById(R.id.ibtn_video_ok);
 		mIbtnCancel.setOnClickListener(mCancelListener);
 		mIbtnOk.setOnClickListener(mOkListener);
 		mIbtnCancel.setVisibility(View.INVISIBLE);
 		mIbtnOk.setVisibility(View.INVISIBLE);
-		mTvTimeCount = (TextView) findViewById(mResources.getIdentifier("yuninfo_tv_recorder_time_count", "id", mPackageName));
+		mTvTimeCount = (TextView) findViewById(R.id.tv_recorder_time_count);
 		mTvTimeCount.setVisibility(View.INVISIBLE);
 		
-		mButton.setBackgroundResource(mResources.getIdentifier("yuninfo_btn_video_start", "drawable", mPackageName));
+		mButton.setBackgroundResource(R.drawable.btn_video_start);
 		mButton.setOnClickListener(mBtnListener);
 		
 		mSurfaceHolder = mSurfaceView.getHolder();
@@ -124,7 +97,7 @@ public class RecorderActivity extends BaseActivity implements SurfaceHolder.Call
 			try {
 				mSurfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
 			} catch (Exception e) {
-				LogUtil.e(TAG, e);
+                AppContext.commonLog.i(e);
 			}
 		}
 		
@@ -235,7 +208,7 @@ public class RecorderActivity extends BaseActivity implements SurfaceHolder.Call
 		public void onClick(View v) {
 			Intent data = new Intent();
 			if(mOutputFile != null && !StringUtil.isEmpty(mOutputFile.getAbsolutePath())) {
-				data.putExtra(Config.YUNINFO_RESULT_DATA, mOutputFile);
+				data.putExtra(Config.VIDEO_RESULT_DATA, mOutputFile);
 			}
 			exit(RESULT_OK, data);
 		}
@@ -263,7 +236,7 @@ public class RecorderActivity extends BaseActivity implements SurfaceHolder.Call
 			mSupportVideoSizes = parameters.getSupportedVideoSizes();
 			if(mSupportVideoSizes == null || mSupportVideoSizes.isEmpty()) {  //For some device can't get supported video size
 				String videoSize = parameters.get("video-size");
-				LogUtil.i(TAG, videoSize);
+                AppContext.commonLog.i(videoSize);
 				mSupportVideoSizes = new ArrayList<Size>();
 				if(!StringUtil.isEmpty(videoSize)) {
 					String [] size = videoSize.split("x");
@@ -273,16 +246,16 @@ public class RecorderActivity extends BaseActivity implements SurfaceHolder.Call
 							int height = Integer.parseInt(size[1]);
 							mSupportVideoSizes.add(mCamera.new Size(width, height));
 						} catch (Exception e) {
-							LogUtil.e(TAG, e.toString());
-						}
+                            AppContext.commonLog.i(e.toString());
+                        }
 					}
 				}
 			}
 			for (Size size : mSupportVideoSizes) {
-				LogUtil.i(TAG, size.width + "<>" + size.height);
+                AppContext.commonLog.i(size.width + "<>" + size.height);
 			}
 		} catch (Exception e) {
-			LogUtil.e(TAG, "Open Camera error\n" + e.toString());
+            AppContext.commonLog.i("Open Camera error\n" + e.toString());
 		}
 	}
 	
@@ -293,8 +266,8 @@ public class RecorderActivity extends BaseActivity implements SurfaceHolder.Call
 		mMediaRecorder = new MediaRecorder();
 
 		// Step 1: Unlock and set camera to MediaRecorder
-		LogUtil.i("Camera", mCamera);
-		LogUtil.i("Camera", mMediaRecorder);
+        AppContext.commonLog.i("camera " + mCamera);
+        AppContext.commonLog.i("camera " + mMediaRecorder);
 		mMediaRecorder.setCamera(mCamera);
 		
 		// Step 2: Set sources
@@ -415,8 +388,16 @@ public class RecorderActivity extends BaseActivity implements SurfaceHolder.Call
 		}
 			
 		// Step 4: Set output file
-		mOutputFile = new File(Environment.getExternalStorageDirectory(), "Video_" 
-				+ DateUtil.getSystemDate("yyyy_MM_dd_HHmmss") + ".mp4");
+
+        String savePath = FileUtil.getSrcSavePath(AppConstant.SAVE_VIDEO_PATH);
+        if(StringUtil.isEmpty(savePath)){
+            AppContext.commonLog.i("Error, save path is not valid");
+            releaseMediaRecorder();
+            return false;
+        }
+        String timeStamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+        String fileName = "circle_video_" + timeStamp + ".mp4";
+        File mOutputFile = new File(savePath, fileName);
 		mMediaRecorder.setOutputFile(mOutputFile.getAbsolutePath());
 
 		// Step 5: Set the preview output
@@ -501,13 +482,13 @@ public class RecorderActivity extends BaseActivity implements SurfaceHolder.Call
 				// Camera is available and unlocked, MediaRecorder is prepared,
 				// now you can start recording
 				mMediaRecorder.start();
-				mButton.setBackgroundResource(mResources.getIdentifier("yuninfo_btn_video_stop", "drawable", mPackageName));
+				mButton.setBackgroundResource(R.drawable.btn_video_stop);
 //				mButton.setEnabled(false);
 			} else {
 				// prepare didn't work, release the camera
 				releaseMediaRecorder();
 				// inform user
-				mButton.setBackgroundResource(mResources.getIdentifier("yuninfo_btn_video_start", "drawable", mPackageName));
+				mButton.setBackgroundResource(R.drawable.btn_video_start);
 			}
 			mTvTimeCount.setVisibility(View.VISIBLE);
 			mTvTimeCount.setText("00:0" + (Config.YUNINFO_MAX_VIDEO_DURATION / 1000));
@@ -531,12 +512,12 @@ public class RecorderActivity extends BaseActivity implements SurfaceHolder.Call
 				mOutputFile.delete();
 				mOutputFile = null;
 			}
-			LogUtil.e(TAG, e.toString());
+            AppContext.commonLog.i(e.toString());
 		}
 		releaseMediaRecorder(); // release the MediaRecorder object
 		mCamera.lock(); // take camera access back from MediaRecorder
 //		releaseCamera(); // release camera
-		mButton.setBackgroundResource(mResources.getIdentifier("yuninfo_btn_video_start", "drawable", mPackageName));
+		mButton.setBackgroundResource(R.drawable.btn_video_start);
 		mIsRecording = false;
 		
 		mButton.setVisibility(View.GONE);
@@ -593,7 +574,7 @@ public class RecorderActivity extends BaseActivity implements SurfaceHolder.Call
 				mCamera.setPreviewDisplay(holder);
 				mCamera.startPreview();
 			} catch (Exception e) {
-				LogUtil.e(TAG, "Error setting camera preview: " + e.toString());
+                AppContext.commonLog.i("Error setting camera preview: " + e.toString());
 			}
 		}
 	}
@@ -612,7 +593,7 @@ public class RecorderActivity extends BaseActivity implements SurfaceHolder.Call
 			try {
 				mCamera.stopPreview();
 			} catch (Exception e) {
-				LogUtil.e(TAG, "Error setting camera preview: " + e.toString());
+                AppContext.commonLog.i("Error setting camera preview: " + e.toString());
 			}
 		}
 	}

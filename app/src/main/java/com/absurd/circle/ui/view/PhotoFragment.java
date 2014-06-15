@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import com.absurd.circle.app.AppConstant;
+import com.absurd.circle.util.FileUtil;
 import com.absurd.circle.util.IntentUtil;
 import com.absurd.circle.util.StringUtil;
 import com.absurd.circle.video.RecorderActivity;
@@ -99,7 +100,9 @@ public class PhotoFragment extends DialogFragment{
 				mIUploadImage.onResultByCrop(data);
 			}else if(requestCode == IUploadImage.SELECT_BY_TAKE_PHOTO){
 				mIUploadImage.onResultByTake(data);
-			}
+			}else if(requestCode == IUploadImage.SELECT_BY_VIDEO){
+                mIUploadImage.onResultByRecorder(data);
+            }
 		}
 	}
 	
@@ -125,15 +128,7 @@ public class PhotoFragment extends DialogFragment{
 	}
 
     public Uri getUriPath(){
-        String savePath = "";
-        String storageState = Environment.getExternalStorageState();
-        if(storageState.equals(Environment.MEDIA_MOUNTED)){
-            savePath = Environment.getExternalStorageDirectory().getAbsolutePath() + AppConstant.TAKE_PHOTO_PATH;
-            File saveDir = new File(savePath);
-            if (!saveDir.exists()) {
-                saveDir.mkdirs();
-            }
-        }
+        String savePath = FileUtil.getSrcSavePath(AppConstant.TAKE_PHOTO_PATH);
 
         if(StringUtil.isEmpty(savePath)){
             Toast.makeText(getActivity(), "Create save photo path error!", Toast.LENGTH_SHORT).show();
@@ -168,7 +163,8 @@ public class PhotoFragment extends DialogFragment{
      * on selecgt record vedio
      */
     private void onRecord(){
-        IntentUtil.startActivity(this.getActivity(), RecorderActivity.class);
+        Intent intent = new Intent(this.getActivity(), RecorderActivity.class);
+        getActivity().startActivityForResult(intent,IUploadImage.SELECT_BY_VIDEO);
     }
 
 	

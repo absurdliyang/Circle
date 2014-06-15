@@ -35,7 +35,7 @@ public class Config {
 
 	public static final int YUNINFO_REQUEST_CODE_PICK_VIDEO = 0x103;
 	
-	public static final String YUNINFO_RESULT_DATA = "yuninfo_result_data";
+	public static final String VIDEO_RESULT_DATA = "video_result_data";
 	
 	public static final String YUNINFO_EXTRA_URL = "yuninfo_url";
 	
