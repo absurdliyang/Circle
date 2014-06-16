@@ -120,8 +120,14 @@ public class MessageDetailFragment extends Fragment{
         if(MessageDetailActivity.message != null && MessageDetailActivity.message.getUser() != null){
             ((TextView)headerView.findViewById(R.id.tv_header_title_username)).setText(MessageDetailActivity.message.getUser().getName());
             ((TextView)headerView.findViewById(R.id.tv_header_title_description)).setText(MessageDetailActivity.message.getUser().getDescription());
-            if(!StringUtil.isEmpty(MessageDetailActivity.message.getUser().getAvatar()) && StringUtil.isUrl(MessageDetailActivity.message.getUser().getAvatar())) {
-                RequestManager.loadImage(MessageDetailActivity.message.getUser().getAvatar(), RequestManager.getImageListener(headerAvaterView,
+            String avatarStr = "";
+            if(StringUtil.isEmpty(MessageDetailActivity.message.getUser().getAvatar())){
+                avatarStr = "https://annonymous";
+            }else{
+                avatarStr = MessageDetailActivity.message.getUser().getAvatar();
+            }
+            if(!StringUtil.isEmpty(avatarStr) && StringUtil.isUrl(avatarStr)) {
+                RequestManager.loadImage(avatarStr, RequestManager.getImageListener(headerAvaterView,
                         mAvatarDefaultBitmap, mAvatarDefaultBitmap, new BitmapFilter() {
                             @Override
                             public Bitmap filter(Bitmap bitmap) {
@@ -356,7 +362,7 @@ public class MessageDetailFragment extends Fragment{
         if(!mIsBusy) {
             mCurrentPageIndex++;
             mIsBusy = true;
-            mCommentService.getComments(MessageDetailActivity.message.getId(), mCurrentPageIndex, 10, mQueryOrder, new TableQueryCallback<Comment>() {
+            mCommentService.getComments(MessageDetailActivity.message.getId(), mCurrentPageIndex, AppConfig.CUSTOM_PAGE_SIZE, mQueryOrder, new TableQueryCallback<Comment>() {
 
                 @Override
                 public void onCompleted(List<Comment> result, int count, Exception exception, ServiceFilterResponse response) {

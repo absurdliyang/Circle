@@ -63,6 +63,13 @@ public class BeanAdapter<E> extends BaseAdapter {
         notifyDataSetChanged();
     }
 
+    public void deleteItem(final E item){
+        if(item != null) {
+            this.mItems.remove(item);
+            notifyDataSetChanged();
+        }
+    }
+
     public List<E> getItems(){
         return mItems;
     }

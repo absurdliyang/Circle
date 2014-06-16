@@ -29,4 +29,12 @@ public class AsyncTaskUtil {
             asyncTask.execute();
         }
     }
+
+    public static void addTaskInPool(AsyncTask asyncTask, Object... params) {
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB){
+            asyncTask.executeOnExecutor(threadPoolExecutor,params);
+        }else{
+            asyncTask.execute(params);
+        }
+    }
 }

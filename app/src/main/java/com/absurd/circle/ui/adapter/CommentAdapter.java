@@ -85,8 +85,14 @@ public class CommentAdapter extends BeanAdapter<Comment> {
         }
 
         if(comment.getUser() != null) {
-            if(comment.getUser().getAvatar() != null && StringUtil.isUrl(comment.getUser().getAvatar()) ) {
-                holder.avatarRequest = RequestManager.loadImage(comment.getUser().getAvatar(),
+            String avatarStr = "";
+            if(StringUtil.isEmpty(comment.getUser().getAvatar())){
+                avatarStr = "https://annonymous";
+            }else{
+                avatarStr = comment.getUser().getAvatar();
+            }
+            if(avatarStr != null && StringUtil.isUrl(avatarStr) ) {
+                holder.avatarRequest = RequestManager.loadImage(avatarStr,
                         RequestManager.getImageListener(holder.userAvatarIv, mAvatarDefaultBitmap, mAvatarDefaultBitmap,new BitmapFilter() {
                             @Override
                             public Bitmap filter(Bitmap bitmap) {

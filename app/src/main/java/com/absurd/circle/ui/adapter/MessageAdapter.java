@@ -97,9 +97,15 @@ public class MessageAdapter extends BeanAdapter<Message> {
             }
         }
         if(message.getUser() != null) {
-            if(message.getUser().getAvatar() != null && StringUtil.isUrl(message.getUser().getAvatar()) ) {
+            String avatarStr = "";
+            if(StringUtil.isEmpty(message.getUser().getAvatar())){
+                avatarStr = "https://annonymous";
+            }else{
+                avatarStr = message.getUser().getAvatar();
+            }
+            if(avatarStr != null && StringUtil.isUrl(avatarStr) ) {
                 //AppContext.commonLog.i(message.getUser().getName()+ "---------" + message.getUser().getAvatar());
-                holder.avatarRequest = RequestManager.loadImage(message.getUser().getAvatar(),
+                holder.avatarRequest = RequestManager.loadImage(avatarStr,
                         RequestManager.getImageListener(holder.avatarIv, mAvatarDefaultBitmap, mAvatarDefaultBitmap,new BitmapFilter() {
                             @Override
                             public Bitmap filter(Bitmap bitmap) {

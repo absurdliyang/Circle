@@ -124,18 +124,18 @@ public class PhotoAdapter extends BeanAdapter<Photo> {
                     }
                 });
             }else {
-                final String thumbnailUrl = ImageUtil.getThumbnailUrl(photo.getUrl(), 200, true);
+                String url = "";
+                if(photo.getType() == 1){
+                    url = photo.getMediaUrl();
+                }else{
+                    url = photo.getUrl();
+                }
+                final String thumbnailUrl = ImageUtil.getThumbnailUrl(url, 200, true);
                 holder.imageView.setVisibility(View.VISIBLE);
                 holder.imageView.setTag("loading");
                 holder.mediaRequest = RequestManager.loadImage(thumbnailUrl,
                         RequestManager.getImageListener(holder.imageView, mMediaDefaultBitmap, mMediaDefaultBitmap,null));
 
-                final Bitmap bitmap;
-                if(holder.imageView.getTag().equals("loading")){
-                    bitmap = null;
-                }else{
-                    bitmap = ((BitmapDrawable)holder.imageView.getDrawable()).getBitmap();
-                }
                 holder.imageView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {

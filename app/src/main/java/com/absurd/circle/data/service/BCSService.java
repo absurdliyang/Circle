@@ -30,27 +30,6 @@ public class BCSService {
 
     private static BaiduBCS baiduBCS = new BaiduBCS(new BCSCredentials(AppConstant.BCS_ACCESS_KEY, AppConstant.BCS_SECURE_KEY),HOST);
 
-    /**
-     * upload file to bcs from byte array
-     * @param object  the uploading file bcs file path
-     * @param content the uploading file content byte array
-     * @throws IOException
-     */
-    public static boolean upload(String object,byte[] content) throws IOException{
-        ObjectMetadata metadata = new ObjectMetadata();
-
-        metadata.setContentEncoding("utf-8");
-        metadata.setContentLength(content.length);
-
-        PutObjectRequest request = new PutObjectRequest(BUCKET, object,new ByteArrayInputStream(content), metadata);
-        boolean isExist = baiduBCS.doesObjectExist(BUCKET, object);
-        if(isExist){
-            AppContext.commonLog.i("BCS file existed already");
-            return false;
-        }
-        baiduBCS.putObject(request);
-        return true;
-    }
 
     /**
      * upload file from input stream
@@ -98,6 +77,48 @@ public class BCSService {
         String fileName = UUID.randomUUID().toString();
         fileName = IMAGE_PATH + fileName + IMAGE_EXT;
         return uploadImageByFile(srcFile,fileName);
+    }
+
+
+    /**
+     * upload file to bcs from byte array
+     * @param object  the uploading file bcs file path
+     * @param content the uploading file content byte array
+     * @throws IOException
+     */
+    public static boolean uploadImageByByteStream(String object,byte[] content) throws IOException{
+        ObjectMetadata metadata = new ObjectMetadata();
+
+        metadata.setContentEncoding("utf-8");
+        metadata.setContentLength(content.length);
+
+        PutObjectRequest request = new PutObjectRequest(BUCKET, object,new ByteArrayInputStream(content), metadata);
+        boolean isExist = baiduBCS.doesObjectExist(BUCKET, object);
+        if(isExist){
+            AppContext.commonLog.i("BCS file existed already");
+            return false;
+        }
+        baiduBCS.putObject(request);
+        return true;
+    }
+
+
+    /**
+     *
+     * @param content
+     * @return remote url if upload success
+     *         null if upload faied
+     * @throws IOException
+     */
+    public static String uploadImageByByteStream(byte[] content) throws IOException{
+
+        String fileName = UUID.randomUUID().toString();
+        fileName = IMAGE_PATH + fileName + IMAGE_EXT;
+        if(uploadImageByByteStream(fileName, content)) {
+            return generateUrl(fileName);
+        }else{
+            return null;
+        }
     }
 
     /**

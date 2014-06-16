@@ -4,10 +4,12 @@ import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.v4.app.FragmentManager;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.DatePicker;
@@ -19,6 +21,7 @@ import android.widget.Toast;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -27,7 +30,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.absurd.circle.app.AppConfig;
 import com.absurd.circle.app.AppContext;
 import com.absurd.circle.app.R;
 import com.absurd.circle.data.client.volley.BitmapFilter;
@@ -39,6 +41,9 @@ import com.absurd.circle.data.service.BCSService;
 import com.absurd.circle.data.service.UserService;
 import com.absurd.circle.ui.activity.base.BaseActivity;
 import com.absurd.circle.ui.adapter.PhotoAdapter;
+import com.absurd.circle.ui.fragment.BlackListFragment;
+import com.absurd.circle.ui.fragment.FollowersFragment;
+import com.absurd.circle.ui.fragment.FunsFragment;
 import com.absurd.circle.ui.view.IUploadImage;
 import com.absurd.circle.ui.view.ItemDialog;
 import com.absurd.circle.ui.view.PhotoFragment;
@@ -46,6 +51,7 @@ import com.absurd.circle.util.FileUtil;
 import com.absurd.circle.util.ImageUtil;
 import com.absurd.circle.util.IntentUtil;
 import com.absurd.circle.util.NetworkUtil;
+import com.absurd.circle.util.StringUtil;
 import com.absurd.circle.util.TimeUtil;
 import com.absurd.circle.video.Config;
 import com.android.volley.Response;
@@ -91,10 +97,13 @@ public class MyProfileActivity extends BaseActivity implements IUploadImage{
     private ArrayList<Photo> mUserPhotos;
 
     private boolean  mPhotoSelectedStatus;
-    private boolean mIsMediaFragment = false;
-    private String mPicPath;
+    private boolean mIsGalleryFragment = false;
     private Uri mImageUri;
     private String mImageUrl;
+    private String mVedioUrl;
+    private String mPicPath;
+    private String mVedioPath;
+    private String mThumbnailUrl;
 
 
     public MyProfileActivity(){
@@ -139,7 +148,9 @@ public class MyProfileActivity extends BaseActivity implements IUploadImage{
         mPhotoGv.setAdapter(mPhotoAdapter);
 
         mPhotoFragment = new PhotoFragment();
+        mPhotoFragment.setIUploadImage(this);
         mMediaFragment = new PhotoFragment(2);
+        mMediaFragment.setIUploadImage(new GalleyUploadImage());
     }
 
     private void bindData(){
@@ -214,9 +225,8 @@ public class MyProfileActivity extends BaseActivity implements IUploadImage{
                 @Override
                 public void onClick(View view) {
                     mPhotoFragment.setTitle("更换头像");
-                    mIsMediaFragment = false;
+                    mIsGalleryFragment = false;
                     mPhotoSelectedStatus = true;
-                    mPhotoFragment.setIUploadImage(MyProfileActivity.this);
                     mPhotoFragment.show(getSupportFragmentManager(),null);
                 }
             });
@@ -225,9 +235,8 @@ public class MyProfileActivity extends BaseActivity implements IUploadImage{
                 @Override
                 public void onClick(View view) {
                     mPhotoFragment.setTitle("更换背景");
-                    mIsMediaFragment = false;
+                    mIsGalleryFragment = false;
                     mPhotoSelectedStatus = false;
-                    mPhotoFragment.setIUploadImage(MyProfileActivity.this);
                     mPhotoFragment.show(getSupportFragmentManager(),null);
                 }
             });
@@ -422,7 +431,7 @@ public class MyProfileActivity extends BaseActivity implements IUploadImage{
                     mUserBackGroundIv.setImageBitmap(photo);
                 }
                 if(NetworkUtil.isNetConnected()) {
-                    AsyncTaskUtil.addTaskInPool(new ImageUploadTask());
+                    AsyncTaskUtil.addTaskInPool(new ImageUploadTask(mIsGalleryFragment));
                 }else{
                     warning(R.string.net_disconnected_warning_upload_failed);
                 }
@@ -466,7 +475,7 @@ public class MyProfileActivity extends BaseActivity implements IUploadImage{
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(mIsMediaFragment){
+        if(mIsGalleryFragment){
             mMediaFragment.onActivityResult(requestCode, resultCode, data);
         }else {
             mPhotoFragment.onActivityResult(requestCode, resultCode, data);
@@ -474,20 +483,111 @@ public class MyProfileActivity extends BaseActivity implements IUploadImage{
     }
 
 
-    public class ImageUploadTask extends AsyncTask<String, Void, Boolean> {
+    public void uploadGalleryPhoto(){
+        mIsGalleryFragment = true;
+        mMediaFragment.setTitle("上传相册图片");
+        mMediaFragment.show(getSupportFragmentManager(),null);
+    }
+
+    public void deleteGalleryPhoto(final int position){
+        List<String> items = new ArrayList<String>();
+        items.add("删除");
+        final ItemDialog dialog = new ItemDialog(this,items);
+        dialog.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                switch(i){
+                    case 0:
+                        final Photo item = mUserPhotos.get(position);
+                        mUserService.deletePhoto(item,new TableDeleteCallback() {
+                            @Override
+                            public void onCompleted(Exception exception, ServiceFilterResponse response) {
+                                if(exception != null){
+                                    exception.printStackTrace();
+                                    return;
+                                }
+                                mPhotoAdapter.deleteItem(item);
+                                warning(R.string.delete_gallery_photo_success);
+                            }
+                        });
+                        break;
+                    default:
+                        break;
+                }
+                dialog.cancel();
+            }
+        });
+        dialog.show();
+
+    }
+
+
+
+
+    public class GalleyUploadImage implements IUploadImage{
         @Override
-        protected Boolean doInBackground(String... params) {
+        public void onResultByAlbum(Intent data) {
+            mPicPath = FileUtil.getPicPathFromUri(data.getData(), MyProfileActivity.this);
+            if(NetworkUtil.isNetConnected()) {
+                AsyncTaskUtil.addTaskInPool(new ImageUploadTask(mIsGalleryFragment),0);
+
+            }else{
+                warning(R.string.net_disconnected_warning_upload_failed);
+            }
+        }
+
+        @Override
+        public void onResultByTake(Intent data) {
+
+        }
+
+        @Override
+        public void onResultByCrop(Intent data) {
+
+        }
+
+        @Override
+        public void onResultByRecorder(Intent data) {
+            File file = (File)data.getSerializableExtra(Config.VIDEO_RESULT_DATA);
+            if(file != null) {
+                mVedioPath = file.getAbsolutePath();
+                AppContext.commonLog.i("Video absolute file path --> " + file.getAbsolutePath());
+
+                if(NetworkUtil.isNetConnected()) {
+                    AsyncTaskUtil.addTaskInPool(new ImageUploadTask(mIsGalleryFragment),1);
+                }else{
+                    warning(R.string.net_disconnected_warning_upload_failed);
+                }
+            }
+        }
+    }
+
+
+    public class ImageUploadTask extends AsyncTask<Object, Void, Boolean> {
+
+        private int mMediaType;
+        private boolean mIsGallery;
+
+        public ImageUploadTask(Boolean isVedio){
+            this.mIsGallery = isVedio;
+        }
+
+        @Override
+        protected Boolean doInBackground(Object... params) {
             // TODO Auto-generated method stub
-            AppContext.commonLog.i("Pic path --> " + mPicPath);
-            if(mPicPath != null){
-                String loadPicPath = ImageUtil.compressPic(MyProfileActivity.this, mPicPath, 1);
-                if(loadPicPath == null) {
+            if(mIsGallery) {
+                if(params == null){
                     return false;
                 }
-                File f = new File(loadPicPath);
-                mImageUrl = BCSService.uploadImageByFile(f);
+                mMediaType = (Integer)params[0];
+                if (mMediaType == 1) {
+                    return uploadVedio();
+                } else {
+                    return uploadPhoto();
+                }
+            }else{
+                return uploadPhoto();
             }
-            return true;
         }
 
         @Override
@@ -496,32 +596,43 @@ public class MyProfileActivity extends BaseActivity implements IUploadImage{
             super.onPostExecute(result);
             if(result == false){
                 AppContext.commonLog.i("Add photo failed");
-                if (mPhotoSelectedStatus) {
-                    warning(R.string.change_avatar_failed);
-                } else {
-                    warning(R.string.change_background_failed);
+                if(mIsGallery) {
+                    if (mPhotoSelectedStatus) {
+                        warning(R.string.change_avatar_failed);
+                    } else {
+                        warning(R.string.change_background_failed);
+                    }
                 }
                 return;
             }
-            if(mIsMediaFragment){
+            if(mIsGallery){
                 warning(R.string.upload_gallery_success);
-                Photo photo = new Photo();
-                photo.setType(0);
-                photo.setUrl(mImageUrl);
-                photo.setUserId(AppContext.auth.getUserId());
-                mUserService.insertPhoto(photo, new TableOperationCallback<Photo>() {
-                    @Override
-                    public void onCompleted(Photo entity, Exception exception, ServiceFilterResponse response) {
-                        if(entity == null){
-                            if(exception != null){
-                                exception.printStackTrace();
+                if(mMediaType == 0){
+                    insertPhoto(mMediaType);
+                }else{
+                    AsyncTaskUtil.addTaskInPool(new AsyncTask() {
+                        @Override
+                        protected Object doInBackground(Object[] objects) {
+                            final Bitmap thumbnail = ThumbnailUtils.createVideoThumbnail(mVedioPath, MediaStore.Video.Thumbnails.MINI_KIND);
+                            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                            thumbnail.compress(Bitmap.CompressFormat.JPEG, 1, stream);
+                            byte[] bytes = stream.toByteArray();
+                            try {
+                                mThumbnailUrl = BCSService.uploadImageByByteStream(bytes);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                                AppContext.commonLog.i(e.toString());
                             }
-                            return;
+                            return null;
                         }
-                        AppContext.commonLog.i("Add photo success");
-                        mPhotoAdapter.addItem(entity);
-                    }
-                });
+
+                        @Override
+                        protected void onPostExecute(Object o) {
+                            super.onPostExecute(o);
+                            insertPhoto(1);
+                        }
+                    });
+                }
             }else {
                 if (mPhotoSelectedStatus) {
                     AppContext.auth.setAvatar(mImageUrl);
@@ -534,59 +645,55 @@ public class MyProfileActivity extends BaseActivity implements IUploadImage{
                 }
             }
         }
+
+
+        private void insertPhoto(int type){
+            Photo photo = new Photo();
+            if(type == 0) {
+                photo.setType(0);
+                photo.setUrl(mImageUrl);
+            }else if(type == 1){
+                photo.setType(1);
+                photo.setUrl(mVedioUrl);
+                photo.setMediaUrl(mThumbnailUrl);
+            }
+            photo.setUserId(AppContext.auth.getUserId());
+            mUserService.insertPhoto(photo, new TableOperationCallback<Photo>() {
+                @Override
+                public void onCompleted(Photo entity, Exception exception, ServiceFilterResponse response) {
+                    if(entity == null){
+                        if(exception != null){
+                            exception.printStackTrace();
+                        }
+                        return;
+                    }
+                    AppContext.commonLog.i("Add photo success");
+                    mPhotoAdapter.addItem(entity);
+                }
+            });
+        }
+
+        private boolean uploadPhoto(){
+            if (StringUtil.isEmpty(mPicPath)) {
+                return false;
+            }
+            String loadPicPath = ImageUtil.compressPic(MyProfileActivity.this, mPicPath, 1);
+            File f = new File(loadPicPath);
+            mImageUrl = BCSService.uploadImageByFile(f);
+            return true;
+        }
+        private boolean uploadVedio(){
+            if (StringUtil.isEmpty(mVedioPath)) {
+                return false;
+            }
+            File f = new File(mVedioPath);
+            mVedioUrl = BCSService.uploadImageByFile(f);
+            return true;
+        }
     }
 
-    public void uploadGalleryPhoto(){
-        mIsMediaFragment = true;
-        mMediaFragment.setTitle("上传相册图片");
-        mMediaFragment.setIUploadImage(new IUploadImage() {
-            @Override
-            public void onResultByAlbum(Intent data) {
-                String picPath = FileUtil.getPicPathFromUri(data.getData(), MyProfileActivity.this);
-                Bitmap bitmap = ImageUtil.getWriteWeiboPictureThumblr(picPath);
-                if (bitmap != null) {
-                    mPicPath = picPath;
-                }
-                if(NetworkUtil.isNetConnected()) {
-                    AsyncTaskUtil.addTaskInPool(new ImageUploadTask());
-                }else{
-                    warning(R.string.net_disconnected_warning_upload_failed);
-                }
-            }
 
-            @Override
-            public void onResultByTake(Intent data) {
 
-            }
-
-            @Override
-            public void onResultByCrop(Intent data) {
-
-            }
-
-            @Override
-            public void onResultByRecorder(Intent data) {
-                File file = (File)data.getSerializableExtra(Config.VIDEO_RESULT_DATA);
-                if(file != null) {
-                    AppContext.commonLog.i("Video absolute file paht --> " + file.getAbsolutePath());
-                }
-            }
-        });
-        mMediaFragment.show(getSupportFragmentManager(),null);
-    }
-
-    public void deleteGalleryPhoto(int position){
-        mUserService.deletePhoto(mUserPhotos.get(position),new TableDeleteCallback() {
-            @Override
-            public void onCompleted(Exception exception, ServiceFilterResponse response) {
-                if(exception != null){
-                    exception.printStackTrace();
-                    return;
-                }
-                warning(R.string.delete_gallery_photo_success);
-            }
-        });
-    }
 
 
 }

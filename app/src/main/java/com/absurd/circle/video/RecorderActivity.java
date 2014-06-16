@@ -209,7 +209,9 @@ public class RecorderActivity extends BaseActivity implements SurfaceHolder.Call
 			Intent data = new Intent();
 			if(mOutputFile != null && !StringUtil.isEmpty(mOutputFile.getAbsolutePath())) {
 				data.putExtra(Config.VIDEO_RESULT_DATA, mOutputFile);
-			}
+			}else{
+                AppContext.commonLog.i("Activity result data is null");
+            }
 			exit(RESULT_OK, data);
 		}
 	};
@@ -397,7 +399,7 @@ public class RecorderActivity extends BaseActivity implements SurfaceHolder.Call
         }
         String timeStamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
         String fileName = "circle_video_" + timeStamp + ".mp4";
-        File mOutputFile = new File(savePath, fileName);
+        mOutputFile = new File(savePath, fileName);
 		mMediaRecorder.setOutputFile(mOutputFile.getAbsolutePath());
 
 		// Step 5: Set the preview output

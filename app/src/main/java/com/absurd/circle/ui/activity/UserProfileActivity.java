@@ -26,6 +26,7 @@ import com.absurd.circle.ui.adapter.PhotoAdapter;
 import com.absurd.circle.ui.view.ItemDialog;
 import com.absurd.circle.util.ImageUtil;
 import com.absurd.circle.util.IntentUtil;
+import com.absurd.circle.util.StringUtil;
 import com.absurd.circle.util.TimeUtil;
 import com.android.volley.Response;
 import com.microsoft.windowsazure.mobileservices.ServiceFilterResponse;
@@ -132,7 +133,13 @@ public class UserProfileActivity extends BaseActivity {
                 }
             }
         });
-        RequestManager.loadImage(mUser.getAvatar(),RequestManager.getImageListener(mAvatarIv,
+        String avatarStr = "";
+        if(StringUtil.isEmpty(mUser.getAvatar())){
+            avatarStr = "https://annonymous";
+        }else{
+            avatarStr = mUser.getAvatar();
+        }
+        RequestManager.loadImage(avatarStr,RequestManager.getImageListener(mAvatarIv,
                 mAvatarDefaultBitmap,mAvatarDefaultBitmap,new BitmapFilter() {
                     @Override
                     public Bitmap filter(Bitmap bitmap) {

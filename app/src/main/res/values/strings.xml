@@ -80,7 +80,7 @@
     <string name="message_not_exit">你查看的消息不存在</string>
     <string name="save_pic_success">保存图片成功</string>
     <string name="save_pic_failed">保存图片失败</string>
-
+    <string name="download_pic_error">图片下载失败</string>
 
 
 

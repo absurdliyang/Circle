@@ -101,8 +101,7 @@ public class LoadingOriginImageFragment extends Fragment {
     }
 
     private void loadImagError(){
-        String strMention = AppContext.getContext().getString(R.string.image_downloading_failed);
-        Toast.makeText(LoadingOriginImageFragment.this.getActivity(), strMention, Toast.LENGTH_SHORT).show();
+        Toast.makeText(AppContext.getContext(), R.string.download_pic_error, Toast.LENGTH_SHORT).show();
     }
 
     public void setImageUrl(String url){
